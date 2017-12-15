@@ -1,0 +1,7 @@
+# output latex
+relazione/_minted-main/
+relazione/*.aux
+relazione/*.dvi
+relazione/*.log
+relazione/*.pdf
+relazione/*.gz
