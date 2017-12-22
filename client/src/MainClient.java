@@ -6,18 +6,16 @@ import javax.swing.*;
 public class MainClient {
     public static void main(String[] args) {
         // Mostrare finestra di login
-        JFrame loginWindow = createWindow("Social Gossip", new Login(
-                (String username, String password) -> null,
-                () -> null
-        ));
+        JPanel loginPanel = new Login(MainClient::loginCallback, MainClient::registerCallback);
+        JFrame loginWindow = createWindow("Social Gossip", loginPanel);
     }
     
     private static void registerCallback() {
-    
+        System.out.println("Premuto bottone Registrati");
     }
     
     private static void loginCallback(String username, String password) {
-    
+        System.out.println("Login, username = " + username + ", password = " + password);
     }
     
     // crea una finestra centrata, non ridimensionabile, con il panel specificato

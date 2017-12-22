@@ -6,13 +6,12 @@ import gui.components.Logo;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.function.BinaryOperator;
-import java.util.function.Supplier;
+import java.util.function.BiConsumer;
 
 public class Login extends JPanel {
     private static final Dimension padding = new Dimension(65, 35);
     
-    public Login(BinaryOperator<String> loginCallback, Supplier<Void> registerCallback) {
+    public Login(BiConsumer<String, String> loginCallback, Runnable registerCallback) {
         // Init components
         JPanel logoPanel = new Logo(); // icon and title
         JPanel loginFormPanel = new LoginForm(loginCallback, registerCallback); // form, submit and register buttons
