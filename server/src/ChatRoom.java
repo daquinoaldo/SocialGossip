@@ -1,8 +1,5 @@
 public class ChatRoom {
-
-    public class ChatNotExistException extends RuntimeException { }
-    public class AllUSersOfflineException extends  RuntimeException { }
-
+    
     private User creator;
     private String chatName;
 

@@ -2,8 +2,8 @@
   <artifact type="jar" name="Server:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/Server_jar</output-path>
     <root id="archive" name="Server.jar">
-      <element id="module-output" name="Server" />
-      <element id="module-output" name="Common" />
+      <element id="module-output" name="server" />
+      <element id="module-output" name="common" />
     </root>
   </artifact>
 </component>

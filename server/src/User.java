@@ -1,17 +1,10 @@
+import exceptions.*;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class User {
-
-    /* Non so se è una buona prassi, ma nel caso si cambia */
-    public class UserNotExistException extends RuntimeException { }
-    public class EmptyUsernameException extends RuntimeException { }
-    public class EmptyPasswordException extends RuntimeException { }
-    public class NotFriendsException extends RuntimeException { }
-    public class UserOfflineException extends RuntimeException { }
-    public class WrongPasswordException extends RuntimeException { }
-
     private String username;
     private byte[] password;
     private UserStatus userStatus;
