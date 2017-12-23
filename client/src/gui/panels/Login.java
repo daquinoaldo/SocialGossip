@@ -1,26 +1,54 @@
 package gui.panels;
 
 import constants.Colors;
+import gui.Util;
 import gui.components.LoginForm;
 import gui.components.Logo;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.function.BiConsumer;
 
 public class Login extends JPanel {
     private static final Dimension padding = new Dimension(65, 35);
+    private JPanel loginFormPanel;
     
-    public Login(BiConsumer<String, String> loginCallback, Runnable registerCallback) {
+    public Login() {
         // Init components
         JPanel logoPanel = new Logo(); // icon and title
-        JPanel loginFormPanel = new LoginForm(loginCallback, registerCallback); // form, submit and register buttons
-    
+        loginFormPanel = new LoginForm(this::loginCallback, this::registerCallback); // form, submit and register buttons
+        
         // Making the panel
         setBackground(Colors.background);
         setBorder(BorderFactory.createEmptyBorder(padding.height, padding.width,padding.height, padding.width));
         setLayout(new GridLayout(2,1,3,50));
         add(logoPanel);
         add(loginFormPanel);
+    }
+    
+    private void loginCallback(String username, String password) {
+        System.out.println("Login, username = " + username + ", password = " + password);
+    }
+    
+    private void registerCallback() {
+        System.out.println("Bottone registrati premuto");
+        
+        // create a register window and set a callback for a succesful registration
+        JPanel registerPanel = new Register(this::loginCallback);
+        JFrame registerWindow = Util.createWindow("Registrazione", registerPanel, false, true);
+        
+        // set listener for window closing (without registration)
+        JPanel self = this;
+        registerWindow.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                // re-enable form elements
+                Util.enableComponents(loginFormPanel, true);
+                self.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            }
+        });
+        
+        // disable form elements
+        Util.enableComponents(loginFormPanel, false);
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     }
 }
