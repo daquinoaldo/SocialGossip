@@ -1,0 +1,13 @@
+{
+  "status": "ok",
+  "code": 200,
+  "result": {
+    "chatsrooms": [
+      { "id": "Serie A", "members": [] }
+    ],
+    "friends": [
+      { "username": "pippo", "online": false },
+      { "username": "pluto", "online": true }
+    ]
+  }
+}

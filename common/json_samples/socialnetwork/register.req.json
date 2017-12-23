@@ -1,0 +1,7 @@
+{
+  "endpoint": "REGISTER",
+  "params": {
+    "username": "pinco",
+    "password": "supersicurezza"
+  }
+}
