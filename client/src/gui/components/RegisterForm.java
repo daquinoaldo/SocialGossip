@@ -1,10 +1,14 @@
 package gui.components;
 
 import constants.Colors;
+import gui.Util;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.function.BiConsumer;
+
+import static gui.Validators.isValidPassword;
+import static gui.Validators.isValidUsername;
 
 public class RegisterForm extends JPanel {
     private final BiConsumer<String, String> registerCallback;
@@ -36,5 +40,15 @@ public class RegisterForm extends JPanel {
         // validate username
         // validate password
         // if successful run this.registerCallback(username, password)
+        String username = usernameInput.getText();
+        String password = passwordInput.getText();
+        String password2 = passwordInput2.getText();
+        
+        if (isValidUsername(username) && isValidPassword(password) && password.equals(password2)) {
+            registerCallback.accept(username, password);
+        }
+        else {
+            Util.showErrorDialog("I dati inseriti non sono corrretti.");
+        }
     }
 }

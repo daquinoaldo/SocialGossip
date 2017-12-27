@@ -11,6 +11,7 @@ import java.awt.*;
 public class Login extends JPanel {
     private static final Dimension padding = new Dimension(65, 35);
     private JPanel loginFormPanel;
+    private JFrame registerWindow = null;
     
     public Login() {
         // Init components
@@ -26,6 +27,11 @@ public class Login extends JPanel {
     }
     
     private void loginCallback(String username, String password) {
+        if (this.registerWindow != null) {
+            // if this method was called after a registration, close the registration form window
+            this.registerWindow.dispose();
+        }
+        
         System.out.println("Login, username = " + username + ", password = " + password);
     }
     
@@ -34,7 +40,7 @@ public class Login extends JPanel {
         
         // create a register window and set a callback for a succesful registration
         JPanel registerPanel = new Register(this::loginCallback);
-        JFrame registerWindow = Util.createWindow("Registrazione", registerPanel, false, true);
+        this.registerWindow = Util.createWindow("Registrazione", registerPanel, false, false);
         
         // set listener for window closing (without registration)
         JPanel self = this;

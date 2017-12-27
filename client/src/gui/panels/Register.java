@@ -45,8 +45,15 @@ public class Register extends JPanel {
     }
     
     private void registerCallback(String username, String password) {
+        Util.enableComponents(this, false);
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    
         // make register request to server
-        // if successful run onUserRegistered(username, password)
+        System.out.println("Registrazione di " + username + ":" + password);
+        try { Thread.sleep(500); }
+        catch (Exception e) {}
         
+        // if successful run onUserRegistered(username, password)
+        onUserRegistered.accept(username, password);
     }
 }

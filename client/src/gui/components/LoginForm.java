@@ -6,8 +6,8 @@ import gui.Util;
 import javax.swing.*;
 import java.awt.*;
 import java.util.function.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import static gui.Validators.isValidUsername;
 
 public class LoginForm extends JPanel {
     private JTextField usernameInput = InputFactory.getTextInput("username", e -> submit());
@@ -46,16 +46,5 @@ public class LoginForm extends JPanel {
             Util.showErrorDialog("Controllare i valori dei campi inseriti.");
             
         }
-    }
-    
-    private boolean isValidUsername(String username) {
-        Pattern p = Pattern.compile("[^a-z0-9]", Pattern.CASE_INSENSITIVE);
-        Matcher m = p.matcher(username);
-    
-        return username.length() > 0 && !m.find();
-    }
-    
-    private boolean isValidPassword(String password) {
-        return password.length() > 0;
     }
 }
