@@ -1,3 +1,5 @@
+package base;
+
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
@@ -9,6 +11,11 @@ public class State {
     private static Consumer<Boolean> onLoggedInChange = null;
     private static Consumer<String> onUsernameChange = null;
     private static Consumer<ArrayList<String>> onFriendsChange = null;
+    
+    // Getters
+    public static boolean isIsLoggedIn() { return isLoggedIn; }
+    public static String username() { return username; }
+    public static ArrayList<String> friends() { return friends; }
     
     // State changes, will trigger a callback if any was set
     public static void setLoggedIn(boolean loggedIn) {

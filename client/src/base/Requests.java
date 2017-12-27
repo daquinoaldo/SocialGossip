@@ -1,3 +1,5 @@
+package base;
+
 import gui.Util;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -27,8 +29,9 @@ public class Requests {
                 });
             }
         }
-        else
+        else {
             Util.showErrorDialog((String) reply.get("message"));
+        }
     }
     
     void register() {

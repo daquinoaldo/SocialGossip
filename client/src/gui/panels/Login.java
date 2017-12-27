@@ -1,5 +1,6 @@
 package gui.panels;
 
+import base.State;
 import constants.Colors;
 import gui.Util;
 import gui.components.LoginForm;
@@ -33,6 +34,8 @@ public class Login extends JPanel {
         }
         
         System.out.println("Login, username = " + username + ", password = " + password);
+        State.setLoggedIn(true);
+        State.setUsername(username);
     }
     
     private void registerCallback() {
