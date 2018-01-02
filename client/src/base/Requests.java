@@ -10,15 +10,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Requests {
-    private JSONParser parser = new JSONParser();
+    private static JSONParser parser = new JSONParser();
     
-    void login(String username, String password) {
+    /* Methods */
+    static void login(String username, String password) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("username", username);
         parameters.put("password", password);
         
-        JSONObject reply = makeRequest("LOGIN", parameters);
-        if (isReplyOk(reply)) {
+        JSONObject reply = makeRequest(Endpoints.LOGIN, parameters);
+        if (reply != null) {
             State.setLoggedIn(true);
             State.setUsername(username);
             JSONArray jsonFriends = (JSONArray) reply.get("friends");
@@ -29,28 +30,26 @@ public class Requests {
                 });
             }
         }
-        else {
-            Util.showErrorDialog((String) reply.get("message"));
-        }
     }
     
-    void register() {
+    static void register() {
     
     }
     
-    void lookup() {
+    static void lookup() {
     
     }
     
-    void friendship() {
+    static void friendship() {
     
     }
     
-    void listFriends() {
+    static void listFriends() {
     
     }
     
-    private boolean isReplyOk(JSONObject reply) {
+    /* Private helpers */
+    private static boolean isReplyOk(JSONObject reply) {
         return reply != null && reply.get("status").equals("ok");
     }
     
@@ -62,7 +61,7 @@ public class Requests {
      * @return JSONObject with response, or null if an error occured
      * @throws IllegalArgumentException if an invalid endpoint is specified
      */
-    private JSONObject makeRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
+    private static JSONObject makeRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
         if (endpoint == null || endpoint.length() == 0)
             throw new IllegalArgumentException("Invalid endpoint specified.");
             
@@ -78,7 +77,13 @@ public class Requests {
         
         try {
             JSONObject response = (JSONObject) parser.parse(reply);
-            return response;
+            
+            if (isReplyOk(response))
+                return response;
+            else {
+                Util.showErrorDialog((String) response.get("message"));
+                return null;
+            }
         }
         catch (ParseException e) {
             Util.showErrorDialog("Invalid JSON response from server:\n" + reply);
