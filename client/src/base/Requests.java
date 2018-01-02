@@ -19,7 +19,7 @@ public class Requests {
         parameters.put("password", password);
         
         JSONObject reply = makeRequest(Endpoints.LOGIN, parameters);
-        if (isReplyOk(reply)) {
+        if (reply != null) {
             State.setLoggedIn(true);
             State.setUsername(username);
             JSONArray jsonFriends = (JSONArray) reply.get("friends");
@@ -29,9 +29,6 @@ public class Requests {
                     State.addFriend(friendUsername);
                 });
             }
-        }
-        else {
-            Util.showErrorDialog((String) reply.get("message"));
         }
     }
     
@@ -80,7 +77,13 @@ public class Requests {
         
         try {
             JSONObject response = (JSONObject) parser.parse(reply);
-            return response;
+            
+            if (isReplyOk(response))
+                return response;
+            else {
+                Util.showErrorDialog((String) response.get("message"));
+                return null;
+            }
         }
         catch (ParseException e) {
             Util.showErrorDialog("Invalid JSON response from server:\n" + reply);
