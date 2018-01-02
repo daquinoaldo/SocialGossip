@@ -6,14 +6,14 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.*;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Requests {
-    private static JSONParser parser = new JSONParser();
-    
     /* Methods */
-    static void login(String username, String password) {
+    public static void login(String username, String password) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("username", username);
         parameters.put("password", password);
@@ -32,23 +32,27 @@ public class Requests {
         }
     }
     
-    static void register() {
+    public static void register() {
     
     }
     
-    static void lookup() {
+    public static void lookup() {
     
     }
     
-    static void friendship() {
+    public static void friendship() {
     
     }
     
-    static void listFriends() {
+    public static void listFriends() {
     
     }
     
     /* Private helpers */
+    
+    /**
+     * @return true if server reply doesn't contain errors, false otherwise
+     */
     private static boolean isReplyOk(JSONObject reply) {
         return reply != null && reply.get("status").equals("ok");
     }
@@ -64,7 +68,7 @@ public class Requests {
     private static JSONObject makeRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
         if (endpoint == null || endpoint.length() == 0)
             throw new IllegalArgumentException("Invalid endpoint specified.");
-            
+        
         JSONObject params = new JSONObject();
         params.putAll(keyvalues);
         
@@ -72,11 +76,31 @@ public class Requests {
         request.put("endpoint", endpoint);
         request.put("params", params);
         
-        // send request to the server and wait for a reply
-        String reply = "{}";
         
+        
+        // send request to the server and wait for a reply
+        // move this to his own class
+        String responseString = "";
         try {
-            JSONObject response = (JSONObject) parser.parse(reply);
+            Socket socket = new Socket("localhost", Configuration.PRIMARY_PORT);
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            writer.write(request.toJSONString());
+            writer.newLine();
+            writer.flush();
+    
+            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            responseString = reader.readLine();
+            reader.close();
+            // end connection
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    
+    
+        try {
+            JSONParser parser = new JSONParser();
+            JSONObject response = (JSONObject) parser.parse(responseString);
             
             if (isReplyOk(response))
                 return response;
@@ -86,9 +110,10 @@ public class Requests {
             }
         }
         catch (ParseException e) {
-            Util.showErrorDialog("Invalid JSON response from server:\n" + reply);
-            System.err.println("Invalid JSON response from server:\n" + reply);
-            return null;
+            Util.showErrorDialog("Invalid JSON response from server");
+            System.err.println("Invalid JSON response from server");
+            e.printStackTrace();
         }
+        return null;
     }
 }

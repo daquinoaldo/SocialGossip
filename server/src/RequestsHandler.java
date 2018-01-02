@@ -1,15 +1,19 @@
 import base.Endpoints;
-import exceptions.InvalidEndpointException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.HashMap;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class RequestsHandler {
-    private static JSONParser parser = new JSONParser();
-    private static HashMap<String, Consumer<JSONObject>> endpoints = new HashMap<>();
+    private static HashMap<String, Function<JSONObject, JSONObject>> endpoints = new HashMap<>();
     
     /* Register endpoint methods to the endpoint string */
     static {
@@ -22,19 +26,20 @@ public class RequestsHandler {
     }
     
     /* ENDPOINTS */
-    private static void login(JSONObject params) {
-    
+    private static JSONObject login(JSONObject params) {
+        return buildErrorReply(400, "Not implemented");
     }
     
-    private static void register(JSONObject params) {
-    
+    private static JSONObject register(JSONObject params) {
+        return buildErrorReply(400, "Not implemented");
     }
     
     /* DISPATCHER */
-    public static void parseRequest(String jsonString) throws InvalidEndpointException {
+    public static JSONObject parseRequest(String input) {
         try {
             // Parse JSON string into a JSONObject
-            JSONObject parsed = (JSONObject) parser.parse(jsonString);
+            JSONParser parser = new JSONParser();
+            JSONObject parsed = (JSONObject) parser.parse(input);
             
             // Read endpoint and parameters
             String endpoint = (String) parsed.get("endpoint");
@@ -42,15 +47,40 @@ public class RequestsHandler {
             
             // Call the endpoint method associated if any, else throw exception
             if (endpoints.containsKey(endpoint)) {
-                endpoints.get(endpoint).accept(params);
+                return endpoints.get(endpoint).apply(params);
             }
             else {
-                throw new InvalidEndpointException(endpoint);
+                System.err.println("Invalid endpoint specified: " + endpoint);
             }
         }
         catch (ParseException e) {
-            System.err.println("Unable to parse JSON request:");
-            System.err.println(jsonString);
+            System.err.println("Got an invalid JSON.");
+            e.printStackTrace();
         }
+        
+        return null;
+    }
+    
+    /* Helpers */
+    private static JSONObject buildSuccessReply() {
+        JSONObject reply = new JSONObject();
+        reply.put("status", "ok");
+        reply.put("code", 200);
+        return reply;
+    }
+    
+    private static JSONObject buildSuccessReply(JSONObject payload) {
+        JSONObject baseReply = buildSuccessReply();
+        baseReply.put("result", payload);
+        return baseReply;
+    }
+    
+    private static JSONObject buildErrorReply(int statusCode, String message) {
+        JSONObject reply = new JSONObject();
+        reply.put("status", "err");
+        reply.put("code", statusCode);
+        reply.put("message", message);
+        
+        return reply;
     }
 }
