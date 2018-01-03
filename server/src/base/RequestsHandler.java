@@ -1,15 +1,10 @@
-import base.Endpoints;
+package base;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
 import java.util.HashMap;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class RequestsHandler {
@@ -35,7 +30,15 @@ public class RequestsHandler {
     }
     
     /* DISPATCHER */
-    public static JSONObject parseRequest(String input) {
+    
+    /**
+     * Parse a JSON String into a JSONObject, then apply the method registered for the endpoint specified in the JSON,
+     * if any.
+     * Returns the result of the operation as a JSONObject, can be an error.
+     * @param input String in valid JSON format.
+     * @return A JSON String to be sent as reply containing the result of the operation, can be an error.
+     */
+    public static String parseRequest(String input) {
         try {
             // Parse JSON string into a JSONObject
             JSONParser parser = new JSONParser();
@@ -47,18 +50,19 @@ public class RequestsHandler {
             
             // Call the endpoint method associated if any, else throw exception
             if (endpoints.containsKey(endpoint)) {
-                return endpoints.get(endpoint).apply(params);
+                return endpoints.get(endpoint).apply(params).toJSONString();
             }
             else {
-                System.err.println("Invalid endpoint specified: " + endpoint);
+                System.err.println("Got an invalid request endpoint: " + endpoint);
+                return buildErrorReply(404, "Endpoint not found.").toJSONString();
             }
         }
         catch (ParseException e) {
-            System.err.println("Got an invalid JSON.");
+            System.err.println("Got an invalid JSON:\n" + input);
             e.printStackTrace();
+    
+            return buildErrorReply(400, "Invalid JSON request.").toJSONString();
         }
-        
-        return null;
     }
     
     /* Helpers */

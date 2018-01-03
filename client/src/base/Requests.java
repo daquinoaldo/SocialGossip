@@ -14,6 +14,10 @@ import java.util.Map;
 public class Requests {
     /* Methods */
     public static void login(String username, String password) {
+        if (username == null || password == null || username.length() == 0 || password.length() == 0) {
+            throw new IllegalArgumentException("Username and password must be a non-empty string.");
+        }
+        
         Map<String, String> parameters = new HashMap<>();
         parameters.put("username", username);
         parameters.put("password", password);
@@ -79,22 +83,11 @@ public class Requests {
         
         
         // send request to the server and wait for a reply
-        // move this to his own class
-        String responseString = "";
-        try {
-            Socket socket = new Socket("localhost", Configuration.PRIMARY_PORT);
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            writer.write(request.toJSONString());
-            writer.newLine();
-            writer.flush();
-    
-            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            responseString = reader.readLine();
-            reader.close();
-            // end connection
-        }
-        catch (Exception e) {
-            e.printStackTrace();
+        String responseString = Connection.sendRequest(request.toJSONString());
+        
+        if (responseString == null) {
+            Util.showErrorDialog("Impossibile comunicare con il server. Controllare la connessione a internet e riprovare.");
+            return null;
         }
     
     
@@ -105,13 +98,14 @@ public class Requests {
             if (isReplyOk(response))
                 return response;
             else {
-                Util.showErrorDialog((String) response.get("message"));
+                String msg = (String) response.get("message");
+                Util.showErrorDialog(msg != null && msg.length() > 0 ? msg : "Errore sconosciuto.");
                 return null;
             }
         }
         catch (ParseException e) {
             Util.showErrorDialog("Invalid JSON response from server");
-            System.err.println("Invalid JSON response from server");
+            System.err.println("Invalid JSON response from server: \n" + responseString);
             e.printStackTrace();
         }
         return null;
