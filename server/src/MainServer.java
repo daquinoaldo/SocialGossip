@@ -1,16 +1,44 @@
 import exceptions.*;
 
 import java.io.File;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainServer {
+
+    private static SQLiteHelper sqLiteHelper = new SQLiteHelper();
+
+    /* Auxiliar methods for login */
+    private static String md5(String password) {
+        try {
+            return new String(MessageDigest.getInstance("MD5").digest(password.getBytes()));
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Check if the given password is the same of the encrypted one.
+     * @param password to be checked
+     * @param md5 of the password of the user
+     * @return true if password is correct, false otherwise
+     */
+    private static boolean checkPassword (String password, String md5) {
+        try {
+            return Arrays.equals(MessageDigest.getInstance("MD5").digest(password.getBytes()), md5.getBytes());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     
     /* TUTTE LE CONNESSIONI DEVONO ESSERE TCP */
     /* È OBBLIGATORIO USARE NIO dove c'è scritto, sarebbe meglio usarlo ovunque */
 
-    /* REGISTER E LOGIN NON DOVREBBERO PRENDERE COME PARAMETRO PASSWORD,
-    ma io lo metterei lo stesso perché mi sembra stupido non accedere con una password.
-    NICKNAME non sarebbe più corretto chiamarlo USERNAME?
+    /* NICKNAME non sarebbe più corretto chiamarlo USERNAME?
     E REGISTER cambiarlo in SIGNUP? */
     
     /**
@@ -20,8 +48,8 @@ public class MainServer {
      * @param language in the ISO 639-1 standard (like "en")
      * @return true if the user is correctly registered, false if the username already exist in the database
      */
-    private static boolean register(String nickname, String password, String language) {
-        return false;
+    private static void register(String nickname, String password, String language) {
+        sqLiteHelper.addUser(nickname, md5(password), language);
     }
     
     /* NotRegisteredException potrebbe essere sostituita da UserNotExistException */
@@ -35,9 +63,13 @@ public class MainServer {
      */
     private static boolean login(String nickname, String password)
             throws UserNotExistException, WrongPasswordException {
-        // cambio lo stato dopo il login
-        // broadcast cambio stato
-        return false;
+        if(!sqLiteHelper.existUser(nickname)) throw new UserNotExistException();
+        if(!checkPassword(password, sqLiteHelper.getPassword(nickname))) throw new WrongPasswordException();
+        else {
+            // TODO: cambio lo stato dopo il login
+            // TODO: broadcast cambio stato
+            return true;
+        }
     }
     
     /**
@@ -45,7 +77,7 @@ public class MainServer {
      * @return true if successfully logged out, false if not logged in
      */
     private static boolean logout() {
-        // setto lo stato su offline
+        // TODO: setto lo stato su offline
         return false;
     }
     
@@ -56,6 +88,8 @@ public class MainServer {
      */
     private static User lookUp (String nickname) {
         return null;
+        // TODO: si potrebbe usare sqLiteHelper.existUser(nickname) per vedere se esite,
+        // oppure usare la ricerca parziale in sql
     }
     
     /**
@@ -65,8 +99,9 @@ public class MainServer {
      * @return true if success, false if you and nickname are already friends
      * @throws UserNotExistException if nickname is not a registered user
      */
-    private static boolean friendship(String nickname) throws UserNotExistException {
-        // server notifica nickname che siete amici
+    private static boolean friendship(String currentUser, String nickname) throws UserNotExistException {
+        sqLiteHelper.addFriendship(currentUser, nickname);
+        // TODO: server notifica nickname che siete amici
         return true;
     }
     
@@ -81,11 +116,11 @@ public class MainServer {
     /**
      * Create a new chat room.
      * Note that just create the chat room, don't add you to that. To enter the chat use addme(chatId)
-     * @param chatName the title of the chat room
+     * @param name the title of the chat room
      * @return true if success, false if a chat room with this name already exists
      */
-    private static boolean createChat(String chatName) {
-        return false;
+    private static boolean createRoom(String currentUser, String name) {
+        return sqLiteHelper.addRoom(name, currentUser);
     }
     
     /**
@@ -95,6 +130,7 @@ public class MainServer {
      * @throws ChatNotExistException if not exist a chat with this title
      */
     private static boolean addMe(String chatId) throws ChatNotExistException {
+        // TODO
         return false;
     }
     
