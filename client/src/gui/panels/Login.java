@@ -38,8 +38,6 @@ public class Login extends JPanel {
     }
     
     private void registerCallback() {
-        System.out.println("Bottone registrati premuto");
-        
         // create a register window and set a callback for a succesful registration
         JPanel registerPanel = new Register(this::loginCallback);
         this.registerWindow = Util.createWindow("Registrazione", registerPanel, false, false);

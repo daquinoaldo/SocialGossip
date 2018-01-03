@@ -36,8 +36,17 @@ public class Requests {
         }
     }
     
-    public static void register() {
+    public static boolean register(String username, String password) {
+        if (username == null || password == null || username.length() == 0 || password.length() == 0) {
+            throw new IllegalArgumentException("Username and password must be a non-empty string.");
+        }
     
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("username", username);
+        parameters.put("password", password);
+    
+        JSONObject reply = makeRequest(Endpoints.REGISTER, parameters);
+        return isReplyOk(reply);
     }
     
     public static void lookup() {
