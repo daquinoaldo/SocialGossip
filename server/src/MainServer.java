@@ -6,6 +6,7 @@ import exceptions.*;
 import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.net.Socket;
 import java.util.List;
@@ -130,8 +131,8 @@ public class MainServer {
      * Get a list of all your friends.
      * @return a List of friends, empty if you don't have friends
      */
-    private static List listFriend() {
-        return null;
+    private static List FriendList(String currentUser) {
+        return sqLiteHelper.getFriendships(currentUser);
     }
     
     /**
@@ -161,7 +162,7 @@ public class MainServer {
      * @return the list of all the existent chat rooms specifying those to which the user is registered
      */
     private static List chatList() {
-        return null;
+        return sqLiteHelper.getRooms();
     }
     
     /* Facciamo che la può chiudere solo l'utente che l'ha aperta? */

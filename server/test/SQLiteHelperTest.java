@@ -38,20 +38,6 @@ class SQLiteHelperTest {
     }
 
     @Test
-    void addMessage() {
-        // creator
-        sqLiteHelper.addMessage("Serie A", "zaphodias", "Message");
-        // another user (with spaces)
-        sqLiteHelper.addMessage("Serie A", "daquinoaldo", "Another message...");
-        // With special chars
-        sqLiteHelper.addMessage("Serie B", "username", "Invisible-M€ssage");
-        // non-existent user: ERROR
-        sqLiteHelper.addMessage("Serie A", "nobody", "Something strange");
-        // non-existent room: ERROR
-        sqLiteHelper.addMessage("invisible r00m", "username", "Invisible-M€ssage");
-    }
-
-    @Test
     void getPassword() {
         // normal
         assertEquals(sqLiteHelper.getPassword("username"), "password");
@@ -64,12 +50,9 @@ class SQLiteHelperTest {
     }
 
     @Test
-    void getMessage() {
-    }
-
-    @Test
     void addFriendship() {
         sqLiteHelper.addFriendship("zaphodias", "daquinoaldo");
+        sqLiteHelper.addFriendship("zaphodias", "username");
         sqLiteHelper.addFriendship("daquinoaldo", "zaphodias");
         sqLiteHelper.addFriendship("daquinoaldo", "daquinoaldo");
     }
@@ -77,5 +60,10 @@ class SQLiteHelperTest {
     @Test
     void checkFriendship() {
         sqLiteHelper.checkFriendship("zaphodias", "daquinoaldo");
+    }
+
+    @Test
+    void getFriendships() {
+        sqLiteHelper.getFriendships("zaphodias");
     }
 }

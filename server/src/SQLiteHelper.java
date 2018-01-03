@@ -1,4 +1,6 @@
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SQLiteHelper {
 
@@ -34,9 +36,40 @@ public class SQLiteHelper {
     private String getString(String sql, String columnLabel) {
         try (Connection connection = connect();
              Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(sql);
-            String string = resultSet.getString(columnLabel);
             return statement.executeQuery(sql).getString(columnLabel);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private ArrayList<String[]> getList(String sql) {
+        try (Connection connection = connect();
+             Statement statement = connection.createStatement()) {
+            ArrayList<String[]> result = new ArrayList<>();
+            ResultSet resultSet = statement.executeQuery(sql);
+            int columnCount = resultSet.getMetaData().getColumnCount();
+            while(resultSet.next()) {
+                String[] row = new String[columnCount];
+                for (int i=0; i <columnCount ; i++)
+                    row[i] = resultSet.getString(i + 1);
+                result.add(row);
+            }
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private ArrayList<String> getList(String sql, String columnLabel) {
+        try (Connection connection = connect();
+             Statement statement = connection.createStatement()) {
+            ArrayList<String> result = new ArrayList<>();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while(resultSet.next())
+                result.add(resultSet.getString(columnLabel));
+            return result;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -126,11 +159,11 @@ public class SQLiteHelper {
         return getCreator(name).equals(creator);
     }
 
-    public void addMessage(String room, String author, String content) {
+    /*public void addMessage(String room, String author, String content) {
         String sql = "INSERT INTO messages(room, author, content) " +
                 "VALUES('"+room+"', '"+author+"', '"+content+"')";
         execute(sql);
-    }
+    }*/
 
     /* Important note: the table admits duplicates like
      * user1: goofy; user2: minnie;
@@ -194,15 +227,29 @@ public class SQLiteHelper {
         return getString(sql, "creator");
     }
 
-    public String getMessage(int id) {
+    public ArrayList<String> getRooms() {
+        String sql1 = "SELECT name FROM rooms";
+        return getList(sql1,"name");
+    }
+
+    /*public String getMessage(int id) {
         String sql = "SELECT * FROM messages WHERE id = '"+id+"'";
         return null;    // TODO: classe Messaggio
-    }
+    }*/
 
     public boolean checkFriendship(String user1, String user2) {
         String sql = "SELECT count(*) FROM friendships WHERE (user1 = '"+user1+"' AND user2 = '"+user2+"') OR " +
                 "(user1 = '"+user2+"' AND user2 = '"+user1+"')";
         return getCount(sql) > 0;
+    }
+
+    public ArrayList<String> getFriendships(String username) {
+        String sql1 = "SELECT user2 FROM friendships WHERE user1 = '"+username+"'";
+        ArrayList array1 = getList(sql1,"user2");
+        String sql2 = "SELECT user1 FROM friendships WHERE user2 = '"+username+"'";
+        ArrayList array2 = getList(sql2,"user1");
+        array1.addAll(array2);
+        return array1;
     }
 
 }
