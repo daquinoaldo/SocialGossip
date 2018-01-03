@@ -1,5 +1,6 @@
 package gui.panels;
 
+import base.Requests;
 import constants.Colors;
 import gui.Util;
 import gui.components.Logo;
@@ -49,11 +50,15 @@ public class Register extends JPanel {
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     
         // make register request to server
-        System.out.println("Registrazione di " + username + ":" + password);
-        try { Thread.sleep(500); }
-        catch (Exception e) {}
+        boolean result = Requests.register(username, password);
         
-        // if successful run onUserRegistered(username, password)
-        onUserRegistered.accept(username, password);
+        // if successful run the callback
+        if (result) {
+            onUserRegistered.accept(username, password);
+        }
+        else {
+            Util.enableComponents(this, true);
+            this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
     }
 }

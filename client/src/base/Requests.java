@@ -6,14 +6,18 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.*;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Requests {
-    private static JSONParser parser = new JSONParser();
-    
     /* Methods */
-    static void login(String username, String password) {
+    public static void login(String username, String password) {
+        if (username == null || password == null || username.length() == 0 || password.length() == 0) {
+            throw new IllegalArgumentException("Username and password must be a non-empty string.");
+        }
+        
         Map<String, String> parameters = new HashMap<>();
         parameters.put("username", username);
         parameters.put("password", password);
@@ -32,23 +36,36 @@ public class Requests {
         }
     }
     
-    static void register() {
+    public static boolean register(String username, String password) {
+        if (username == null || password == null || username.length() == 0 || password.length() == 0) {
+            throw new IllegalArgumentException("Username and password must be a non-empty string.");
+        }
+    
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("username", username);
+        parameters.put("password", password);
+    
+        JSONObject reply = makeRequest(Endpoints.REGISTER, parameters);
+        return isReplyOk(reply);
+    }
+    
+    public static void lookup() {
     
     }
     
-    static void lookup() {
+    public static void friendship() {
     
     }
     
-    static void friendship() {
-    
-    }
-    
-    static void listFriends() {
+    public static void listFriends() {
     
     }
     
     /* Private helpers */
+    
+    /**
+     * @return true if server reply doesn't contain errors, false otherwise
+     */
     private static boolean isReplyOk(JSONObject reply) {
         return reply != null && reply.get("status").equals("ok");
     }
@@ -64,7 +81,7 @@ public class Requests {
     private static JSONObject makeRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
         if (endpoint == null || endpoint.length() == 0)
             throw new IllegalArgumentException("Invalid endpoint specified.");
-            
+        
         JSONObject params = new JSONObject();
         params.putAll(keyvalues);
         
@@ -72,23 +89,34 @@ public class Requests {
         request.put("endpoint", endpoint);
         request.put("params", params);
         
-        // send request to the server and wait for a reply
-        String reply = "{}";
         
+        
+        // send request to the server and wait for a reply
+        String responseString = Connection.sendRequest(request.toJSONString());
+        
+        if (responseString == null) {
+            Util.showErrorDialog("Impossibile comunicare con il server. Controllare la connessione a internet e riprovare.");
+            return null;
+        }
+    
+    
         try {
-            JSONObject response = (JSONObject) parser.parse(reply);
+            JSONParser parser = new JSONParser();
+            JSONObject response = (JSONObject) parser.parse(responseString);
             
             if (isReplyOk(response))
                 return response;
             else {
-                Util.showErrorDialog((String) response.get("message"));
+                String msg = (String) response.get("message");
+                Util.showErrorDialog(msg != null && msg.length() > 0 ? msg : "Errore sconosciuto.");
                 return null;
             }
         }
         catch (ParseException e) {
-            Util.showErrorDialog("Invalid JSON response from server:\n" + reply);
-            System.err.println("Invalid JSON response from server:\n" + reply);
-            return null;
+            Util.showErrorDialog("Invalid JSON response from server");
+            System.err.println("Invalid JSON response from server: \n" + responseString);
+            e.printStackTrace();
         }
+        return null;
     }
 }

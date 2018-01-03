@@ -1,5 +1,6 @@
 package gui.panels;
 
+import base.Requests;
 import base.State;
 import constants.Colors;
 import gui.Util;
@@ -32,15 +33,11 @@ public class Login extends JPanel {
             // if this method was called after a registration, close the registration form window
             this.registerWindow.dispose();
         }
-        
-        System.out.println("Login, username = " + username + ", password = " + password);
-        State.setLoggedIn(true);
-        State.setUsername(username);
+    
+        Requests.login(username, password);
     }
     
     private void registerCallback() {
-        System.out.println("Bottone registrati premuto");
-        
         // create a register window and set a callback for a succesful registration
         JPanel registerPanel = new Register(this::loginCallback);
         this.registerWindow = Util.createWindow("Registrazione", registerPanel, false, false);
