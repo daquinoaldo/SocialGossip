@@ -1,3 +1,5 @@
+import base.User;
+
 public class Room {
 
     private String name;

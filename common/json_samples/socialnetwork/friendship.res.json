@@ -1,0 +1,10 @@
+{
+  "status": "ok",
+  "code": 200,
+  "result": {
+    "friends": [
+      { "username": "pippo" },
+      { "username": "pluto" }
+    ]
+  }
+}

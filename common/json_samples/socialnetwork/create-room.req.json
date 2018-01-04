@@ -1,0 +1,6 @@
+{
+  "endpoint": "CREATE_ROOM",
+  "params": {
+    "name": "Serie A"
+  }
+}

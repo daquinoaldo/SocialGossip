@@ -2,6 +2,7 @@
   "endpoint": "REGISTER",
   "params": {
     "username": "pinco",
-    "password": "supersicurezza"
+    "password": "supersicurezza",
+    "language": "en"
   }
 }
