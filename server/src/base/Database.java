@@ -1,45 +1,56 @@
+package base;
+
+import org.sqlite.SQLiteConfig;
+
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class SQLiteHelper {
+
+public class Database {
 
     private static String DEFAULT_DB_NAME = "database.db";
 
-    private String dbName = "database.db";
+    private String dbName;
 
-    public SQLiteHelper(String dbName) {
+    public Database(String dbName) {
         this.dbName = dbName;
     }
-    public SQLiteHelper() {
+    public Database() {
         this(DEFAULT_DB_NAME);
     }
 
     private Connection connect() {
         try {
-            return DriverManager.getConnection("jdbc:sqlite:"+dbName);
+            SQLiteConfig config = new SQLiteConfig();
+            config.enforceForeignKeys(true);
+            return DriverManager.getConnection("jdbc:sqlite:"+dbName, config.toProperties());
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             return null;
         }
     }
 
-    private void execute(String sql) {
+    private void execute(String sql) throws SQLException {
         try (Connection connection = connect();
              Statement statement = connection.createStatement()) {
             statement.execute(sql);
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            throw e;
         }
     }
-
-    private String getString(String sql, String columnLabel) {
-        try (Connection connection = connect();
-             Statement statement = connection.createStatement()) {
-            return statement.executeQuery(sql).getString(columnLabel);
+    
+    private String getString(String sql, String columnLabel) throws SQLException {
+        try (
+                Connection connection = connect();
+                Statement statement = connection.createStatement()
+        ) {
+            // Execute query
+            ResultSet resultSet = statement.executeQuery(sql);
+            if (resultSet.isClosed())
+                return null;
+            return resultSet.getString(columnLabel);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            throw e;
         }
     }
 
@@ -88,22 +99,32 @@ public class SQLiteHelper {
 
     /* CREATE TABLE */
     public void init() {
-        // Enable FOREIGN KEYs
-        execute("PRAGMA foreign_keys = ON");
         // Assumption: the primary key is the username, that is unique and immutable.
         String users = "CREATE TABLE IF NOT EXISTS users (\n"
                 + "	username TEXT PRIMARY KEY,\n"
                 + "	password TEXT NOT NULL,\n"
                 + "	language TEXT NOT NULL\n"
                 + ");";
-        execute(users);
+        try {
+            execute(users);
+        } catch (SQLException e){
+            System.err.println("Fatal error while creating users table");
+            e.printStackTrace();
+            System.exit(1);
+        }
         // Assumption: the primary key is the room name, that is unique and immutable.
         String rooms = "CREATE TABLE IF NOT EXISTS rooms (\n"
                 + "	name TEXT PRIMARY KEY,\n"
                 + "	creator TEXT NOT NULL,\n"
                 + " FOREIGN KEY (creator) REFERENCES users(username)\n"
                 + ");";
-        execute(rooms);
+        try {
+            execute(rooms);
+        } catch (SQLException e){
+            System.err.println("Fatal error while creating rooms table");
+            e.printStackTrace();
+            System.exit(1);
+        }
         /* Important note:
          * In SQLite, a column with type INTEGER PRIMARY KEY is an alias for the ROWID.
          * The AUTOINCREMT keyword changes the automatic ROWID assignment algorithm to prevent the reuse of ROWIDs
@@ -125,7 +146,13 @@ public class SQLiteHelper {
                 + " FOREIGN KEY (room) REFERENCES rooms (name),\n"
                 + " FOREIGN KEY (author) REFERENCES users (username)\n"
                 + ");";
-        execute(messages);
+        try {
+            execute(messages);
+        } catch (SQLException e){
+            System.err.println("Fatal error while creating messages table");
+            e.printStackTrace();
+            System.exit(1);
+        }
         /* Assumption: the primary key is the couple of 2 friends.
          * Important note: the table admits duplicates like
          * user1: goofy; user2: minnie;
@@ -139,24 +166,39 @@ public class SQLiteHelper {
                 + " FOREIGN KEY (user1) REFERENCES users (username),\n"
                 + " FOREIGN KEY (user2) REFERENCES users (username)\n"
                 + ");";
-        execute(friendships);
+        try {
+            execute(friendships);
+        } catch (SQLException e){
+            System.err.println("Fatal error while creating friendships table");
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
     /* INSERT */
     public boolean addUser(String username, String password, String language) {
         String sql = "INSERT INTO users (username, password, language) " +
                 "VALUES('"+username+"', '"+password+"', '"+language+"')";
-        execute(sql);
-        return existUser(username);
+        try {
+            execute(sql);
+            return true;
+        }
+        catch (SQLException e) {
+            return false;
+        }
     }
 
     public boolean addRoom(String name, String creator) {
-        execute("PRAGMA foreign_keys = ON");
-        //TODO: questa cosa continua a non funzionare...
         String sql = "INSERT INTO rooms(name, creator) " +
                 "VALUES('"+name+"', '"+creator+"')";
-        execute(sql);
-        return getCreator(name).equals(creator);
+        
+        try {
+            execute(sql);
+            return true;
+        }
+        catch (SQLException e) {
+            return false;
+        }
     }
 
     /*public void addMessage(String room, String author, String content) {
@@ -175,8 +217,13 @@ public class SQLiteHelper {
         if (!user1.equals(user2) && !checkFriendship(user1, user2)) {
             String sql = "INSERT INTO friendships(user1, user2) " +
                     "VALUES('" + user1 + "', '" + user2 + "')";
-            execute(sql);
-            return checkFriendship(user1, user2);
+            try {
+                execute(sql);
+                return true;
+            }
+            catch (SQLException e) {
+                return false;
+            }
         } else return false;
     }
 
@@ -219,12 +266,22 @@ public class SQLiteHelper {
 
     public String getPassword(String username) {
         String sql = "SELECT password FROM users WHERE username = '"+username+"'";
-        return existUser(username) ? getString(sql, "password") : null;
+        try {
+            return getString(sql, "password");
+        }
+        catch (SQLException e) {
+            return null;
+        }
     }
 
     public String getCreator(String name) {
         String sql = "SELECT creator FROM rooms WHERE name = '"+name+"'";
-        return getString(sql, "creator");
+        try {
+            return getString(sql, "creator");
+        }
+        catch (SQLException e) {
+            return null;
+        }
     }
 
     public ArrayList<String> getRooms() {

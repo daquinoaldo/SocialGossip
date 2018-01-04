@@ -13,24 +13,14 @@ public class RequestsHandler {
     /* Register endpoint methods to the endpoint string */
     static {
         endpoints.put(
-          Endpoints.LOGIN, RequestsHandler::login
+          Endpoints.LOGIN, EndpointsHandler::login
         );
         endpoints.put(
-          Endpoints.REGISTER, RequestsHandler::register
+          Endpoints.REGISTER, EndpointsHandler::register
         );
-    }
-    
-    /* ENDPOINTS */
-    private static JSONObject login(JSONObject params) {
-        return buildErrorReply(400, "Not implemented");
-    }
-    
-    private static JSONObject register(JSONObject params) {
-        return buildErrorReply(400, "Not implemented");
     }
     
     /* DISPATCHER */
-    
     /**
      * Parse a JSON String into a JSONObject, then apply the method registered for the endpoint specified in the JSON,
      * if any.
@@ -66,20 +56,20 @@ public class RequestsHandler {
     }
     
     /* Helpers */
-    private static JSONObject buildSuccessReply() {
+    static JSONObject buildSuccessReply() {
         JSONObject reply = new JSONObject();
         reply.put("status", "ok");
         reply.put("code", 200);
         return reply;
     }
     
-    private static JSONObject buildSuccessReply(JSONObject payload) {
+    static JSONObject buildSuccessReply(JSONObject payload) {
         JSONObject baseReply = buildSuccessReply();
         baseReply.put("result", payload);
         return baseReply;
     }
     
-    private static JSONObject buildErrorReply(int statusCode, String message) {
+    static JSONObject buildErrorReply(int statusCode, String message) {
         JSONObject reply = new JSONObject();
         reply.put("status", "err");
         reply.put("code", statusCode);

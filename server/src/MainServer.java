@@ -1,12 +1,13 @@
 import Connections.Listener;
 import Connections.TaskFactory;
 import base.Configuration;
+import base.Database;
+import base.Utils;
 import exceptions.*;
 
 import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.net.Socket;
 import java.util.List;
@@ -16,17 +17,9 @@ import java.util.function.Function;
 
 public class MainServer {
 
-    private static SQLiteHelper sqLiteHelper = new SQLiteHelper();
+    private static Database database = new Database();
 
     /* Auxiliar methods for login */
-    private static String md5(String password) {
-        try {
-            return new String(MessageDigest.getInstance("MD5").digest(password.getBytes()));
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     /**
      * Check if the given password is the same of the encrypted one.
@@ -71,7 +64,7 @@ public class MainServer {
      * @return true if the user is correctly registered, false if the username already exist in the database
      */
     private static void register(String nickname, String password, String language) {
-        sqLiteHelper.addUser(nickname, md5(password), language);
+        database.addUser(nickname, Utils.md5(password), language);
     }
     
     /* NotRegisteredException potrebbe essere sostituita da UserNotExistException */
@@ -85,8 +78,8 @@ public class MainServer {
      */
     private static boolean login(String nickname, String password)
             throws UserNotExistException, WrongPasswordException {
-        if(!sqLiteHelper.existUser(nickname)) throw new UserNotExistException();
-        if(!checkPassword(password, sqLiteHelper.getPassword(nickname))) throw new WrongPasswordException();
+        if(!database.existUser(nickname)) throw new UserNotExistException();
+        if(!checkPassword(password, database.getPassword(nickname))) throw new WrongPasswordException();
         else {
             // TODO: cambio lo stato dopo il login
             // TODO: broadcast cambio stato
@@ -110,7 +103,7 @@ public class MainServer {
      */
     private static User lookUp (String nickname) {
         return null;
-        // TODO: si potrebbe usare sqLiteHelper.existUser(nickname) per vedere se esite,
+        // TODO: si potrebbe usare database.existUser(nickname) per vedere se esite,
         // oppure usare la ricerca parziale in sql
     }
     
@@ -122,7 +115,7 @@ public class MainServer {
      * @throws UserNotExistException if nickname is not a registered user
      */
     private static boolean friendship(String currentUser, String nickname) throws UserNotExistException {
-        sqLiteHelper.addFriendship(currentUser, nickname);
+        database.addFriendship(currentUser, nickname);
         // TODO: server notifica nickname che siete amici
         return true;
     }
@@ -132,7 +125,7 @@ public class MainServer {
      * @return a List of friends, empty if you don't have friends
      */
     private static List FriendList(String currentUser) {
-        return sqLiteHelper.getFriendships(currentUser);
+        return database.getFriendships(currentUser);
     }
     
     /**
@@ -142,7 +135,7 @@ public class MainServer {
      * @return true if success, false if a chat room with this name already exists
      */
     private static boolean createRoom(String currentUser, String name) {
-        return sqLiteHelper.addRoom(name, currentUser);
+        return database.addRoom(name, currentUser);
     }
     
     /**
@@ -162,7 +155,7 @@ public class MainServer {
      * @return the list of all the existent chat rooms specifying those to which the user is registered
      */
     private static List chatList() {
-        return sqLiteHelper.getRooms();
+        return database.getRooms();
     }
     
     /* Facciamo che la può chiudere solo l'utente che l'ha aperta? */
