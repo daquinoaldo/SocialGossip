@@ -201,12 +201,6 @@ public class Database {
         }
     }
 
-    /*public void addMessage(String room, String author, String content) {
-        String sql = "INSERT INTO messages(room, author, content) " +
-                "VALUES('"+room+"', '"+author+"', '"+content+"')";
-        execute(sql);
-    }*/
-
     /* Important note: the table admits duplicates like
      * user1: goofy; user2: minnie;
      * user1: minnie; user2: goofy;
@@ -227,36 +221,23 @@ public class Database {
         } else return false;
     }
 
-    /* DELETE
-    Per semplicità non si elimina niente.
-
-    /**
-     * Delete the user, all his messages and all the rooms that the user have created. The username is available again.
-     * @param username of the user you want to delete
-     * @return true for success, false otherwise
-     *
-    public boolean deleteUser(String username) {
-        String sql = "DELETE FROM users WHERE username = '"+username+"'";
-        return execute(sql);
-        // TODO: chiamare deleteRoom per tutte le stanze
-        // TODO: chiamare deleteMessage per tutti i messaggi
-    }
+    /* DELETE */
 
     /**
      * Delete the room and all the messages in the room.
      * @param name of the room you want to delete
      * @return true for success, false otherwise
-     *
+     */
     public boolean deleteRoom(String name) {
         String sql = "DELETE FROM rooms WHERE name = '"+name+"'";
-        return execute(sql);
-        // TODO: chiamare deleteMessage per tutti i messaggi
+        try {
+            execute(sql);
+            return true;
+        }
+        catch (SQLException e) {
+            return false;
+        }
     }
-
-    public boolean deleteMessage(String id) {
-        String sql = "DELETE FROM messages WHERE id = '"+id+"'";
-        return execute(sql);
-    } */
 
     /* SELECT */
     public boolean existUser(String username) {
@@ -288,11 +269,6 @@ public class Database {
         String sql1 = "SELECT name FROM rooms";
         return getList(sql1,"name");
     }
-
-    /*public String getMessage(int id) {
-        String sql = "SELECT * FROM messages WHERE id = '"+id+"'";
-        return null;    // TODO: classe Messaggio
-    }*/
 
     public boolean checkFriendship(String user1, String user2) {
         String sql = "SELECT count(*) FROM friendships WHERE (user1 = '"+user1+"' AND user2 = '"+user2+"') OR " +
