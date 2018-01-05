@@ -1,3 +1,5 @@
+*.db
+
 # output latex
 relazione/_minted-main/
 relazione/*.aux
