@@ -42,9 +42,11 @@ public class RequestsHandler {
         endpoints.put(
                 Endpoints.FILE2FRIEND, EndpointsHandler::file2friend
         );
+        // NOTA: se si potesse fare sulla stessa connessione delle altre operazioni sarebbe maggico!
         endpoints.put(
                 Endpoints.MSG2FRIEND, EndpointsHandler::msg2friend
         );
+        // NOTA: non è sulla connessione di controllo come le altre ma su quella UDP!
         endpoints.put(
                 Endpoints.CHATROOM_MESSAGE, EndpointsHandler::chatroomMessage
         );
@@ -86,6 +88,7 @@ public class RequestsHandler {
     }
     
     /* Helpers */
+    @SuppressWarnings("unchecked")
     static JSONObject buildSuccessReply() {
         JSONObject reply = new JSONObject();
         reply.put("status", "ok");
@@ -93,18 +96,19 @@ public class RequestsHandler {
         return reply;
     }
     
+    @SuppressWarnings("unchecked")
     static JSONObject buildSuccessReply(JSONObject payload) {
         JSONObject baseReply = buildSuccessReply();
         baseReply.put("result", payload);
         return baseReply;
     }
-    
+
+    @SuppressWarnings("unchecked")
     static JSONObject buildErrorReply(int statusCode, String message) {
         JSONObject reply = new JSONObject();
         reply.put("status", "err");
         reply.put("code", statusCode);
         reply.put("message", message);
-        
         return reply;
     }
 }

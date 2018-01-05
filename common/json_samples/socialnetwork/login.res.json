@@ -2,8 +2,9 @@
   "status": "ok",
   "code": 200,
   "result": {
-    "chatsrooms": [
-      { "id": "Serie A", "members": [] }
+    "rooms": [
+      { "name": "Serie A", "added": true },
+      { "name": "Serie B", "added": false }
     ],
     "friends": [
       { "username": "pippo", "online": false },

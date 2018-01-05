@@ -1,6 +1,6 @@
 {
   "endpoint": "ADD_ME",
   "params": {
-    "name": "Serie A"
+    "room": "Serie A"
   }
 }

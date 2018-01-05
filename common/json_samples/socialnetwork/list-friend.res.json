@@ -2,6 +2,9 @@
   "status": "ok",
   "code": 200,
   "result": {
-    "friends": [ "pippo", "pluto" ]
+    "friends": [
+      { "username": "pippo", "online": false },
+      { "username": "pluto", "online": true }
+    ]
   }
 }
