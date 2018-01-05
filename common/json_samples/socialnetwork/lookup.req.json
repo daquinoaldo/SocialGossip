@@ -1,5 +1,5 @@
 {
-  "endpoint": "FRIENDSHIP",
+  "endpoint": "LOOKUP",
   "params": {
     "nickname": "pinco"
   }

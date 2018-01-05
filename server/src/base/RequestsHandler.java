@@ -33,6 +33,21 @@ public class RequestsHandler {
         endpoints.put(
                 Endpoints.ADD_ME, EndpointsHandler::addMe
         );
+        endpoints.put(
+                Endpoints.CHAT_LIST, EndpointsHandler::chatList
+        );
+        endpoints.put(
+                Endpoints.CLOSE_ROOM, EndpointsHandler::closeRoom
+        );
+        endpoints.put(
+                Endpoints.FILE2FRIEND, EndpointsHandler::file2friend
+        );
+        endpoints.put(
+                Endpoints.MSG2FRIEND, EndpointsHandler::msg2friend
+        );
+        endpoints.put(
+                Endpoints.CHATROOM_MESSAGE, EndpointsHandler::chatroomMessage
+        );
     }
     
     /* DISPATCHER */
