@@ -13,7 +13,7 @@ public class Utils {
      * @return The MD5 hash as a String, or null if the computation failed.
      * @
      */
-    public  static String md5(String str) {
+    public static String md5(String str) {
         try {
             return new String(MessageDigest.getInstance("MD5").digest(str.getBytes()));
         } catch (NoSuchAlgorithmException e) {
@@ -22,5 +22,32 @@ public class Utils {
             return null;
         }
     }
-    
+
+    private static String nextIP(String actualIP) {
+        String[] tokens = actualIP.split("\\.");
+        if (tokens.length != 4) throw new IllegalArgumentException();
+        // Starting from the last
+        for (int i = 4; i >= 0; i--) {
+            int item = Integer.parseInt(tokens[i]);
+            // if can be incremented:
+            if (item < 255) {
+                tokens[i] = String.valueOf(item + 1);
+                break;  // we have done
+            } else { // else is 255 and then
+                // set to 0 and go ahead to the i-1 token
+                tokens[i] = String.valueOf(0);
+            }
+        }
+        return String.join(".", tokens);
+        // NOTE: nextIP("255.255.255.255") == "0.0.0.0"
+    }
+
+    public static String nextBroadcastIP(String actualIP) {
+        String nextIP = nextIP(actualIP);
+        String[] tokens = nextIP.split("\\.");
+        int item = Integer.parseInt(tokens[0]);
+        if (item < 224 || item > 239) return null;
+        return nextIP;
+    }
+
 }
