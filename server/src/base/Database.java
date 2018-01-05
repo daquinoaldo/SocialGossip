@@ -6,6 +6,7 @@ import java.sql.*;
 import java.util.ArrayList;
 
 
+@SuppressWarnings("ConstantConditions")
 public class Database {
 
     private static String DEFAULT_DB_NAME = "database.db";
@@ -15,6 +16,7 @@ public class Database {
     public Database(String dbName) {
         this.dbName = dbName;
     }
+    @SuppressWarnings("WeakerAccess")
     public Database() {
         this(DEFAULT_DB_NAME);
     }
@@ -34,23 +36,19 @@ public class Database {
         try (Connection connection = connect();
              Statement statement = connection.createStatement()) {
             statement.execute(sql);
-        } catch (SQLException e) {
-            throw e;
         }
+        // IMPORTANT NOTE: the use of a try without catch clause may seem dumb,
+        // but it has the utility of being able to use try with resources.
     }
     
     private String getString(String sql, String columnLabel) throws SQLException {
-        try (
-                Connection connection = connect();
-                Statement statement = connection.createStatement()
-        ) {
+        try (Connection connection = connect();
+                Statement statement = connection.createStatement()) {
             // Execute query
             ResultSet resultSet = statement.executeQuery(sql);
             if (resultSet.isClosed())
                 return null;
             return resultSet.getString(columnLabel);
-        } catch (SQLException e) {
-            throw e;
         }
     }
 
@@ -276,11 +274,14 @@ public class Database {
         return getCount(sql) > 0;
     }
 
+    @SuppressWarnings("unchecked")
     public ArrayList<String> getFriendships(String username) {
         String sql1 = "SELECT user2 FROM friendships WHERE user1 = '"+username+"'";
         ArrayList array1 = getList(sql1,"user2");
         String sql2 = "SELECT user1 FROM friendships WHERE user2 = '"+username+"'";
         ArrayList array2 = getList(sql2,"user1");
+        if (array1 == null) return array2;
+        if (array2 == null) return array1;
         array1.addAll(array2);
         return array1;
     }

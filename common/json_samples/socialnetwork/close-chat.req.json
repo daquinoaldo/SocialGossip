@@ -1,0 +1,6 @@
+{
+  "endpoint": "CLOSE_CHAT",
+  "params": {
+    "name": "Serie A"
+  }
+}

@@ -1,9 +1,9 @@
-public enum UserStatus {
+public enum XUserStatus {
     OFFLINE (0), ONLINE (1);
 
     private final int status;
 
-    UserStatus(int id) {
+    XUserStatus(int id) {
         this.status = id;
     }
 

@@ -1,171 +1,122 @@
 package base;
 
-import exceptions.*;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 
 import static base.RequestsHandler.buildErrorReply;
 import static base.RequestsHandler.buildSuccessReply;
 
 public class EndpointsHandler {
+
     private static Database db = new Database();
+    private static HashMap<String, User> onlineUsers = new HashMap<>();
     
     static {
         db.init();
     }
-    
-    static JSONObject login(JSONObject params) {
-        return buildErrorReply(400, "Not implemented");
-    }
-    
-    static JSONObject register(JSONObject params) {
-        return buildErrorReply(400, "Not implemented");
-    }
-    
+
     /* Helpers */
     private static boolean checkPassword(String username, String password) {
         String realPasswordHash = db.getPassword(username);
         String actualPasswordHash = Utils.md5(password);
         return realPasswordHash.equals(actualPasswordHash);
     }
-
-    /* TUTTE LE CONNESSIONI DEVONO ESSERE TCP */
-    /* È OBBLIGATORIO USARE NIO dove c'è scritto, sarebbe meglio usarlo ovunque */
-
-    /* NICKNAME non sarebbe più corretto chiamarlo USERNAME?
-    E REGISTER cambiarlo in SIGNUP? */
-
-    /**
-     * Register a new user. After registration user is not logged-in, need to call the login function.
-     * @param nickname the username you want to register
-     * @param password the chosen password
-     * @param language in the ISO 639-1 standard (like "en")
-     * @return true if the user is correctly registered, false if the username already exist in the db
-     */
-    private static void register(String nickname, String password, String language) {
-        db.addUser(nickname, Utils.md5(password), language);
+    
+    static JSONObject login(JSONObject params) {
+        String username = (String) params.get("username");
+        if(!db.existUser(username)) return buildErrorReply(401, "base.User not exist");
+        if(!checkPassword((String) params.get("password"), db.getPassword(username)))
+            return buildErrorReply(401, "Wrong password");
+        onlineUsers.put(username, new User(username));
+        List<String> friends = db.getFriendships(username);
+        for (String friend : friends)
+            if (onlineUsers.containsKey(friend))
+                ;//TODO: onlineUsers.get(friend).notifyChangeStatus(username);
+        return buildSuccessReply();
+    }
+    
+    static JSONObject register(JSONObject params) {
+        String username = (String) params.get("username");
+        if(db.existUser(username)) return buildErrorReply(400, "User already exists.");
+        if(!db.addUser(username, Utils.md5((String) params.get("password")),
+                (String) params.get("language"))) return buildErrorReply(400, "Database error.");
+        return buildSuccessReply();
     }
 
-    /* NotRegisteredException potrebbe essere sostituita da UserNotExistException */
-    /**
-     * Login with an existent user.
-     * @param nickname of the user that want to log in
-     * @param password the password previously chosen
-     * @return true if the user is authenticated successfully, false otherwise and throw an exception
-     * @throws UserNotExistException if the username doesn't exist in db
-     * @throws WrongPasswordException if the username is registered with another password
-     */
-    private static boolean login(String nickname, String password)
-            throws UserNotExistException, WrongPasswordException {
-        if(!db.existUser(nickname)) throw new UserNotExistException();
-        if(!checkPassword(password, db.getPassword(nickname))) throw new WrongPasswordException();
-        else {
-            // TODO: cambio lo stato dopo il login
-            // TODO: broadcast cambio stato
-            return true;
-        }
+    static JSONObject lookup(JSONObject params) {
+        if(!db.existUser((String) params.get("nickname")))
+            return buildErrorReply(400, "User not exists.");
+        return buildSuccessReply();
     }
 
-    /**
-     * Exit the account.
-     * @return true if successfully logged out, false if not logged in
-     */
-    private static boolean logout() {
-        // TODO: setto lo stato su offline
-        return false;
+    static JSONObject friendship(String currentUser, JSONObject params) {
+        String nickname = (String) params.get("nickname");
+        if(!db.existUser(nickname)) return buildErrorReply(400, "User not exists.");
+        if(!db.addFriendship(currentUser, nickname))
+            return buildErrorReply(400, "Database error.");
+        if (onlineUsers.containsKey(nickname))
+            ;//TODO: onlineUsers.get(nickname).notifyFriendship(currentUser)
+        return buildSuccessReply();
     }
 
-    /**
-     * Find information about a user.
-     * @param nickname of the user you want to search
-     * @return the user if exist, null if not exist
-     */
-    private static boolean lookUp (String nickname) {
-        return false;
-        // TODO: si potrebbe usare db.existUser(nickname) per vedere se esite,
-        // oppure usare la ricerca parziale in sql
+    @SuppressWarnings("unchecked")
+    static JSONObject listFriend(String currentUser) {
+        List<String> friends = db.getFriendships(currentUser);
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.addAll(friends);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("friends", jsonArray);
+        return buildSuccessReply(jsonObject);
     }
 
-    /**
-     * Add a person(nickname) to your friends.
-     * The other person doesn't have to accept but will notice that now you and him/her are friends.
-     * @param nickname of the person you want to add to friends
-     * @return true if success, false if you and nickname are already friends
-     * @throws UserNotExistException if nickname is not a registered user
-     */
-    private static boolean friendship(String currentUser, String nickname) throws UserNotExistException {
-        db.addFriendship(currentUser, nickname);
-        // TODO: server notifica nickname che siete amici
-        return true;
+    static JSONObject createRoom(String currentUser, JSONObject params) {
+        if(!db.addRoom((String) params.get("name"), currentUser))
+            return buildErrorReply(400, "Database error.");
+        return buildSuccessReply();
     }
 
-    /**
-     * Get a list of all your friends.
-     * @return a List of friends, empty if you don't have friends
-     */
-    private static List ListFriend(String currentUser) {
-        return db.getFriendships(currentUser);
+    @SuppressWarnings("unchecked")
+    static JSONObject addMe(JSONObject params) {
+        String broadcastIp = null; //TODO: db.getBroadcastIp((String) params.get("name")); //return null se la stanza non esiste
+        if(broadcastIp == null) return buildErrorReply(400, "Database error.");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("broadcast-ip", broadcastIp);
+        return buildSuccessReply(jsonObject);
     }
 
-    /**
-     * Create a new chat room.
-     * Note that just create the chat room, don't add you to that. To enter the chat use addme(chatId)
-     * @param name the title of the chat room
-     * @return true if success, false if a chat room with this name already exists
-     */
-    private static boolean createRoom(String currentUser, String name) {
-        return db.addRoom(name, currentUser);
-        //NOTA: all'avvio il server carica tutte le stanze
+    @SuppressWarnings("unchecked")
+    static JSONObject chatList(String currentUser) {
+        List<String> rooms = db.getRooms();
+        // TODO: deve dire a quali chatroom sono iscritto??
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.addAll(rooms);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("rooms", jsonArray);
+        return buildSuccessReply(jsonObject);
     }
 
-    /**
-     * Add you in the specified chat room.
-     * @param chatId the title of the chat
-     * @return true if success, false if already in the chat
-     * @throws ChatNotExistException if not exist a chat with this title
-     */
-    private static boolean addMe(String chatId) throws ChatNotExistException {
-        // TODO: restituisce l'indirizzo multicast
-        return false;
+    static JSONObject closeRoom(String currentUser, JSONObject params) {
+        String name = (String) params.get("name");
+        String creator = db.getCreator(name);
+        if(creator == null) return buildErrorReply(400, "XRoom not exists.");
+        if(!creator.equals(currentUser))
+            return buildErrorReply(403, "Only the creator can close the room.");
+        if(!db.deleteRoom(name)) return buildErrorReply(400, "Database error.");
+        return buildSuccessReply();
     }
 
-    /**
-     * Returns a list of all the existent chat rooms,
-     * including those to which the user is registered, specifying what they are.
-     * @return the list of all the existent chat rooms specifying those to which the user is registered
-     */
-    private static List chatList() {
-        return db.getRooms();
+    static JSONObject file2friend(String currentUser, JSONObject params) {
+        return buildErrorReply(400, "Not implemented yet.");
     }
 
-    /* Facciamo che la può chiudere solo l'utente che l'ha aperta? */
-    /**
-     * Close a chat room. All users who belong to it will be informed.
-     * @param chatName of the chat you want to close
-     * @return true if success, false otherwise
-     */
-    private static boolean closeChat(String chatName) {
-        return false;
+    static JSONObject msg2friend(String currentUser, JSONObject params) {
+        return buildErrorReply(400, "Not implemented yet.");
     }
 
-    /* Dobbiamo implementare anche le corrispettive funzioni per ricevere,
-    che dovranno essere passate al server al momento del login. */
-
-    private static boolean file2friend(String nickname, File file) {
-        // il trasferimento deve essere fatto senza passare dal server, con TCP e NIO (fuck)
-        // si passa dal server per
-        return false;
-    }
-
-    private static boolean message2friend(String nickname, String message)
-            throws UserNotExistException, NotFriendsException, UserOfflineException {
-        return false;
-    }
-
-    private static boolean message2chat(String chatName, String message)
-            throws ChatNotExistException, AllUSersOfflineException {
-        return false;
+    static JSONObject chatroomMessage(String currentUser, JSONObject params) {
+        return buildErrorReply(400, "Not implemented yet.");
     }
 }

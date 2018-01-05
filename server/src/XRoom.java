@@ -1,9 +1,11 @@
-public class Room {
+import base.User;
+
+public class XRoom {
 
     private String name;
     private User creator;
 
-    public Room(String name, User creator) {
+    public XRoom(String name, User creator) {
         this.name = name;
         this.creator = creator;
     }

@@ -13,10 +13,40 @@ public class RequestsHandler {
     /* Register endpoint methods to the endpoint string */
     static {
         endpoints.put(
-          Endpoints.LOGIN, EndpointsHandler::login
+                Endpoints.LOGIN, EndpointsHandler::login
         );
         endpoints.put(
-          Endpoints.REGISTER, EndpointsHandler::register
+                Endpoints.REGISTER, EndpointsHandler::register
+        );
+        endpoints.put(
+                Endpoints.LOOKUP, EndpointsHandler::lookup
+        );
+        endpoints.put(
+                Endpoints.FRIENDSHIP, EndpointsHandler::friendship
+        );
+        endpoints.put(
+                Endpoints.LIST_FRIEND, EndpointsHandler::listFriend
+        );
+        endpoints.put(
+                Endpoints.CREATE_ROOM, EndpointsHandler::createRoom
+        );
+        endpoints.put(
+                Endpoints.ADD_ME, EndpointsHandler::addMe
+        );
+        endpoints.put(
+                Endpoints.CHAT_LIST, EndpointsHandler::chatList
+        );
+        endpoints.put(
+                Endpoints.CLOSE_ROOM, EndpointsHandler::closeRoom
+        );
+        endpoints.put(
+                Endpoints.FILE2FRIEND, EndpointsHandler::file2friend
+        );
+        endpoints.put(
+                Endpoints.MSG2FRIEND, EndpointsHandler::msg2friend
+        );
+        endpoints.put(
+                Endpoints.CHATROOM_MESSAGE, EndpointsHandler::chatroomMessage
         );
     }
     
