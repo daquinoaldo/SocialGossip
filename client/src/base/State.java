@@ -5,9 +5,10 @@ import java.util.HashMap;
 import java.util.function.Consumer;
 
 public class State {
-    public class Message {
+    public static class Message {
         public String sender;
         public String text;
+        public Message(String username, String text) { this.sender = username; this.text = text; }
         public String toString() { return "<" + sender + ">: " + text; }
     }
     

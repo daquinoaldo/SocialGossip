@@ -1,6 +1,6 @@
 package gui.panels;
 
-import base.Requests;
+import base.Json;
 import constants.Colors;
 import gui.Util;
 import gui.components.Logo;
@@ -50,7 +50,7 @@ public class Register extends JPanel {
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     
         // make register request to server
-        boolean result = Requests.register(username, password);
+        boolean result = Json.register(username, password);
         
         // if successful run the callback
         if (result) {

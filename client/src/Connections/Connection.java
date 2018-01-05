@@ -1,4 +1,6 @@
-package base;
+package Connections;
+
+import base.Configuration;
 
 import java.io.*;
 import java.net.Socket;

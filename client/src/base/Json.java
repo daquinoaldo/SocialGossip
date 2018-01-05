@@ -1,18 +1,37 @@
 package base;
 
+import Connections.Connection;
 import gui.Util;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.*;
-import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Requests {
-    /* Methods */
+public class Json {
+    /* Json parsers to objects */
+    public static State.Message parseMessage(String jsonString) {
+        String username = null;
+        String text = null;
+        
+        try {
+            JSONParser parser = new JSONParser();
+            JSONObject response = (JSONObject) parser.parse(jsonString);
+            username = (String) response.get("username");
+            text = (String) response.get("text");
+        }
+        catch (ParseException e) {
+            System.err.println("Invalid JSON message: ");
+            System.err.println(jsonString);
+            e.printStackTrace();
+        }
+        
+        return new State.Message(username, text);
+    }
+    
+    /* Request builders */
     public static void login(String username, String password) {
         if (username == null || password == null || username.length() == 0 || password.length() == 0) {
             throw new IllegalArgumentException("Username and password must be a non-empty string.");
@@ -88,7 +107,6 @@ public class Requests {
         JSONObject request = new JSONObject();
         request.put("endpoint", endpoint);
         request.put("params", params);
-        
         
         
         // send request to the server and wait for a reply

@@ -1,7 +1,6 @@
 package gui.panels;
 
-import base.Requests;
-import base.State;
+import base.Json;
 import constants.Colors;
 import gui.Util;
 import gui.components.LoginForm;
@@ -34,7 +33,7 @@ public class Login extends JPanel {
             this.registerWindow.dispose();
         }
     
-        Requests.login(username, password);
+        Json.login(username, password);
     }
     
     private void registerCallback() {
