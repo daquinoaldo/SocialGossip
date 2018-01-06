@@ -114,7 +114,7 @@ public class EndpointsHandler {
 
     static JSONObject createRoom(User user, JSONObject params) {
         String nextBroadcastIP = Utils.nextBroadcastIP(lastBroadcastIP);
-        if(!db.addRoom((String) params.get("name"), user.getUsername(), nextBroadcastIP))
+        if(!db.addRoom((String) params.get("room"), user.getUsername(), nextBroadcastIP))
             return buildErrorReply(400, "Database error.");
         lastBroadcastIP = nextBroadcastIP;  // only if success
         return buildSuccessReply();
@@ -141,12 +141,12 @@ public class EndpointsHandler {
     }
 
     static JSONObject closeRoom(User user, JSONObject params) {
-        String name = (String) params.get("name");
-        String creator = db.getCreator(name);
+        String room = (String) params.get("room");
+        String creator = db.getCreator(room);
         if(creator == null) return buildErrorReply(400, "Room not exists.");
         if(!creator.equals(user.getUsername()))
             return buildErrorReply(403, "Only the creator can close the room.");
-        if(!db.deleteRoom(name)) return buildErrorReply(400, "Database error.");
+        if(!db.deleteRoom(room)) return buildErrorReply(400, "Database error.");
         return buildSuccessReply();
     }
 

@@ -1,6 +1,6 @@
 {
   "endpoint": "LOOKUP",
   "params": {
-    "nickname": "pinco"
+    "username": "pinco"
   }
 }

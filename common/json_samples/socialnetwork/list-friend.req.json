@@ -1,6 +1,5 @@
 {
   "endpoint": "LIST_FRIEND",
   "params": {
-    "username": "me"
   }
 }

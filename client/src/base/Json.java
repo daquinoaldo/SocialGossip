@@ -32,10 +32,10 @@ public class Json {
     }
     
     /* Request builders */
+    //TODO: ma al login è necessario comunicare amici e chat? Non sarebbe più oppurtuno che il client usasse le apposite funzioni?
     public static void login(String username, String password) {
-        if (username == null || password == null || username.length() == 0 || password.length() == 0) {
+        if (username == null || password == null || username.length() == 0 || password.length() == 0)
             throw new IllegalArgumentException("Username and password must be a non-empty string.");
-        }
         
         Map<String, String> parameters = new HashMap<>();
         parameters.put("username", username);
@@ -46,38 +46,82 @@ public class Json {
             State.setLoggedIn(true);
             State.setUsername(username);
             JSONArray jsonFriends = (JSONArray) reply.get("friends");
-            if (jsonFriends != null) {
+            //TODO: ricontrollare, c'è da segnalare anche lo stato (online/offline)
+            if (jsonFriends != null)
                 jsonFriends.forEach(friend -> {
                     String friendUsername = (String) ((JSONObject) friend).get("username");
                     State.addFriend(friendUsername);
                 });
-            }
         }
     }
     
-    public static boolean register(String username, String password) {
-        if (username == null || password == null || username.length() == 0 || password.length() == 0) {
-            throw new IllegalArgumentException("Username and password must be a non-empty string.");
-        }
+    public static boolean register(String username, String password, String language) {
+        if (username == null || password == null || language == null ||
+                username.length() == 0 || password.length() == 0 || language.length() == 0)
+            throw new IllegalArgumentException("Username, password and language must be a non-empty string.");
     
         Map<String, String> parameters = new HashMap<>();
         parameters.put("username", username);
         parameters.put("password", password);
-    
+        parameters.put("language", language);
+
         JSONObject reply = makeRequest(Endpoints.REGISTER, parameters);
         return isReplyOk(reply);
     }
     
-    public static void lookup() {
-    
+    public static boolean lookup(String username) {
+        if (username == null || username.length() == 0)
+            throw new IllegalArgumentException("Username must be a non-empty string.");
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("username", username);
+        JSONObject reply = makeRequest(Endpoints.LOOKUP, parameters);
+        return isReplyOk(reply);
     }
     
-    public static void friendship() {
-    
+    public static boolean friendship(String username) {
+        if (username == null || username.length() == 0)
+            throw new IllegalArgumentException("Username must be a non-empty string.");
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("username", username);
+        JSONObject reply = makeRequest(Endpoints.FRIENDSHIP, parameters);
+        return isReplyOk(reply);
     }
     
     public static void listFriends() {
-    
+        JSONObject reply = makeRequest(Endpoints.LIST_FRIEND, null);
+        //TODO: reply
+    }
+
+    public static boolean createRoom(String room) {
+        if (room == null || room.length() == 0)
+            throw new IllegalArgumentException("The room name must be a non-empty string.");
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("room", room);
+        JSONObject reply = makeRequest(Endpoints.CREATE_ROOM, parameters);
+        return isReplyOk(reply);
+    }
+
+    public static boolean addMe(String room) {
+        if (room == null || room.length() == 0)
+            throw new IllegalArgumentException("The room name must be a non-empty string.");
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("room", room);
+        JSONObject reply = makeRequest(Endpoints.ADD_ME, parameters);
+        return isReplyOk(reply);
+    }
+
+    public static void chatList() {
+        JSONObject reply = makeRequest(Endpoints.CHAT_LIST, null);
+        //TODO: reply
+    }
+
+    public static boolean closeRoom(String room) {
+        if (room == null || room.length() == 0)
+            throw new IllegalArgumentException("The room name must be a non-empty string.");
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("room", room);
+        JSONObject reply = makeRequest(Endpoints.CLOSE_ROOM, parameters);
+        return isReplyOk(reply);
     }
     
     /* Private helpers */
@@ -93,16 +137,17 @@ public class Json {
      * Build a JSON to be sent to the server. Parameters (payload) can be included.
      *
      * @param endpoint, String representing the type of the request, must be specified
-     * @param keyvalues, Map with key-value pairs to be included in the request
+     * @param keyvalues, Map with key-value pairs to be included in the request, can be null
      * @return JSONObject with response, or null if an error occured
      * @throws IllegalArgumentException if an invalid endpoint is specified
      */
+    @SuppressWarnings("unchecked")
     private static JSONObject makeRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
         if (endpoint == null || endpoint.length() == 0)
             throw new IllegalArgumentException("Invalid endpoint specified.");
         
         JSONObject params = new JSONObject();
-        params.putAll(keyvalues);
+        if(keyvalues != null) params.putAll(keyvalues); // it can be null if the request has no parameters
         
         JSONObject request = new JSONObject();
         request.put("endpoint", endpoint);
