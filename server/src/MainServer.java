@@ -1,25 +1,21 @@
-import Connections.Listener;
-import Connections.TaskFactory;
+import Connections.Reception;
+import Connections.Tasks;
 import base.Configuration;
 
-import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Function;
 
 public class MainServer {
 
     public static void main(String[] args) {
         ExecutorService threadpool = Executors.newFixedThreadPool(8);
-
-        Thread primaryListener = startListener(Configuration.PRIMARY_PORT, threadpool, TaskFactory::primaryConnectionTask);
-        Thread messageListener = startListener(Configuration.MSG_PORT, threadpool, TaskFactory::messageConnectionTask);
+    
+        Reception primaryConnectionsListener = new Reception(
+                threadpool, Configuration.PRIMARY_PORT, Tasks::primaryConnectionTask, Tasks::socketClosed
+        );
+        Reception messageConnectionsListener = new Reception(
+                threadpool, Configuration.MSG_PORT, Tasks::primaryConnectionTask, Tasks::socketClosed
+        );
     }
 
-    private static Thread startListener(int port, ExecutorService pool, Function<Socket, Runnable> taskFactory) {
-        Listener listener = new Listener(port, pool, taskFactory);
-        Thread t = new Thread(listener);
-        t.start();
-        return t;
-    }
 }

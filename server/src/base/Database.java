@@ -134,7 +134,7 @@ public class Database {
         String rooms = "CREATE TABLE IF NOT EXISTS rooms (\n"
                 + "	name TEXT PRIMARY KEY,\n"
                 + "	creator TEXT NOT NULL,\n"
-                + "	broadcastIP TEXT NOT NULL,\n"
+                + "	broadcastIP TEXT NOT NULL UNIQUE,\n"
                 + " FOREIGN KEY (creator) REFERENCES users(username)\n"
                 + ");";
         try {

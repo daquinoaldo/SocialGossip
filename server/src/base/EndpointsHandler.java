@@ -12,7 +12,6 @@ import static base.RequestsHandler.buildSuccessReply;
 public class EndpointsHandler {
 
     private static Database db = new Database();
-    private static HashMap<String, User> onlineUsers = new HashMap<>();
     private static String lastBroadcastIP = "224.0.0.0";    //TODO: deve essere salvato (su file?)
     
     static {
@@ -32,7 +31,7 @@ public class EndpointsHandler {
         for (String friend : friends) {
             JSONObject jsonFriend = new JSONObject();
             jsonFriend.put("username", friend);
-            if (onlineUsers.containsKey(friend)) jsonFriend.put("online", true);
+            if (OnlineUsers.isOnline(friend)) jsonFriend.put("online", true);
             else jsonFriend.put("online", false);
             friendsWithStatus.add(jsonFriend);
         }
@@ -59,16 +58,18 @@ public class EndpointsHandler {
      * Note that the database query is performed only one time for better performance.
      */
     @SuppressWarnings("unchecked")
-    static JSONObject login(JSONObject params) {
+    static JSONObject login(User user, JSONObject params) {
         String username = (String) params.get("username");
-        if(!db.existUser(username)) return buildErrorReply(401, "base.User not exist");
+        if(!db.existUser(username)) return buildErrorReply(401, "Username not found.");
         if(!checkPassword((String) params.get("password"), db.getPassword(username)))
-            return buildErrorReply(401, "Wrong password");
-        onlineUsers.put(username, new User(username));
+            return buildErrorReply(401, "Incorrect password.");
+        OnlineUsers.add(new User(username));
+        
         List<String> friends = db.getFriendships(username);
         for (String friend : friends)
-            if (onlineUsers.containsKey(friend))
-                ;//TODO: onlineUsers.get(friend).notifyChangeStatus(username);
+            if (OnlineUsers.isOnline(friend))
+                OnlineUsers.getByUsername(friend).notify.changedStatus(username, true);
+        
         JSONObject payload = new JSONObject();
         payload.put("friends", getFriendsStatus(friends));
         List<String> rooms = db.getRooms();
@@ -77,7 +78,7 @@ public class EndpointsHandler {
         return buildSuccessReply(payload);
     }
     
-    static JSONObject register(JSONObject params) {
+    static JSONObject register(User user, JSONObject params) {
         String username = (String) params.get("username");
         if(db.existUser(username)) return buildErrorReply(400, "User already exists.");
         if(!db.addUser(username, Utils.md5((String) params.get("password")),
@@ -85,77 +86,77 @@ public class EndpointsHandler {
         return buildSuccessReply();
     }
 
-    static JSONObject lookup(JSONObject params) {
-        if(!db.existUser((String) params.get("nickname")))
+    static JSONObject lookup(User user, JSONObject params) {
+        if(!db.existUser((String) params.get("username")))
             return buildErrorReply(400, "User not exists.");
         return buildSuccessReply();
     }
 
-    static JSONObject friendship(String currentUser, JSONObject params) {
-        String nickname = (String) params.get("nickname");
-        if(!db.existUser(nickname)) return buildErrorReply(400, "User not exists.");
-        if(!db.addFriendship(currentUser, nickname))
+    static JSONObject friendship(User user, JSONObject params) {
+        String username = (String) params.get("username");
+        if(!db.existUser(username)) return buildErrorReply(400, "User not exists.");
+        if(!db.addFriendship(user.getUsername(), username))
             return buildErrorReply(400, "Database error.");
-        if (onlineUsers.containsKey(nickname))
-            ;//TODO: onlineUsers.get(nickname).notifyFriendship(currentUser)
+        if (OnlineUsers.isOnline(username))
+            OnlineUsers.getByUsername(username).notify.newFriend(user.getUsername());
         return buildSuccessReply();
     }
 
     @SuppressWarnings("unchecked")
-    static JSONObject listFriend(String currentUser) {
-        List<String> friends = db.getFriendships(currentUser);
+    static JSONObject listFriend(User user, JSONObject params) {
+        List<String> friends = db.getFriendships(user.getUsername());
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("friends", getFriendsStatus(friends));
         return buildSuccessReply(jsonObject);
     }
 
-    static JSONObject createRoom(String currentUser, JSONObject params) {
+    static JSONObject createRoom(User user, JSONObject params) {
         String nextBroadcastIP = Utils.nextBroadcastIP(lastBroadcastIP);
-        if(!db.addRoom((String) params.get("name"), currentUser, nextBroadcastIP))
+        if(!db.addRoom((String) params.get("name"), user.getUsername(), nextBroadcastIP))
             return buildErrorReply(400, "Database error.");
         lastBroadcastIP = nextBroadcastIP;  // only if success
         return buildSuccessReply();
     }
 
     @SuppressWarnings("unchecked")
-    static JSONObject addMe(String currentUser, JSONObject params) {
+    static JSONObject addMe(User user, JSONObject params) {
         String room = (String) params.get("room");
         String broadcastIp = db.getBroadcastIP(room);
         if(broadcastIp == null) return buildErrorReply(400, "Database error.");
-        if(!db.addSubscription(currentUser, room)) buildErrorReply(400, "Database error.");
+        if(!db.addSubscription(user.getUsername(), room)) buildErrorReply(400, "Database error.");
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("broadcastIP", broadcastIp);
         return buildSuccessReply(jsonObject);
     }
 
     @SuppressWarnings("unchecked")
-    static JSONObject chatList(String currentUser) {
+    static JSONObject chatList(User user, JSONObject params) {
         List<String> rooms = db.getRooms();
-        List<String> subscriptions = db.getSubscriptions(currentUser);
+        List<String> subscriptions = db.getSubscriptions(user.getUsername());
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("rooms", getRoomSubscriptions(rooms, subscriptions));
         return buildSuccessReply(jsonObject);
     }
 
-    static JSONObject closeRoom(String currentUser, JSONObject params) {
+    static JSONObject closeRoom(User user, JSONObject params) {
         String name = (String) params.get("name");
         String creator = db.getCreator(name);
         if(creator == null) return buildErrorReply(400, "XRoom not exists.");
-        if(!creator.equals(currentUser))
+        if(!creator.equals(user.getUsername()))
             return buildErrorReply(403, "Only the creator can close the room.");
         if(!db.deleteRoom(name)) return buildErrorReply(400, "Database error.");
         return buildSuccessReply();
     }
 
-    static JSONObject file2friend(String currentUser, JSONObject params) {
+    static JSONObject file2friend(User user, JSONObject params) {
         return buildErrorReply(400, "Not implemented yet.");
     }
 
-    static JSONObject msg2friend(String currentUser, JSONObject params) {
+    static JSONObject msg2friend(User user, JSONObject params) {
         return buildErrorReply(400, "Not implemented yet.");
     }
 
-    static JSONObject chatroomMessage(String currentUser, JSONObject params) {
+    static JSONObject chatroomMessage(User user, JSONObject params) {
         return buildErrorReply(400, "Not implemented yet.");
     }
 }

@@ -37,10 +37,12 @@ class DatabaseTest {
         database.addUser("zaphodias", "password", "en");
         database.addUser("daquinoaldo","password", "en");
         
-        assertTrue(database.addRoom("Serie A", "zaphodias"));
-        assertTrue(database.addRoom("Serie B", "daquinoaldo"));
+        assertTrue(database.addRoom("Serie A", "zaphodias", "1.1.1.1"));
+        assertTrue(database.addRoom("Serie B", "daquinoaldo", "2.2.2.2"));
         
-        assertFalse(database.addRoom("Stranger Things", "nobody"));
+        assertFalse(database.addRoom("Stranger Things", "nobody", "3.3.3.3"));
+        assertFalse(database.addRoom("Serie C", "zaphodias", "1.1.1.1"));
+    
     }
 
     @Test
@@ -58,7 +60,7 @@ class DatabaseTest {
     void getCreator() {
         resetDatabase();
         database.addUser("username", "password", "en");
-        database.addRoom("Serie A", "username");
+        database.addRoom("Serie A", "username", "1.2.3.4");
     
         assertEquals("username", database.getCreator("Serie A"));
     }

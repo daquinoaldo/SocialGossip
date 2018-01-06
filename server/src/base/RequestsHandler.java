@@ -1,55 +1,31 @@
 package base;
 
+import static base.Endpoints.*;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.util.HashMap;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class RequestsHandler {
-    private static HashMap<String, Function<JSONObject, JSONObject>> endpoints = new HashMap<>();
+    private static HashMap<String, BiFunction<User, JSONObject, JSONObject>> endpoints = new HashMap<>();
     
     /* Register endpoint methods to the endpoint string */
     static {
-        endpoints.put(
-                Endpoints.LOGIN, EndpointsHandler::login
-        );
-        endpoints.put(
-                Endpoints.REGISTER, EndpointsHandler::register
-        );
-        endpoints.put(
-                Endpoints.LOOKUP, EndpointsHandler::lookup
-        );
-        endpoints.put(
-                Endpoints.FRIENDSHIP, EndpointsHandler::friendship
-        );
-        endpoints.put(
-                Endpoints.LIST_FRIEND, EndpointsHandler::listFriend
-        );
-        endpoints.put(
-                Endpoints.CREATE_ROOM, EndpointsHandler::createRoom
-        );
-        endpoints.put(
-                Endpoints.ADD_ME, EndpointsHandler::addMe
-        );
-        endpoints.put(
-                Endpoints.CHAT_LIST, EndpointsHandler::chatList
-        );
-        endpoints.put(
-                Endpoints.CLOSE_ROOM, EndpointsHandler::closeRoom
-        );
-        endpoints.put(
-                Endpoints.FILE2FRIEND, EndpointsHandler::file2friend
-        );
-        // NOTA: se si potesse fare sulla stessa connessione delle altre operazioni sarebbe maggico!
-        endpoints.put(
-                Endpoints.MSG2FRIEND, EndpointsHandler::msg2friend
-        );
-        // NOTA: non è sulla connessione di controllo come le altre ma su quella UDP!
-        endpoints.put(
-                Endpoints.CHATROOM_MESSAGE, EndpointsHandler::chatroomMessage
-        );
+        endpoints.put(LOGIN, EndpointsHandler::login);
+        endpoints.put(REGISTER, EndpointsHandler::register);
+        endpoints.put(LOOKUP, EndpointsHandler::lookup);
+        endpoints.put(FRIENDSHIP, EndpointsHandler::friendship);
+        endpoints.put(LIST_FRIEND, EndpointsHandler::listFriend);
+        endpoints.put(CREATE_ROOM, EndpointsHandler::createRoom);
+        endpoints.put(ADD_ME, EndpointsHandler::addMe);
+        endpoints.put(CHAT_LIST, EndpointsHandler::chatList);
+        endpoints.put(CLOSE_ROOM, EndpointsHandler::closeRoom);
+        endpoints.put(FILE2FRIEND, EndpointsHandler::file2friend);
+        endpoints.put(MSG2FRIEND, EndpointsHandler::msg2friend);
+        endpoints.put(CHATROOM_MESSAGE, EndpointsHandler::chatroomMessage);
     }
     
     /* DISPATCHER */
@@ -60,7 +36,7 @@ public class RequestsHandler {
      * @param input String in valid JSON format.
      * @return A JSON String to be sent as reply containing the result of the operation, can be an error.
      */
-    public static String parseRequest(String input) {
+    public static String parseRequest(User user, String input) {
         try {
             // Parse JSON string into a JSONObject
             JSONParser parser = new JSONParser();
@@ -72,7 +48,7 @@ public class RequestsHandler {
             
             // Call the endpoint method associated if any, else throw exception
             if (endpoints.containsKey(endpoint)) {
-                return endpoints.get(endpoint).apply(params).toJSONString();
+                return endpoints.get(endpoint).apply(user, params).toJSONString();
             }
             else {
                 System.err.println("Got an invalid request endpoint: " + endpoint);
