@@ -10,6 +10,7 @@ public class User implements Comparable<User> {
     private Socket messageSocket;
     public ClientCallbackInterface notify; // RMI interface
     
+    @SuppressWarnings("WeakerAccess")
     public User(String username) {
         this.username = username;
     }

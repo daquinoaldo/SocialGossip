@@ -38,7 +38,7 @@ public class Translation {
             // Read response, parse it as a JSON
             BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
             String line = null;
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             while ((line=in.readLine()) != null) {
                 sb.append(line);
             }

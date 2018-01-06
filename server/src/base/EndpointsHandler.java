@@ -3,7 +3,6 @@ package base;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.util.HashMap;
 import java.util.List;
 
 import static base.RequestsHandler.buildErrorReply;
@@ -57,13 +56,14 @@ public class EndpointsHandler {
      * getFriendsStatus function is also used in listfriend.
      * Note that the database query is performed only one time for better performance.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "unused"})
     static JSONObject login(User user, JSONObject params) {
         String username = (String) params.get("username");
         if(!db.existUser(username)) return buildErrorReply(401, "Username not found.");
         if(!checkPassword((String) params.get("password"), db.getPassword(username)))
             return buildErrorReply(401, "Incorrect password.");
-        OnlineUsers.add(new User(username));
+        if(!OnlineUsers.add(new User(username)))
+            return buildErrorReply(503, "Error while changing user status.");
         
         List<String> friends = db.getFriendships(username);
         for (String friend : friends)
@@ -77,7 +77,8 @@ public class EndpointsHandler {
         payload.put("rooms", getRoomSubscriptions(rooms, subscriptions));
         return buildSuccessReply(payload);
     }
-    
+
+    @SuppressWarnings("unused")
     static JSONObject register(User user, JSONObject params) {
         String username = (String) params.get("username");
         if(db.existUser(username)) return buildErrorReply(400, "User already exists.");
@@ -86,6 +87,7 @@ public class EndpointsHandler {
         return buildSuccessReply();
     }
 
+    @SuppressWarnings("unused")
     static JSONObject lookup(User user, JSONObject params) {
         if(!db.existUser((String) params.get("username")))
             return buildErrorReply(400, "User not exists.");
@@ -102,7 +104,7 @@ public class EndpointsHandler {
         return buildSuccessReply();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "unused"})
     static JSONObject listFriend(User user, JSONObject params) {
         List<String> friends = db.getFriendships(user.getUsername());
         JSONObject jsonObject = new JSONObject();
@@ -129,7 +131,7 @@ public class EndpointsHandler {
         return buildSuccessReply(jsonObject);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "unused"})
     static JSONObject chatList(User user, JSONObject params) {
         List<String> rooms = db.getRooms();
         List<String> subscriptions = db.getSubscriptions(user.getUsername());
@@ -141,7 +143,7 @@ public class EndpointsHandler {
     static JSONObject closeRoom(User user, JSONObject params) {
         String name = (String) params.get("name");
         String creator = db.getCreator(name);
-        if(creator == null) return buildErrorReply(400, "XRoom not exists.");
+        if(creator == null) return buildErrorReply(400, "Room not exists.");
         if(!creator.equals(user.getUsername()))
             return buildErrorReply(403, "Only the creator can close the room.");
         if(!db.deleteRoom(name)) return buildErrorReply(400, "Database error.");

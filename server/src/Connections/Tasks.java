@@ -78,7 +78,8 @@ public class Tasks {
         User user = OnlineUsers.getBySocket(socket);
         if (user == null) return;
         ArrayList<User> friends = OnlineUsers.getOnlineFriends(user);
-        OnlineUsers.remove(user);
+        if(!OnlineUsers.remove(user)) System.err.println("Error while changing user status\n" +
+                "Error occurr in Task.socketClosed with user "+user.toString());
     
         for (User friend : friends) {
             friend.notify.changedStatus(user.getUsername(), false);

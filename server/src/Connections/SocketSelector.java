@@ -53,6 +53,7 @@ public class SocketSelector {
      * @param pool, threadpool that will execute tasks.
      * @param realTask, function that accept a socket as parameter, executed when the socket is ready.
      */
+    @SuppressWarnings("WeakerAccess")
     public SocketSelector(ExecutorService pool, Consumer<Socket> realTask, Consumer<Socket> onSocketClose) {
         this.pool = pool;
         this.realTask = realTask;
