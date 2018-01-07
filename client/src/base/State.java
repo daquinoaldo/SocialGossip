@@ -16,6 +16,7 @@ public class State {
     private static boolean isLoggedIn = false;
     private static String username = null;
     private static final ArrayList<String> friends = new ArrayList<>();
+    private static final ArrayList<String> rooms = new ArrayList<>();
     
     // Callbacks
     private static final ArrayList<Consumer<Boolean>> loginCallbacks = new ArrayList<>();
@@ -27,6 +28,7 @@ public class State {
     public static boolean isIsLoggedIn() { return isLoggedIn; }
     public static String username() { return username; }
     public static ArrayList<String> friends() { return friends; }
+    public static ArrayList<String> rooms() { return rooms; }
     
     // State changes, will trigger a callback if any was set
     public static void setLoggedIn(boolean loggedIn) {
@@ -42,6 +44,11 @@ public class State {
     public static void addFriend(String newFriend) {
         friends.add(newFriend);
         friendsCallbacks.forEach(c -> c.accept(friends));
+    }
+
+    public static void addRoom(String newRoom) {
+        rooms.add(newRoom);
+        //TODO: roomsCallbacks.forEach(c -> c.accept(rooms));
     }
     
     public static void newMessage(String chatname, Message msg) {
