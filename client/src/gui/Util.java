@@ -10,6 +10,7 @@ public class Util {
         JOptionPane.showMessageDialog(null, msg,"Attenzione!", JOptionPane.WARNING_MESSAGE);
     }
     
+    @SuppressWarnings("UnusedReturnValue")
     public static JFrame createWindow(String title, JPanel panel, Dimension dimension) {
         JFrame window = new JFrame(title);                                  // create a window
         window.setIconImage(Icons.logo.getImage());                         // set logo as application icon

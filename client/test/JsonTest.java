@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class JsonTest {
+    @SuppressWarnings("unchecked")
     @Test
     void SimpleJsonTest() {
         JSONObject jsonObj = new JSONObject();

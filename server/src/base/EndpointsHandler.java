@@ -8,9 +8,9 @@ import java.util.List;
 import static base.RequestsHandler.buildErrorReply;
 import static base.RequestsHandler.buildSuccessReply;
 
-public class EndpointsHandler {
+class EndpointsHandler {
 
-    private static Database db = new Database();
+    private static final Database db = new Database();
     private static String lastBroadcastIP = "224.0.0.0";    //TODO: deve essere salvato (su file?)
     
     static {

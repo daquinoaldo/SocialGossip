@@ -5,7 +5,7 @@ import remoteinterfaces.ClientCallbackInterface;
 import java.net.Socket;
 
 public class User implements Comparable<User> {
-    private String username;
+    private final String username;
     private Socket primarySocket;
     private Socket messageSocket;
     public ClientCallbackInterface notify; // RMI interface

@@ -5,7 +5,7 @@ import base.Configuration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MainServer {
+class MainServer {
 
     public static void main(String[] args) {
         ExecutorService threadpool = Executors.newFixedThreadPool(8);

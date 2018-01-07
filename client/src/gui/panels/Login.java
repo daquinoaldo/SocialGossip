@@ -11,7 +11,7 @@ import java.awt.*;
 
 public class Login extends JPanel {
     private static final Dimension padding = new Dimension(65, 35);
-    private JPanel loginFormPanel;
+    private final JPanel loginFormPanel;
     private JFrame registerWindow = null;
     
     public Login() {

@@ -5,7 +5,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class Utils {
     
-    public static boolean isDebug = System.getenv().getOrDefault("DEBUG", "false").equals("TRUE");
+    public static final boolean isDebug = System.getenv().getOrDefault("DEBUG", "false").equals("TRUE");
     
     /**
      * Return MD5 hash of a String.

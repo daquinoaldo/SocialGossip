@@ -2,33 +2,40 @@ package Connections;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 
-public class SocketSelector {
+class SocketSelector {
     private class SelectorTask implements Runnable {
         private final Consumer<Socket> realTask;
         private final Consumer<Socket> onSocketClose;
         private final ExecutorService pool;
         private final Socket socket;
+        private InputStreamReader reader = null;
         
         SelectorTask(ExecutorService pool, Socket socket, Consumer<Socket> realTask, Consumer<Socket> onSocketClose) {
             this.pool = pool;
             this.socket = socket;
+            try {
+                this.reader = new InputStreamReader(socket.getInputStream());
+            }
+            catch (IOException e) {
+                System.err.println("Can't read from socket.");
+                e.printStackTrace();
+            }
             this.realTask = realTask;
             this.onSocketClose = onSocketClose;
         }
         
         public void run() {
-//            if (socket.isClosed()) {
-//                System.out.println("Closed connection (port " + socket.getLocalPort() + ")");
-//                onSocketClose.accept(socket);
-//                return;
-//            }
+            if (socket.isClosed()) {
+                System.out.println("Closed connection (port " + socket.getLocalPort() + ")");
+                onSocketClose.accept(socket);
+                return;
+            }
             
-            try (Reader reader = new InputStreamReader(socket.getInputStream())) {
+            try {
                 if (reader.ready()) {
                     realTask.accept(socket);
                 }
@@ -41,9 +48,9 @@ public class SocketSelector {
     }
     
     
-    private Consumer<Socket> realTask;
-    private Consumer<Socket> onSocketClose;
-    private ExecutorService pool;
+    private final Consumer<Socket> realTask;
+    private final Consumer<Socket> onSocketClose;
+    private final ExecutorService pool;
     
     /**
      * Use a thredpool to read socket and execute a task. If the thread was able to read it, realTask will be executed.
@@ -58,6 +65,7 @@ public class SocketSelector {
     public SocketSelector(ExecutorService pool, Consumer<Socket> realTask, Consumer<Socket> onSocketClose) {
         this.pool = pool;
         this.realTask = realTask;
+        this.onSocketClose = onSocketClose;
     }
     
     public void addSocket(Socket socket) {

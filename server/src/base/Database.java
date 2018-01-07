@@ -9,9 +9,9 @@ import java.util.ArrayList;
 @SuppressWarnings("ConstantConditions")
 public class Database {
 
-    private static String DEFAULT_DB_NAME = "database.db";
+    private static final String DEFAULT_DB_NAME = "database.db";
 
-    private String dbName;
+    private final String dbName;
 
     public Database(String dbName) {
         this.dbName = dbName;

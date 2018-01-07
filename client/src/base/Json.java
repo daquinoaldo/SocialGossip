@@ -33,6 +33,7 @@ public class Json {
     
     /* Request builders */
     //TODO: ma al login è necessario comunicare amici e chat? Non sarebbe più oppurtuno che il client usasse le apposite funzioni?
+    @SuppressWarnings("unchecked")
     public static void login(String username, String password) {
         if (username == null || password == null || username.length() == 0 || password.length() == 0)
             throw new IllegalArgumentException("Username and password must be a non-empty string.");

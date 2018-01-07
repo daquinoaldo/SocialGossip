@@ -5,7 +5,7 @@ import base.Configuration;
 import java.io.IOException;
 import java.net.*;
 
-public class Multicast {
+class Multicast {
     private static final int port = Configuration.MULTICAST_PORT;
     private static DatagramSocket socket;
     

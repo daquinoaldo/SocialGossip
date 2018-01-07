@@ -8,7 +8,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 
 public class Reception {
-    private Thread listener;
     private boolean stop = false;
     private ServerSocket serverSocket = null;
     
@@ -22,27 +21,24 @@ public class Reception {
      */
     public Reception(ExecutorService pool, int port, Consumer<Socket> socketTask, Consumer<Socket> onSocketClose) {
         SocketSelector selector = new SocketSelector(pool, socketTask, onSocketClose);
-        
-        listener = new Thread(() -> {
+
+        Thread listener = new Thread(() -> {
             System.out.println("Listening on port " + port);
-            
+
             try {
                 serverSocket = new ServerSocket(port);
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 System.err.println("Fatal error while binding port " + port);
                 e.printStackTrace();
                 System.exit(1);
             }
-    
+
             while (!stop) {
                 try {
                     Socket socket = serverSocket.accept();
                     System.out.println("Accepted connection (port " + port + ")");
                     selector.addSocket(socket);
-                }
-                catch (SocketTimeoutException e) { /* socket accept timed out, not really an exception */ }
-                catch (IOException e) {
+                } catch (SocketTimeoutException e) { /* socket accept timed out, not really an exception */ } catch (IOException e) {
                     if (stop) return; // exited normally after a stop request
                     System.err.println("Error occured while accepting connection");
                     e.printStackTrace();

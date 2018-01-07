@@ -6,8 +6,8 @@ import java.util.function.Consumer;
 
 public class State {
     public static class Message {
-        public String sender;
-        public String text;
+        final String sender;
+        final String text;
         public Message(String username, String text) { this.sender = username; this.text = text; }
         public String toString() { return "<" + sender + ">: " + text; }
     }
@@ -15,13 +15,13 @@ public class State {
     // State structure
     private static boolean isLoggedIn = false;
     private static String username = null;
-    private static ArrayList<String> friends = new ArrayList<>();
+    private static final ArrayList<String> friends = new ArrayList<>();
     
     // Callbacks
-    private static ArrayList<Consumer<Boolean>> loginCallbacks = new ArrayList<>();
-    private static ArrayList<Consumer<String>> usernameCallbacks = new ArrayList<>();
-    private static ArrayList<Consumer<ArrayList<String>>> friendsCallbacks = new ArrayList<>();
-    private static HashMap<String, Consumer<Message>> chatMsgCallbacks = new HashMap<>();
+    private static final ArrayList<Consumer<Boolean>> loginCallbacks = new ArrayList<>();
+    private static final ArrayList<Consumer<String>> usernameCallbacks = new ArrayList<>();
+    private static final ArrayList<Consumer<ArrayList<String>>> friendsCallbacks = new ArrayList<>();
+    private static final HashMap<String, Consumer<Message>> chatMsgCallbacks = new HashMap<>(); // one callback per chat only
     
     // Getters
     public static boolean isIsLoggedIn() { return isLoggedIn; }
@@ -61,5 +61,9 @@ public class State {
     
     public static void addFriendsListener(Consumer<ArrayList<String>> callback) {
         friendsCallbacks.add(callback);
+    }
+
+    public static void addChatMsgListener(String chatname, Consumer<Message> callback) {
+        chatMsgCallbacks.put(chatname, callback);
     }
 }

@@ -6,7 +6,6 @@ import gui.Util;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.function.BiConsumer;
 
 import static gui.Validators.isValidPassword;
 import static gui.Validators.isValidUsername;
@@ -17,10 +16,10 @@ public class RegisterForm extends JPanel {
     };
     
     private final TriConsumer<String, String, String> registerCallback;
-    private JTextField usernameInput = InputFactory.getTextInput("username", e -> submit());
-    private JTextField passwordInput = InputFactory.getPasswordInput("password", e -> submit());
-    private JTextField passwordInput2 = InputFactory.getPasswordInput("password", e -> submit());
-    private JComboBox languageInput = InputFactory.getComboBox(languageList, e -> submit());
+    private final JTextField usernameInput = InputFactory.getTextInput("username", e -> submit());
+    private final JTextField passwordInput = InputFactory.getPasswordInput("password", e -> submit());
+    private final JTextField passwordInput2 = InputFactory.getPasswordInput("password", e -> submit());
+    private final JComboBox languageInput = InputFactory.getComboBox(languageList, e -> submit());
     
     public RegisterForm(TriConsumer<String, String, String> registerCallback) {
         this.registerCallback = registerCallback;

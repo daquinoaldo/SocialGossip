@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DatabaseTest {
 
-    Database database = new Database("testdatabase.db");
+    private final Database database = new Database("testdatabase.db");
     
     private void resetDatabase() {
         try { Files.delete(Paths.get("testdatabase.db")); }

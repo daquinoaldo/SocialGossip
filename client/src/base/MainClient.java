@@ -6,18 +6,12 @@ import gui.panels.Login;
 import gui.panels.MainPanel;
 
 import javax.swing.*;
-import java.net.Socket;
 
-public class MainClient {
+class MainClient {
     private static JFrame mainWindow = null;
     
     public static void main(String[] args) {
         // Establish TCP connections
-        Socket socket;
-        try {
-            socket = new Socket(Configuration.HOSTNAME, Configuration.PRIMARY_PORT);
-        }
-        catch (Exception e) {}
         Connection.init();
         
         // Show login window

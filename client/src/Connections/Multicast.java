@@ -10,12 +10,12 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.HashMap;
 
-public class Multicast {
+class Multicast {
     private Thread listener;
     private static boolean stop = false;
     private static MulticastSocket ms = null;
     
-    private static HashMap<InetAddress, String> addressToChatname = new HashMap<>();
+    private static final HashMap<InetAddress, String> addressToChatname = new HashMap<>();
     
     static {
         try {

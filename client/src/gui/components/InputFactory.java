@@ -7,7 +7,7 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class InputFactory {
+class InputFactory {
     /* Configuration */
     private static final Border inputBorder = BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(Colors.accent, 1),
@@ -60,6 +60,7 @@ public class InputFactory {
     }
     
     /* Dropdown select */
+    @SuppressWarnings("unchecked")
     public static JComboBox getComboBox(String[] values, ActionListener e) {
         JComboBox box = new JComboBox(values);
         box.addActionListener(e);

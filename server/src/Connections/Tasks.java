@@ -4,7 +4,6 @@ import base.OnlineUsers;
 import base.RequestsHandler;
 import base.User;
 import base.Utils;
-import org.json.simple.JSONObject;
 
 import java.io.*;
 import java.net.Socket;
@@ -15,13 +14,13 @@ public class Tasks {
      * Returns the task used when receiving a new primary connection:
      * Read a line from the socket, then parse it as a JSON executing. (See RequestsHandler for further details).
      * @param socket The socket of the incoming connection.
-     * @return The task to be executed, as a Runnable.
      */
     public static void primaryConnectionTask(Socket socket) {
-        try (
-                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))
-        ) {
+        try {
+            // Note: closing the reader or the writer will close the original socket too.
+            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+    
             String msg = reader.readLine();
             
             if (Utils.isDebug)
@@ -46,13 +45,13 @@ public class Tasks {
     /**
      * Returns the task used when receiving a new message connection.
      * @param socket The socket of the incoming connection.
-     * @return The task to be executed, as a Runnable.
      */
     public static void messageConnectionTask(Socket socket) {
-        try (
-                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))
-        ) {
+        try {
+            // Note: closing the reader or the writer will close the original socket too.
+            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+    
             String msg = reader.readLine();
         
             if (Utils.isDebug)

@@ -4,8 +4,8 @@ import java.net.Socket;
 import java.util.*;
 
 public class OnlineUsers {
-    private static Database db = new Database();
-    private static HashMap<String, User> users = new HashMap<>();
+    private static final Database db = new Database();
+    private static final HashMap<String, User> users = new HashMap<>();
     
     public static boolean add(User user) {
         return users.putIfAbsent(user.getUsername(), user) == null;

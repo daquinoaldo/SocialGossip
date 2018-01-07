@@ -10,9 +10,9 @@ import java.util.function.*;
 import static gui.Validators.isValidUsername;
 
 public class LoginForm extends JPanel {
-    private JTextField usernameInput = InputFactory.getTextInput("username", e -> submit());
-    private JTextField passwordInput = InputFactory.getPasswordInput("password", e -> submit());
-    private BiConsumer<String, String> loginCallback;
+    private final JTextField usernameInput = InputFactory.getTextInput("username", e -> submit());
+    private final JTextField passwordInput = InputFactory.getPasswordInput("password", e -> submit());
+    private final BiConsumer<String, String> loginCallback;
     
     public LoginForm(BiConsumer<String, String> loginCallback, Runnable registerCallback) {
         this.loginCallback = loginCallback;

@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.*;
 
-public class Translation {
+class Translation {
     private static final String baseUrl = "https://api.mymemory.translated.net/get";
     
     public static String translate(String text, String sourceLang, String destLang) {
@@ -37,7 +37,8 @@ public class Translation {
             
             // Read response, parse it as a JSON
             BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
-            String line = null;
+            
+            String line;
             StringBuilder sb = new StringBuilder();
             while ((line=in.readLine()) != null) {
                 sb.append(line);

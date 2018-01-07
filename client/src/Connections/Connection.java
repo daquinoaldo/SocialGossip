@@ -5,24 +5,23 @@ import base.Configuration;
 import java.io.*;
 import java.net.Socket;
 
+@SuppressWarnings("EmptyMethod")
 public class Connection {
     private static final String host = Configuration.HOSTNAME;
     
-    private static Socket primarySocket;
     private static BufferedWriter primaryWriter;
     private static BufferedReader primaryReader;
     
-    private static Socket msgSocket;
     private static BufferedWriter msgWriter;
     private static BufferedReader msgReader;
     
     static {
         try {
-            primarySocket = new Socket(host, Configuration.PRIMARY_PORT);
+            Socket primarySocket = new Socket(host, Configuration.PRIMARY_PORT);
             primaryWriter = new BufferedWriter(new OutputStreamWriter(primarySocket.getOutputStream()));
             primaryReader = new BufferedReader(new InputStreamReader(primarySocket.getInputStream()));
     
-            msgSocket = new Socket(host, Configuration.MSG_PORT);
+            Socket msgSocket = new Socket(host, Configuration.MSG_PORT);
             msgWriter = new BufferedWriter(new OutputStreamWriter(msgSocket.getOutputStream()));
             msgReader = new BufferedReader(new InputStreamReader(msgSocket.getInputStream()));
         }

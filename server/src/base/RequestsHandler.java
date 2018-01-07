@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.function.BiFunction;
 
 public class RequestsHandler {
-    private static HashMap<String, BiFunction<User, JSONObject, JSONObject>> endpoints = new HashMap<>();
+    private static final HashMap<String, BiFunction<User, JSONObject, JSONObject>> endpoints = new HashMap<>();
     
     /* Register endpoint methods to the endpoint string */
     static {
