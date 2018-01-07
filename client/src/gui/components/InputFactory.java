@@ -58,4 +58,11 @@ public class InputFactory {
     public static JButton getSecondaryButton(String text, ActionListener e) {
         return makeButton(text, e, secondaryButtonBackground, secondaryButtonText, false);
     }
+    
+    /* Dropdown select */
+    public static JComboBox getComboBox(String[] values, ActionListener e) {
+        JComboBox box = new JComboBox(values);
+        box.addActionListener(e);
+        return box;
+    }
 }

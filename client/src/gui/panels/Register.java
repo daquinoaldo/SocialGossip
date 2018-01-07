@@ -45,12 +45,12 @@ public class Register extends JPanel {
         add(registerPanel);
     }
     
-    private void registerCallback(String username, String password) {
+    private void registerCallback(String username, String password, String language) {
         Util.enableComponents(this, false);
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     
         // make register request to server
-        boolean result = Json.register(username, password);
+        boolean result = Json.register(username, password, language);
         
         // if successful run the callback
         if (result) {

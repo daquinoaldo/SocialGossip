@@ -22,11 +22,11 @@ public class SocketSelector {
         }
         
         public void run() {
-            if (socket.isClosed()) {
-                System.out.println("Closed connection (port " + socket.getLocalPort() + ")");
-                onSocketClose.accept(socket);
-                return;
-            }
+//            if (socket.isClosed()) {
+//                System.out.println("Closed connection (port " + socket.getLocalPort() + ")");
+//                onSocketClose.accept(socket);
+//                return;
+//            }
             
             try (Reader reader = new InputStreamReader(socket.getInputStream())) {
                 if (reader.ready()) {

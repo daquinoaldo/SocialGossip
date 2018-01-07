@@ -1,5 +1,6 @@
 package gui.components;
 
+import base.TriConsumer;
 import constants.Colors;
 import gui.Util;
 
@@ -11,12 +12,17 @@ import static gui.Validators.isValidPassword;
 import static gui.Validators.isValidUsername;
 
 public class RegisterForm extends JPanel {
-    private final BiConsumer<String, String> registerCallback;
+    private static final String[] languageList = {
+        "it", "en", "de", "fr"
+    };
+    
+    private final TriConsumer<String, String, String> registerCallback;
     private JTextField usernameInput = InputFactory.getTextInput("username", e -> submit());
     private JTextField passwordInput = InputFactory.getPasswordInput("password", e -> submit());
     private JTextField passwordInput2 = InputFactory.getPasswordInput("password", e -> submit());
+    private JComboBox languageInput = InputFactory.getComboBox(languageList, e -> submit());
     
-    public RegisterForm(BiConsumer<String, String> registerCallback) {
+    public RegisterForm(TriConsumer<String, String, String> registerCallback) {
         this.registerCallback = registerCallback;
         this.setBackground(Colors.background);
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -33,6 +39,8 @@ public class RegisterForm extends JPanel {
         this.add(Box.createRigidArea(new Dimension(0, 5)));
         this.add(passwordInput2);
         this.add(Box.createRigidArea(new Dimension(0, 15)));
+        this.add(languageInput);
+        this.add(Box.createRigidArea(new Dimension(0, 15)));
         this.add(btnsPanel);
     }
     
@@ -43,9 +51,10 @@ public class RegisterForm extends JPanel {
         String username = usernameInput.getText();
         String password = passwordInput.getText();
         String password2 = passwordInput2.getText();
+        String language = languageInput.getActionCommand();
         
         if (isValidUsername(username) && isValidPassword(password) && password.equals(password2)) {
-            registerCallback.accept(username, password);
+            registerCallback.accept(username, password, language);
         }
         else {
             Util.showErrorDialog("I dati inseriti non sono corrretti.");
