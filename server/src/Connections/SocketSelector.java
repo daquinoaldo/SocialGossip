@@ -23,6 +23,7 @@ public class SocketSelector {
         
         public void run() {
             if (socket.isClosed()) {
+                System.out.println("Closed connection (port " + socket.getLocalPort() + ")");
                 onSocketClose.accept(socket);
                 return;
             }
