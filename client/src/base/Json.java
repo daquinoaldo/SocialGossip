@@ -32,7 +32,6 @@ public class Json {
     }
     
     /* Request builders */
-    //TODO: ma al login è necessario comunicare amici e chat? Non sarebbe più oppurtuno che il client usasse le apposite funzioni?
     @SuppressWarnings("unchecked")
     public static boolean login(String username, String password) {
         if (username == null || password == null || username.length() == 0 || password.length() == 0)
@@ -43,19 +42,12 @@ public class Json {
         parameters.put("password", password);
         
         JSONObject reply = makeRequest(Endpoints.LOGIN, parameters);
-        JSONObject msgReply = makeMsgRequest(Endpoints.LOGIN, parameters);
+        JSONObject msgReply = makeMsgLoginRequest(Endpoints.LOGIN, parameters);
 
         if(Utils.isDebug) System.out.println("Json.login() got reply");
         if (reply == null || msgReply != null) return false;
         State.setLoggedIn(true);
         State.setUsername(username);
-        JSONArray jsonFriends = (JSONArray) reply.get("friends");
-        //TODO: ricontrollare, c'è da segnalare anche lo stato (online/offline)
-        if (jsonFriends != null)
-            jsonFriends.forEach(friend -> {
-                String friendUsername = (String) ((JSONObject) friend).get("username");
-                State.addFriend(friendUsername);
-            });
         return true;
     }
     
@@ -147,14 +139,18 @@ public class Json {
      */
     @SuppressWarnings("unchecked")
     private static JSONObject makeRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
-        return makeGenericRequest(endpoint, keyvalues, false);
+        return makeGenericRequest(endpoint, keyvalues, false, true);
     }
 
     private static JSONObject makeMsgRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
-        return makeGenericRequest(endpoint, keyvalues, true);
+        return makeGenericRequest(endpoint, keyvalues, true, true);
+    }
+    
+    private static JSONObject makeMsgLoginRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
+        return makeGenericRequest(endpoint, keyvalues, true, false);
     }
 
-    private static JSONObject makeGenericRequest(String endpoint, Map keyvalues, boolean isMsgRequest) throws IllegalArgumentException {
+    private static JSONObject makeGenericRequest(String endpoint, Map keyvalues, boolean isMsgRequest, boolean showErrorDialogs) throws IllegalArgumentException {
         if (endpoint == null || endpoint.length() == 0)
             throw new IllegalArgumentException("Invalid endpoint specified.");
 
@@ -175,7 +171,8 @@ public class Json {
         if(Utils.isDebug) System.out.println("Json.makeRequest: got response");
 
         if (responseString == null) {
-            Utils.showErrorDialog("Impossibile comunicare con il server. Controllare la connessione a internet e riprovare.");
+            if (showErrorDialogs)
+                Utils.showErrorDialog("Impossibile comunicare con il server. Controllare la connessione a internet e riprovare.");
             return null;
         }
 
@@ -190,12 +187,14 @@ public class Json {
             }
             else {
                 String msg = (String) response.get("message");
-                Utils.showErrorDialog(msg != null && msg.length() > 0 ? msg : "Errore sconosciuto.");
+                if (showErrorDialogs)
+                    Utils.showErrorDialog(msg != null && msg.length() > 0 ? msg : "Errore sconosciuto.");
                 return null;
             }
         }
         catch (ParseException e) {
-            Utils.showErrorDialog("Invalid JSON response from server");
+            if (showErrorDialogs)
+                Utils.showErrorDialog("Invalid JSON response from server");
             System.err.println("Invalid JSON response from server: \n" + responseString);
             e.printStackTrace();
         }
