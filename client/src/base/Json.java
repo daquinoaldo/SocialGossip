@@ -43,7 +43,8 @@ public class Json {
         parameters.put("password", password);
         
         JSONObject reply = makeRequest(Endpoints.LOGIN, parameters);
-        if (reply != null) {
+        JSONObject msgReply = makeMsgRequest(Endpoints.LOGIN, parameters);
+        if (reply != null && msgReply != null) {
             State.setLoggedIn(true);
             State.setUsername(username);
             JSONArray jsonFriends = (JSONArray) reply.get("friends");
@@ -144,20 +145,31 @@ public class Json {
      */
     @SuppressWarnings("unchecked")
     private static JSONObject makeRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
+        return makeGenericRequest(endpoint, keyvalues, false);
+    }
+    
+    private static JSONObject makeMsgRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
+        return makeGenericRequest(endpoint, keyvalues, true);
+    }
+    
+    private static JSONObject makeGenericRequest(String endpoint, Map keyvalues, boolean isMsgRequest) throws IllegalArgumentException {
         if (endpoint == null || endpoint.length() == 0)
             throw new IllegalArgumentException("Invalid endpoint specified.");
-        
+    
         JSONObject params = new JSONObject();
         if(keyvalues != null) params.putAll(keyvalues); // it can be null if the request has no parameters
-        
+    
         JSONObject request = new JSONObject();
         request.put("endpoint", endpoint);
         request.put("params", params);
-        
-        
-        // send request to the server and wait for a reply
-        String responseString = Connection.sendRequest(request.toJSONString());
-        
+    
+    
+        // send request to the server using the right socket, and wait for a reply
+        String responseString =
+                isMsgRequest ?
+                        Connection.sendMsgRequest(request.toJSONString()) :
+                        Connection.sendRequest(request.toJSONString());
+    
         if (responseString == null) {
             Utils.showErrorDialog("Impossibile comunicare con il server. Controllare la connessione a internet e riprovare.");
             return null;
@@ -167,7 +179,7 @@ public class Json {
         try {
             JSONParser parser = new JSONParser();
             JSONObject response = (JSONObject) parser.parse(responseString);
-            
+        
             if (isReplyOk(response))
                 return response;
             else {
