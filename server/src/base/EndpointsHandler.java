@@ -3,6 +3,7 @@ package base;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 import static base.RequestsHandler.buildErrorReply;
@@ -67,8 +68,14 @@ class EndpointsHandler {
         
         List<String> friends = db.getFriendships(username);
         for (String friend : friends)
-            if (OnlineUsers.isOnline(friend))
-                OnlineUsers.getByUsername(friend).notify.changedStatus(username, true);
+            if (OnlineUsers.isOnline(friend)) {
+                try {
+                    OnlineUsers.getByUsername(friend).notify.changedStatus(username, true);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                    return buildErrorReply(503, "Error while notifing user status changing.");
+                }
+            }
         
         JSONObject payload = new JSONObject();
         payload.put("friends", getFriendsStatus(friends));
@@ -99,8 +106,14 @@ class EndpointsHandler {
         if(!db.existUser(username)) return buildErrorReply(400, "User not exists.");
         if(!db.addFriendship(user.getUsername(), username))
             return buildErrorReply(400, "Database error.");
-        if (OnlineUsers.isOnline(username))
-            OnlineUsers.getByUsername(username).notify.newFriend(user.getUsername());
+        if (OnlineUsers.isOnline(username)) {
+            try {
+                OnlineUsers.getByUsername(username).notify.newFriend(user.getUsername());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+                return buildErrorReply(503, "Error while notifing user status changing.");
+            }
+        }
         return buildSuccessReply();
     }
 
