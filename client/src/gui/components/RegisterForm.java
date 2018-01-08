@@ -37,7 +37,7 @@ public class RegisterForm extends JPanel {
         this.add(passwordInput);
         this.add(Box.createRigidArea(new Dimension(0, 5)));
         this.add(passwordInput2);
-        this.add(Box.createRigidArea(new Dimension(0, 15)));
+        this.add(Box.createRigidArea(new Dimension(0, 5)));
         this.add(languageInput);
         this.add(Box.createRigidArea(new Dimension(0, 15)));
         this.add(btnsPanel);

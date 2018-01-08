@@ -28,14 +28,12 @@ public class LoginPanel extends JPanel {
     }
     
     private void loginCallback(String username, String password) {
-        if(Utils.isDebug) System.out.println("LOGIN CALLBACK");
+        Json.login(username, password);
+        
         if (this.registerWindow != null) {
             // if this method was called after a registration, close the registration form window
             this.registerWindow.dispose();
         }
-        if (!Json.login(username, password))
-            System.err.println("Can't log in with username "+username);
-        if(Utils.isDebug) System.out.println("Logged in as "+username);
     }
     
     private void registerCallback() {

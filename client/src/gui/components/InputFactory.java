@@ -4,6 +4,10 @@ import constants.Colors;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.plaf.ComboBoxUI;
+import javax.swing.plaf.basic.BasicArrowButton;
+import javax.swing.plaf.basic.BasicComboBoxEditor;
+import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
@@ -62,7 +66,65 @@ class InputFactory {
     /* Dropdown select */
     @SuppressWarnings("unchecked")
     public static JComboBox getComboBox(String[] values, ActionListener e) {
+        class MyRenderer extends JLabel implements ListCellRenderer {
+            private MyRenderer() {
+                setOpaque(true);
+                setFont(new Font("Arial", Font.PLAIN, 14));
+                setHorizontalAlignment(SwingConstants.CENTER);
+            }
+            
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                if (isSelected) {
+                    setBackground(mainButtonBackground);
+                    setForeground(mainButtonText);
+                }
+                else {
+                    setBackground(secondaryButtonBackground);
+                    setForeground(secondaryButtonText);
+                }
+                setText(value.toString());
+                return this;
+            }
+        }
+    
+        class MyEditor extends BasicComboBoxEditor {
+            private JLabel label = new JLabel();
+            private JPanel panel = new JPanel();
+            private Object selectedItem;
+        
+            MyEditor() {
+                label.setOpaque(false);
+                label.setFont(new Font("Arial", Font.BOLD, 14));
+                label.setForeground(secondaryButtonText);
+            
+                panel.setBorder(inputBorder);
+                panel.setLayout(new FlowLayout(FlowLayout.CENTER));
+                panel.add(label);
+                panel.setBackground(secondaryButtonBackground);
+            }
+        
+            public Component getEditorComponent() {
+                return this.panel;
+            }
+        
+            public Object getItem() {
+                return "[" + this.selectedItem.toString() + "]";
+            }
+        
+            public void setItem(Object item) {
+                this.selectedItem = item;
+                label.setText(item.toString());
+            }
+        }
+        
         JComboBox box = new JComboBox(values);
+        
+        box.setEditable(true);
+        box.setUI(new ColorArrowUI());
+        box.setRenderer(new MyRenderer());
+        box.setEditor(new MyEditor());
+        
         box.addActionListener(e);
         return box;
     }

@@ -24,7 +24,7 @@ class Register extends JPanel {
         logoPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         
         JLabel helpText = new JLabel("<html>" +
-                "Scegli un nome utente composto da lettere e numeri, e inserisci due volte una password sicura." +
+                "Pick an username (letters and numbers only), type a password twice and choose your language." +
                 "</html>");
         helpText.setPreferredSize(new Dimension(maxWidth, 100));
         helpText.setForeground(Colors.accent);
