@@ -8,12 +8,10 @@ import java.awt.*;
 import java.net.InetAddress;
 
 class ChatPanel extends JPanel {
-    private InetAddress multicastAddress;
-    
     private final JTextArea chatHistory;
     private final JTextField msgField;
     
-    ChatPanel(String chatName) {
+    ChatPanel() {
         setLayout(new BorderLayout());
         
         // Send a new message input and button
@@ -50,7 +48,7 @@ class ChatPanel extends JPanel {
             catch (Exception e) { e.printStackTrace(); }
         });
     
-        JPanel panel = new ChatPanel("Serie A");
+        JPanel panel = new ChatPanel();
         
         Utils.createWindow("Serie A", panel, new Dimension(600, 400));
     }

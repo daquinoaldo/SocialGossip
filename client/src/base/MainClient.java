@@ -30,6 +30,7 @@ class MainClient {
         State.addUsernameListener(username -> {
             if (mainWindow != null)
                 mainWindow.setTitle(username + " - Social Gossip");
+            rmi.Manager.registerCallback();
         });
     }
 }

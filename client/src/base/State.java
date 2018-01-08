@@ -1,10 +1,20 @@
+
 package base;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
 public class State {
+    // Sub-classes
+    public static class Friend {
+        public String username;
+        public boolean isOnline = false;
+        public Friend(String username) { this.username = username; }
+        public void setStatus(boolean isOnline) { this.isOnline = isOnline; }
+    }
+    
     public static class Message {
         final String sender;
         final String text;
@@ -15,19 +25,20 @@ public class State {
     // State structure
     private static boolean isLoggedIn = false;
     private static String username = null;
-    private static final ArrayList<String> friends = new ArrayList<>();
+    private static final HashMap<String, Friend> friends = new HashMap<>();
     private static final ArrayList<String> rooms = new ArrayList<>();
     
     // Callbacks
     private static final ArrayList<Consumer<Boolean>> loginCallbacks = new ArrayList<>();
     private static final ArrayList<Consumer<String>> usernameCallbacks = new ArrayList<>();
-    private static final ArrayList<Consumer<ArrayList<String>>> friendsCallbacks = new ArrayList<>();
+    private static final ArrayList<Consumer<Collection<Friend>>> friendsListCallbacks = new ArrayList<>();
+    private static final HashMap<String, Consumer<Boolean>> friendStatusCallback = new HashMap<>();
     private static final HashMap<String, Consumer<Message>> chatMsgCallbacks = new HashMap<>(); // one callback per chat only
     
     // Getters
     public static boolean isIsLoggedIn() { return isLoggedIn; }
     public static String username() { return username; }
-    public static ArrayList<String> friends() { return friends; }
+    public static Collection<Friend> friends() { return friends.values(); }
     public static ArrayList<String> rooms() { return rooms; }
     
     // State changes, will trigger a callback if any was set
@@ -41,9 +52,15 @@ public class State {
         usernameCallbacks.forEach(c -> c.accept(username));
     }
     
-    public static void addFriend(String newFriend) {
-        friends.add(newFriend);
-        friendsCallbacks.forEach(c -> c.accept(friends));
+    public static void setFriendStatus(String username, boolean isOnline) {
+        friends.get(username).setStatus(isOnline);
+        if (friendStatusCallback.containsKey(username)) friendStatusCallback.get(username).accept(isOnline);
+        friendsListCallbacks.forEach(c -> c.accept(friends.values()));
+    }
+    
+    public static void addFriend(String friendUsername) {
+        friends.put(friendUsername, new Friend(friendUsername));
+        friendsListCallbacks.forEach(c -> c.accept(friends.values()));
     }
 
     public static void addRoom(String newRoom) {
@@ -66,11 +83,15 @@ public class State {
         usernameCallbacks.add(callback);
     }
     
-    public static void addFriendsListener(Consumer<ArrayList<String>> callback) {
-        friendsCallbacks.add(callback);
+    public static void addFriendsListener(Consumer<Collection<Friend>> callback) {
+        friendsListCallbacks.add(callback);
     }
 
     public static void addChatMsgListener(String chatname, Consumer<Message> callback) {
         chatMsgCallbacks.put(chatname, callback);
+    }
+    
+    public static void addFriendStatusListener(String username, Consumer<Boolean> callback) {
+        friendStatusCallback.put(username, callback);
     }
 }

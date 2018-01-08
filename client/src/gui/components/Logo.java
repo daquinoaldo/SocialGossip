@@ -26,6 +26,5 @@ public class Logo extends JPanel {
     
         this.add(iconLabel);
         this.add(title);
-    
     }
 }
