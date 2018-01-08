@@ -4,12 +4,13 @@ import base.Configuration;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 class MainServer {
 
     public static void main(String[] args) {
         rmi.Manager.start();
-        ExecutorService threadpool = Executors.newFixedThreadPool(8);
+        ScheduledExecutorService threadpool = Executors.newScheduledThreadPool(4);
     
         Reception primaryConnectionsListener = new Reception(
                 threadpool, Configuration.PRIMARY_PORT, Tasks::primaryConnectionTask, Tasks::socketClosed

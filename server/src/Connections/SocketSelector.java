@@ -4,17 +4,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 class SocketSelector {
     private class SelectorTask implements Runnable {
         private final Consumer<Socket> realTask;
         private final Consumer<Socket> onSocketClose;
-        private final ExecutorService pool;
+        private final ScheduledExecutorService pool;
         private final Socket socket;
         private InputStreamReader reader = null;
         
-        SelectorTask(ExecutorService pool, Socket socket, Consumer<Socket> realTask, Consumer<Socket> onSocketClose) {
+        SelectorTask(ScheduledExecutorService pool, Socket socket, Consumer<Socket> realTask, Consumer<Socket> onSocketClose) {
             this.pool = pool;
             this.socket = socket;
             try {
@@ -39,7 +41,7 @@ class SocketSelector {
                 if (reader.ready()) {
                     realTask.accept(socket);
                 }
-                pool.submit(this);
+                pool.schedule(this, 500, TimeUnit.MILLISECONDS);
             } catch (IOException e) {
                 System.err.println("Error while testing socket readiness");
                 e.printStackTrace();
@@ -50,7 +52,7 @@ class SocketSelector {
     
     private final Consumer<Socket> realTask;
     private final Consumer<Socket> onSocketClose;
-    private final ExecutorService pool;
+    private final ScheduledExecutorService pool;
     
     /**
      * Use a thredpool to read socket and execute a task. If the thread was able to read it, realTask will be executed.
@@ -62,7 +64,7 @@ class SocketSelector {
      * @param realTask, function that accept a socket as parameter, executed when the socket is ready.
      */
     @SuppressWarnings("WeakerAccess")
-    public SocketSelector(ExecutorService pool, Consumer<Socket> realTask, Consumer<Socket> onSocketClose) {
+    public SocketSelector(ScheduledExecutorService pool, Consumer<Socket> realTask, Consumer<Socket> onSocketClose) {
         this.pool = pool;
         this.realTask = realTask;
         this.onSocketClose = onSocketClose;

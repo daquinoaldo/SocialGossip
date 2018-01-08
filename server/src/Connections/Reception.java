@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 
 public class Reception {
@@ -19,7 +20,7 @@ public class Reception {
      * @param socketTask Task to be executed when receiving messaes from a socket - see SocketSelector for details
      * @param onSocketClose Task to be executed when a socket gets closed - see SocketSelector for details
      */
-    public Reception(ExecutorService pool, int port, Consumer<Socket> socketTask, Consumer<Socket> onSocketClose) {
+    public Reception(ScheduledExecutorService pool, int port, Consumer<Socket> socketTask, Consumer<Socket> onSocketClose) {
         SocketSelector selector = new SocketSelector(pool, socketTask, onSocketClose);
 
         Thread listener = new Thread(() -> {
