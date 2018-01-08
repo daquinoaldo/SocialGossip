@@ -46,6 +46,15 @@ class DatabaseTest {
     }
 
     @Test
+    void existUser() {
+        resetDatabase();
+        database.addUser("username", "password", "en");
+        
+        assertTrue(database.existUser("username"));
+        assertFalse(database.existUser("asddasdasdsa"));
+    }
+    
+    @Test
     void getPassword() {
         resetDatabase();
         database.addUser("username", "password", "en");

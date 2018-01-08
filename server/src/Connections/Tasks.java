@@ -21,14 +21,19 @@ public class Tasks {
             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
     
-            String msg = reader.readLine();
+            String req = reader.readLine();
             
             if (Utils.isDebug)
-                System.out.println("<- [PRIMARY] Got request:\n" + msg);
+                System.out.println("<- [PRIMARY] Got request:\n" + req);
             
             User user = OnlineUsers.getBySocket(socket);
-            String reply = RequestsHandler.parseRequest(user, msg);
-            
+            if (user == null) {
+                user = new User("stub");
+                user.setPrimarySocket(socket);
+            }
+    
+            String reply = RequestsHandler.parseRequest(user, req);
+    
             if (Utils.isDebug)
                 System.out.println("-> [PRIMARY] Sending reply:\n" + reply);
             
@@ -52,20 +57,25 @@ public class Tasks {
             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
     
-            String msg = reader.readLine();
+            String req = reader.readLine();
         
             if (Utils.isDebug)
-                System.out.println("<- [MESSAGE] Got request:\n" + msg);
-            // TODO
-            //            User user = OnlineUsers.getBySocket(socket);
-            //            String reply = RequestsHandler.parseMessageRequest(user, msg);
-            //
-            //            if (Utils.isDebug)
-            //                System.out.println("-> [MESSAGE] Sending reply:\n" + reply);
-            //
-            //            writer.write(reply);
-            //            writer.newLine();
-            //            writer.flush();
+                System.out.println("<- [MESSAGE] Got request:\n" + req);
+            
+            User user = OnlineUsers.getBySocket(socket);
+            if (user == null) {
+                user = new User("stub");
+                user.setMessageSocket(socket);
+            }
+            
+            String reply = RequestsHandler.parseRequest(user, req);
+
+            if (Utils.isDebug)
+                System.out.println("-> [MESSAGE] Sending reply:\n" + reply);
+
+            writer.write(reply);
+            writer.newLine();
+            writer.flush();
         }
         catch (IOException e) {
             System.err.println("Error while reading request (primary connection):");
@@ -78,10 +88,10 @@ public class Tasks {
         if (user == null) return;
         ArrayList<User> friends = OnlineUsers.getOnlineFriends(user);
         if(!OnlineUsers.remove(user)) System.err.println("Error while changing user status\n" +
-                "Error occurr in Task.socketClosed with user "+user.toString());
+                "Error occurred in Task.socketClosed with user "+user.toString());
     
         for (User friend : friends) {
-            friend.notify.changedStatus(user.getUsername(), false);
+            friend.notifyFriendStatus(user.getUsername(), false);
         }
     }
 }

@@ -42,16 +42,11 @@ public class Json {
         parameters.put("username", username);
         parameters.put("password", password);
         
-        //TODO: ERRORE IN MAKE REQUEST, SE L'USERNAME E LA PASSWORD SONO GIUSTI NON RITORNA
-        // JSONObject reply = makeRequest(Endpoints.LOGIN, parameters);
-        //JSONObject msgReply = makeMsgRequest(Endpoints.LOGIN, parameters);
-        JSONObject msgReply = new JSONObject();
-        JSONObject reply = new JSONObject();
-        reply.put("code", 200);
-        reply.put("friends", null);
-        // FINE TODO
+        JSONObject reply = makeRequest(Endpoints.LOGIN, parameters);
+        JSONObject msgReply = makeMsgRequest(Endpoints.LOGIN, parameters);
+
         if(Utils.isDebug) System.out.println("Json.login() got reply");
-        if (reply == null || Integer.parseInt((String)reply.get("code")) != 200 || msgReply != null) return false;
+        if (reply == null || msgReply != null) return false;
         State.setLoggedIn(true);
         State.setUsername(username);
         JSONArray jsonFriends = (JSONArray) reply.get("friends");

@@ -197,6 +197,8 @@ public class Database {
             return true;
         }
         catch (SQLException e) {
+            System.err.println("Can't register user: <" + username + "," + password + "," + language);
+            e.printStackTrace();
             return false;
         }
     }

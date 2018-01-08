@@ -1,5 +1,6 @@
 package base;
 
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -15,7 +16,18 @@ public class Utils {
      */
     public static String md5(String str) {
         try {
-            return new String(MessageDigest.getInstance("MD5").digest(str.getBytes()));
+            byte[] digest = MessageDigest.getInstance("MD5").digest(str.getBytes());
+    
+            StringBuffer hexString = new StringBuffer();
+            for (int i = 0; i < digest.length; i++) {
+                String hex=Integer.toHexString(0xFF & digest[i]);
+                if(hex.length()==1)
+                    hexString.append('0');
+        
+                hexString.append(hex);
+            }
+            
+            return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
             System.err.println("Error while calculating MD5 hash of " + str);
             e.printStackTrace();

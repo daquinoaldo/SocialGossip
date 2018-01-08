@@ -3,10 +3,12 @@ package base;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.net.Socket;
 import java.util.List;
 
 import static base.RequestsHandler.buildErrorReply;
 import static base.RequestsHandler.buildSuccessReply;
+import static base.Utils.isDebug;
 
 class EndpointsHandler {
 
@@ -50,40 +52,59 @@ class EndpointsHandler {
         return roomSubscriptions;
     }
 
-    /* NOTE: In this function the friends list (friends) is scanned 2 times: one in the for loop and one in the
-     * getFriendsStatus function. It was possible to avoid this doing both the notification of status change and the
-     * status list in only one for loop, but this would have led to a duplication of the code because the
-     * getFriendsStatus function is also used in listfriend.
-     * Note that the database query is performed only one time for better performance.
-     */
     @SuppressWarnings({"unchecked", "unused"})
-    static JSONObject login(User user, JSONObject params) {
+    static JSONObject login(User stubUser, JSONObject params) {
+        Socket primarySocket = stubUser.getPrimarySocket();
+        Socket messageSocket = stubUser.getMessageSocket();
         String username = (String) params.get("username");
-        if(!db.existUser(username)) return buildErrorReply(401, "Username not found.");
-        if(!checkPassword((String) params.get("password"), db.getPassword(username)))
+        String password = (String) params.get("password");
+    
+        if (isDebug)
+            System.out.println("Login request: <" + username + "," + password + ">");
+        
+        if(!db.existUser(username))
+            return buildErrorReply(401, "Username not found.");
+    
+        if (isDebug)
+            System.out.println("User found in database, checking password...");
+    
+        if(!checkPassword(username, password))
             return buildErrorReply(401, "Incorrect password.");
-        if(!OnlineUsers.add(new User(username)))
-            return buildErrorReply(503, "Error while changing user status.");
+    
+        if (isDebug)
+            System.out.println("Password correct, adding to OnlineUsers");
         
-        List<String> friends = db.getFriendships(username);
-        for (String friend : friends)
-            if (OnlineUsers.isOnline(friend))
-                OnlineUsers.getByUsername(friend).notify.changedStatus(username, true);
+        // Check if this is not first login request (-> update socket informations)
+        User user = OnlineUsers.getByUsername(username);
         
-        JSONObject payload = new JSONObject();
-        payload.put("friends", getFriendsStatus(friends));
-        List<String> rooms = db.getRooms();
-        List<String> subscriptions = db.getSubscriptions(username);
-        payload.put("rooms", getRoomSubscriptions(rooms, subscriptions));
-        return buildSuccessReply(payload);
+        if (user == null) {
+            // First login request, adding a new user to OnlineUsers
+            user = new User(username);
+            boolean success = OnlineUsers.add(user);
+            if (!success) return buildErrorReply(503, "Error while changing user status.");
+        }
+        
+        // Update socket informations
+        if (primarySocket != null)
+            user.setPrimarySocket(primarySocket);
+        if (messageSocket != null)
+            user.setMessageSocket(messageSocket);
+        
+        return buildSuccessReply();
     }
 
     @SuppressWarnings("unused")
-    static JSONObject register(User user, JSONObject params) {
+    static JSONObject register(User stubUser, JSONObject params) {
         String username = (String) params.get("username");
-        if(db.existUser(username)) return buildErrorReply(400, "User already exists.");
-        if(!db.addUser(username, Utils.md5((String) params.get("password")),
-                (String) params.get("language"))) return buildErrorReply(400, "Database error.");
+        String password = (String) params.get("password");
+        String language = (String) params.get("language");
+    
+        if (isDebug) System.out.println("Register request: <" + username + "," + password + "," + language + ">");
+    
+        if(db.existUser(username))
+            return buildErrorReply(400, "User already exists.");
+        if(!db.addUser(username, Utils.md5(password), language))
+            return buildErrorReply(400, "Database error.");
         return buildSuccessReply();
     }
 
@@ -100,7 +121,7 @@ class EndpointsHandler {
         if(!db.addFriendship(user.getUsername(), username))
             return buildErrorReply(400, "Database error.");
         if (OnlineUsers.isOnline(username))
-            OnlineUsers.getByUsername(username).notify.newFriend(user.getUsername());
+            OnlineUsers.getByUsername(username).notifyNewFriend(user.getUsername());
         return buildSuccessReply();
     }
 

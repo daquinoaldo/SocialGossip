@@ -2,10 +2,11 @@ package base;
 
 import java.net.Socket;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class OnlineUsers {
     private static final Database db = new Database();
-    private static final HashMap<String, User> users = new HashMap<>();
+    private static final ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
     
     public static boolean add(User user) {
         return users.putIfAbsent(user.getUsername(), user) == null;
@@ -27,8 +28,8 @@ public class OnlineUsers {
     
     public static User getBySocket(Socket s) {
         for (User user : users.values())
-            if (user.getPrimarySocket().equals(s) || user.getMessageSocket().equals(s))
-                return user;
+            if (user.getPrimarySocket() == s || user.getMessageSocket() == s) return user;
+        
         return null;
     }
     

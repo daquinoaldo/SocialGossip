@@ -37,7 +37,10 @@ public class Manager {
     public static void registerCallback() {
         try {
             ClientCallbackInterface stub = (ClientCallbackInterface) UnicastRemoteObject.exportObject(callback, 0);
-            server.registerCallback(State.username(), stub);
+            boolean success = server.registerCallback(State.username(), stub);
+            if (!success) {
+                throw new RemoteException("User offline for the server");
+            }
         }
         catch (RemoteException e) {
             System.err.println("Fatal error: can't register callback in RMI server");

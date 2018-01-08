@@ -19,7 +19,7 @@ public class RegisterForm extends JPanel {
     private final JTextField usernameInput = InputFactory.getTextInput("username", e -> submit());
     private final JTextField passwordInput = InputFactory.getPasswordInput("password", e -> submit());
     private final JTextField passwordInput2 = InputFactory.getPasswordInput("password", e -> submit());
-    private final JComboBox languageInput = InputFactory.getComboBox(languageList, e -> submit());
+    private final JComboBox languageInput = InputFactory.getComboBox(languageList, null);
     
     public RegisterForm(TriConsumer<String, String, String> registerCallback) {
         this.registerCallback = registerCallback;
@@ -50,9 +50,9 @@ public class RegisterForm extends JPanel {
         String username = usernameInput.getText();
         String password = passwordInput.getText();
         String password2 = passwordInput2.getText();
-        String language = languageInput.getActionCommand();
+        String language = (String) languageInput.getSelectedItem();
         
-        if (isValidUsername(username) && isValidPassword(password) && password.equals(password2)) {
+        if (isValidUsername(username) && isValidPassword(password) && password.equals(password2) && language.length() == 2) {
             registerCallback.accept(username, password, language);
         }
         else {
