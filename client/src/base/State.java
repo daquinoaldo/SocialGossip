@@ -12,6 +12,10 @@ public class State {
         private String username;
         private boolean online = false;
         public Friend(String username) { this.username = username; }
+        public Friend(String username, boolean online) {
+            this(username);
+            this.online = online;
+        }
         public void setStatus(boolean online) { this.online = online; }
         public String getUsername() { return username; }
         public boolean isOnline() { return online; }
