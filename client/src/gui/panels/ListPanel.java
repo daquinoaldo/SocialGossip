@@ -8,20 +8,32 @@ import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import base.State.Friend;
 
 class ListPanel extends JPanel {
 
     private static final String DEFAULT_LABEL = "Double-click to start chat with...";
 
-    ListPanel(List<String> chats) {
-        this(DEFAULT_LABEL, chats);
+    private static String[] toArray(Collection<Friend> friends, boolean onlineOnly) {
+        List<String> online = new ArrayList<>();
+        List<String> offline = new ArrayList<>();
+        for (Friend friend : friends) {
+            if(friend.isOnline) online.add(friend.username);
+            else offline.add(friend.username);
+        }
+        if (!onlineOnly) online.addAll(offline);
+        return online.toArray(new String[online.size()]);
     }
-    ListPanel(String[] chats) {
-        this(DEFAULT_LABEL, chats);
+
+    ListPanel(Collection<Friend> friends, boolean onlineOnly) {
+        this(DEFAULT_LABEL, friends, onlineOnly);
     }
-    ListPanel(String labelText, List<String> chats) {
-        this(labelText, chats.toArray(new String[chats.size()]));
+    ListPanel(String labelText, Collection<Friend> friends, boolean onlineOnly) {
+        this(labelText, toArray(friends, onlineOnly));
     }
     ListPanel(String labelText, String[] chats) {
         JList<String> jlist = new JList<>(chats);
@@ -43,7 +55,7 @@ class ListPanel extends JPanel {
                     if (index >= 0) {
                         String username = jlist.getModel().getElementAt(index).toString();
 
-                        JPanel chatPanel = new ChatPanel(username);
+                        JPanel chatPanel = new ChatPanel();
                         Utils.createWindow(username, chatPanel, Dimensions.CHAT_PANE);
                     }
                 }
@@ -63,7 +75,7 @@ class ListPanel extends JPanel {
         //JPanel panel = new ListPanel(chats);
         for(String chat : chats)
             State.addFriend(chat);
-        JPanel panel = new ListPanel(State.friends());
+        JPanel panel = new ListPanel(State.friends(), true);
         Utils.createWindow("Chat list", panel, Dimensions.LIST_PANE);
     }
 }
