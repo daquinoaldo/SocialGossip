@@ -109,7 +109,7 @@ class InputFactory {
             }
         
             public Object getItem() {
-                return "[" + this.selectedItem.toString() + "]";
+                return this.selectedItem.toString();
             }
         
             public void setItem(Object item) {
