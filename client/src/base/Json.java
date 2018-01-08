@@ -11,24 +11,48 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Json {
-    /* Json parsers to objects */
-    public static State.Message parseMessage(String jsonString) {
-        String username = null;
-        String text = null;
+    public static void parseMessageRequest(String jsonString) {
         
         try {
             JSONParser parser = new JSONParser();
             JSONObject response = (JSONObject) parser.parse(jsonString);
-            username = (String) response.get("username");
-            text = (String) response.get("text");
+            JSONObject payload = (JSONObject) response.get("params");
+            
+            String endpoint = (String) response.get("endpoint");
+            String status = (String) response.get("status");
+            
+            if (endpoint.equals(Endpoints.LOGIN) && !status.equals("ok")) {
+                // Second login request failed
+                System.err.println("Fatal error: Login failed on message connection but succeded on primary connection");
+                System.exit(1);
+            }
+            else if (endpoint.equals(Endpoints.MSG2FRIEND)) {
+                // Got a message from friend
+                String username = (String) payload.get("username");
+                String text = (String) payload.get("text");
+                State.Message msg = new State.Message(username, text);
+                // TODO: update State    - State.newPrivateMessage(username, msg)
+            }
+            else if (endpoint.equals(Endpoints.FILE2FRIEND)){
+                // Got a request to send a file to me
+                String fromUsername = (String) payload.get("username");
+                // if (!State.isFriend(fromUsername)) return;
+                
+                // aprire dialog di conferma
+                // aprire dialog di selezione destinazione
+                
+                // int port = Connection.receiveFile();
+                JSONObject reply = new JSONObject();
+                reply.put("status", "ok");
+                // reply.put("port", port);
+                Connection.sendMsgRequest(reply.toJSONString());
+            }
         }
         catch (ParseException e) {
             System.err.println("Invalid JSON message: ");
             System.err.println(jsonString);
             e.printStackTrace();
         }
-        
-        return new State.Message(username, text);
     }
     
     /* Request builders */
@@ -45,9 +69,7 @@ public class Json {
         if (reply == null)
             return;
         
-        JSONObject msgReply = makeMsgRequest(Endpoints.LOGIN, parameters);
-        if (msgReply == null)
-            return;
+        makeMsgRequest(Endpoints.LOGIN, parameters);
         
         State.setLoggedIn(true);
         State.setUsername(username);
@@ -144,8 +166,8 @@ public class Json {
         return makeGenericRequest(endpoint, keyvalues, false);
     }
 
-    private static JSONObject makeMsgRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
-        return makeGenericRequest(endpoint, keyvalues, true);
+    private static void makeMsgRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
+        makeGenericRequest(endpoint, keyvalues, true);
     }
 
     private static JSONObject makeGenericRequest(String endpoint, Map keyvalues, boolean isMsgRequest) throws IllegalArgumentException {
@@ -162,10 +184,14 @@ public class Json {
 
         // send request to the server using the right socket, and wait for a reply
         if(Utils.isDebug) System.out.println("Json.makeRequest: sending request...");
-        String responseString =
-                isMsgRequest ?
-                        Connection.sendMsgRequest(request.toJSONString()) :
-                        Connection.sendRequest(request.toJSONString());
+        
+        if (isMsgRequest) {
+            Connection.sendMsgRequest(request.toJSONString());
+            return null;
+        }
+        
+        String responseString = Connection.sendRequest(request.toJSONString());
+        
         if(Utils.isDebug) System.out.println("Json.makeRequest: got response");
 
         if (responseString == null) {

@@ -45,7 +45,8 @@ class Multicast {
                 String chatname = addressToChatname.get(from);
                 String data = new String(packet.getData());
                 if (chatname != null) {
-                    State.newMessage(chatname, Json.parseMessage(data));
+                    //TODO:
+                    // Json.parseChatMessage(chatname, data);
                 }
                 else {
                     System.err.println("Got message from unknown address:");

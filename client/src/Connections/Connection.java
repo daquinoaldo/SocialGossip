@@ -1,6 +1,7 @@
 package Connections;
 
 import base.Configuration;
+import base.Json;
 import gui.Utils;
 
 import java.io.*;
@@ -31,6 +32,20 @@ public class Connection {
             e.printStackTrace();
             System.exit(1);
         }
+        
+        Thread t = new Thread(() -> {
+            while (true) {
+                try {
+                    String msgRequest = msgReader.readLine();
+                    Json.parseMessageRequest(msgRequest);
+                }
+                catch (IOException e) {
+                    System.err.println("Error while reading message socket");
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
     }
     
     /**
@@ -73,4 +88,7 @@ public class Connection {
     
         return null;
     }
+    
+    // TODO:  Peer to peer file exchange
+    public static void sendFile() {}
 }
