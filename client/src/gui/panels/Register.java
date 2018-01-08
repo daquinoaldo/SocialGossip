@@ -2,7 +2,7 @@ package gui.panels;
 
 import base.Json;
 import constants.Colors;
-import gui.Util;
+import gui.Utils;
 import gui.components.Logo;
 import gui.components.RegisterForm;
 
@@ -46,7 +46,7 @@ class Register extends JPanel {
     }
     
     private void registerCallback(String username, String password, String language) {
-        Util.enableComponents(this, false);
+        Utils.enableComponents(this, false);
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     
         // make register request to server
@@ -57,7 +57,7 @@ class Register extends JPanel {
             onUserRegistered.accept(username, password);
         }
         else {
-            Util.enableComponents(this, true);
+            Utils.enableComponents(this, true);
             this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }

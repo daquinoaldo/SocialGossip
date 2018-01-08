@@ -1,7 +1,7 @@
 package gui.components;
 
 import constants.Colors;
-import gui.Util;
+import gui.Utils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -43,7 +43,7 @@ public class LoginForm extends JPanel {
         if (isValidUsername(username) && password.length() > 0)
             this.loginCallback.accept(username, password);
         else {
-            Util.showErrorDialog("Controllare i valori dei campi inseriti.");
+            Utils.showErrorDialog("Controllare i valori dei campi inseriti.");
             
         }
     }

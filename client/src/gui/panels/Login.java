@@ -2,7 +2,7 @@ package gui.panels;
 
 import base.Json;
 import constants.Colors;
-import gui.Util;
+import gui.Utils;
 import gui.components.LoginForm;
 import gui.components.Logo;
 
@@ -39,7 +39,7 @@ public class Login extends JPanel {
     private void registerCallback() {
         // create a register window and set a callback for a succesful registration
         JPanel registerPanel = new Register(this::loginCallback);
-        this.registerWindow = Util.createFixedWindow("Registrazione", registerPanel, false, false);
+        this.registerWindow = Utils.createFixedWindow("Registrazione", registerPanel, false, false);
         
         // set listener for window closing (without registration)
         JPanel self = this;
@@ -47,13 +47,13 @@ public class Login extends JPanel {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 // re-enable form elements
-                Util.enableComponents(loginFormPanel, true);
+                Utils.enableComponents(loginFormPanel, true);
                 self.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
         });
         
         // disable form elements
-        Util.enableComponents(loginFormPanel, false);
+        Utils.enableComponents(loginFormPanel, false);
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     }
 }

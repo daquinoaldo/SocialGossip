@@ -2,13 +2,12 @@ package gui.panels;
 
 import base.State;
 import constants.Dimensions;
-import gui.Util;
+import gui.Utils;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
 import java.util.List;
 
 class ListPanel extends JPanel {
@@ -45,7 +44,7 @@ class ListPanel extends JPanel {
                         String username = jlist.getModel().getElementAt(index).toString();
 
                         JPanel chatPanel = new ChatPanel(username);
-                        Util.createWindow(username, chatPanel, Dimensions.CHAT_PANE);
+                        Utils.createWindow(username, chatPanel, Dimensions.CHAT_PANE);
                     }
                 }
             }
@@ -65,6 +64,6 @@ class ListPanel extends JPanel {
         for(String chat : chats)
             State.addFriend(chat);
         JPanel panel = new ListPanel(State.friends());
-        Util.createWindow("Chat list", panel, Dimensions.LIST_PANE);
+        Utils.createWindow("Chat list", panel, Dimensions.LIST_PANE);
     }
 }

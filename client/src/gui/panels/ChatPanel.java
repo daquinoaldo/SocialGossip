@@ -1,7 +1,7 @@
 package gui.panels;
 
 import base.State;
-import gui.Util;
+import gui.Utils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,6 +52,6 @@ class ChatPanel extends JPanel {
     
         JPanel panel = new ChatPanel("Serie A");
         
-        Util.createWindow("Serie A", panel, new Dimension(600, 400));
+        Utils.createWindow("Serie A", panel, new Dimension(600, 400));
     }
 }

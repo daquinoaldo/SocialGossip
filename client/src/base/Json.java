@@ -1,7 +1,7 @@
 package base;
 
 import Connections.Connection;
-import gui.Util;
+import gui.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -159,7 +159,7 @@ public class Json {
         String responseString = Connection.sendRequest(request.toJSONString());
         
         if (responseString == null) {
-            Util.showErrorDialog("Impossibile comunicare con il server. Controllare la connessione a internet e riprovare.");
+            Utils.showErrorDialog("Impossibile comunicare con il server. Controllare la connessione a internet e riprovare.");
             return null;
         }
     
@@ -172,12 +172,12 @@ public class Json {
                 return response;
             else {
                 String msg = (String) response.get("message");
-                Util.showErrorDialog(msg != null && msg.length() > 0 ? msg : "Errore sconosciuto.");
+                Utils.showErrorDialog(msg != null && msg.length() > 0 ? msg : "Errore sconosciuto.");
                 return null;
             }
         }
         catch (ParseException e) {
-            Util.showErrorDialog("Invalid JSON response from server");
+            Utils.showErrorDialog("Invalid JSON response from server");
             System.err.println("Invalid JSON response from server: \n" + responseString);
             e.printStackTrace();
         }

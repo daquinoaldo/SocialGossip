@@ -2,7 +2,7 @@ package gui.components;
 
 import base.TriConsumer;
 import constants.Colors;
-import gui.Util;
+import gui.Utils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -56,7 +56,7 @@ public class RegisterForm extends JPanel {
             registerCallback.accept(username, password, language);
         }
         else {
-            Util.showErrorDialog("I dati inseriti non sono corrretti.");
+            Utils.showErrorDialog("I dati inseriti non sono corrretti.");
         }
     }
 }

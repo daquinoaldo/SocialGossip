@@ -5,7 +5,7 @@ import constants.Icons;
 import javax.swing.*;
 import java.awt.*;
 
-public class Util {
+public class Utils {
     public static void showErrorDialog(String msg) {
         JOptionPane.showMessageDialog(null, msg,"Attenzione!", JOptionPane.WARNING_MESSAGE);
     }
