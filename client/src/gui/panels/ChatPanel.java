@@ -1,13 +1,15 @@
 package gui.panels;
 
 import base.State;
-import gui.Utils;
+import base.State.Message;
 
 import javax.swing.*;
 import java.awt.*;
-import java.net.InetAddress;
+import java.awt.event.ActionEvent;
+
 
 public class ChatPanel extends JPanel {
+
     private final JTextArea chatHistory;
     private final JTextField msgField;
     
@@ -20,10 +22,10 @@ public class ChatPanel extends JPanel {
     
         msgField = new JTextField(30);
         msgField.requestFocusInWindow();
-        JButton sndBtn = new JButton("Send");
+        JButton sendButton = new JButton("Send");
         
         southPanel.add(msgField);
-        southPanel.add(sndBtn);
+        southPanel.add(sendButton);
         
         // ChatPanel messages
         chatHistory = new JTextArea();
@@ -35,21 +37,25 @@ public class ChatPanel extends JPanel {
     
         this.add(scrollableChatMessages, BorderLayout.CENTER);
         this.add(southPanel, BorderLayout.SOUTH);
+
+        // Send listeners
+        Action action = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!msgField.getText().equals("")) {
+                    Message msg = new Message(State.username(), msgField.getText());
+                    // TODO: send(msg)
+                    chatHistory.append(msg.toString() + "\n");
+                    msgField.setText("");
+                }
+            }
+        };
+        msgField.addActionListener(action);
+        sendButton.addActionListener(action);
     }
     
-    private void newMessage(State.Message msg) {
+    private void newMessage(Message msg) {
         chatHistory.append(msg.toString() + "\n");
     }
-    
-    // Test per la schermata di chat
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); }
-            catch (Exception e) { e.printStackTrace(); }
-        });
-    
-        JPanel panel = new ChatPanel();
-        
-        Utils.createWindow("Serie A", panel, new Dimension(600, 400));
-    }
+
 }
