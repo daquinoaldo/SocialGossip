@@ -33,7 +33,7 @@ public class Json {
     
     /* Request builders */
     @SuppressWarnings("unchecked")
-    public static boolean login(String username, String password) {
+    public static void login(String username, String password) {
         if (username == null || password == null || username.length() == 0 || password.length() == 0)
             throw new IllegalArgumentException("Username and password must be a non-empty string.");
         if(Utils.isDebug) System.out.println("Json.login()");
@@ -43,15 +43,14 @@ public class Json {
         
         JSONObject reply = makeRequest(Endpoints.LOGIN, parameters);
         if (reply == null)
-            return false;
+            return;
         
         JSONObject msgReply = makeMsgRequest(Endpoints.LOGIN, parameters);
-        if (msgReply != null)
-            return false;
+        if (msgReply == null)
+            return;
         
         State.setLoggedIn(true);
         State.setUsername(username);
-        return true;
     }
     
     public static boolean register(String username, String password, String language) {
