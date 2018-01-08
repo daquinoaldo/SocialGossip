@@ -1,9 +1,10 @@
 package base;
 
 import Connections.Connection;
+import constants.Dimensions;
 import gui.Utils;
+import gui.panels.ListPanelFactory;
 import gui.panels.LoginPanel;
-import gui.panels.MainPanel;
 
 import javax.swing.*;
 
@@ -21,9 +22,11 @@ class MainClient {
         State.addLoginListener(isLoggedIn -> {
             if (isLoggedIn) {
                 loginWindow.dispose();
-                
-                MainPanel mainPanel = new MainPanel();
-                mainWindow = Utils.createFixedWindow("Social Gossip", mainPanel, true, false);
+
+                JPanel friendsPane = ListPanelFactory.newFriendsPane(State.friends());
+                Utils.createWindow("Friends", friendsPane, Dimensions.LIST_PANE, true);
+                JPanel roomsPane = ListPanelFactory.newRoomsPane(State.rooms());
+                Utils.createWindow("Friends", roomsPane, Dimensions.LIST_PANE, true);
             }
         });
         

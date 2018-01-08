@@ -1,6 +1,5 @@
 package gui.panels;
 
-import base.State;
 import base.State.Friend;
 import base.State.Room;
 import constants.Dimensions;
@@ -12,9 +11,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-class ListPanelFactory {
+public class ListPanelFactory {
 
-    static JPanel newFriendPane(Collection<Friend> friends) {
+    public static JPanel newFriendsPane(Collection<Friend> friends) {
         List<String> online = new ArrayList<>();
         List<String> offline = new ArrayList<>();
         for (Friend friend : friends) {
@@ -22,7 +21,7 @@ class ListPanelFactory {
             else offline.add(friend.getUsername());
         }
         online.sort(String::compareToIgnoreCase);
-        online.sort(String::compareToIgnoreCase);
+        offline.sort(String::compareToIgnoreCase);
 
         return new ListPanel(
                 "Online: double-click to open chat",
@@ -32,7 +31,7 @@ class ListPanelFactory {
         );
     }
 
-    static JPanel newChatPane(Collection<Room> rooms) {
+    public static JPanel newRoomsPane(Collection<Room> rooms) {
         List<String> subscriptions = new ArrayList<>();
         List<String> others = new ArrayList<>();
         for (Room room : rooms) {
@@ -40,7 +39,7 @@ class ListPanelFactory {
             else others.add(room.getName());
         }
         subscriptions.sort(String::compareToIgnoreCase);
-        subscriptions.sort(String::compareToIgnoreCase);
+        others.sort(String::compareToIgnoreCase);
 
         return new ListPanel(
                 "My rooms: double-click to open chat",
@@ -98,7 +97,7 @@ class ListPanelFactory {
             try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); }
             catch (Exception e) { e.printStackTrace(); }
         });
-        JPanel panel = ListPanelFactory.newFriendPane(fakeFriends());
+        JPanel panel = ListPanelFactory.newFriendsPane(fakeFriends());
         Utils.createWindow("User list", panel, Dimensions.LIST_PANE);
     }
 }
