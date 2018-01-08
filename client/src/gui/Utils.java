@@ -6,6 +6,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Utils {
+
+    public static final boolean isDebug = true;
+
     public static void showErrorDialog(String msg) {
         JOptionPane.showMessageDialog(null, msg,"Attenzione!", JOptionPane.WARNING_MESSAGE);
     }

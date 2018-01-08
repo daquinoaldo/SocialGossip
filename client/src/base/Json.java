@@ -2,6 +2,7 @@ package base;
 
 import Connections.Connection;
 import gui.Utils;
+import javafx.beans.binding.IntegerBinding;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -34,26 +35,31 @@ public class Json {
     /* Request builders */
     //TODO: ma al login è necessario comunicare amici e chat? Non sarebbe più oppurtuno che il client usasse le apposite funzioni?
     @SuppressWarnings("unchecked")
-    public static void login(String username, String password) {
+    public static boolean login(String username, String password) {
         if (username == null || password == null || username.length() == 0 || password.length() == 0)
             throw new IllegalArgumentException("Username and password must be a non-empty string.");
-        
+        if(Utils.isDebug) System.out.println("Json.login()");
         Map<String, String> parameters = new HashMap<>();
         parameters.put("username", username);
         parameters.put("password", password);
         
-        JSONObject reply = makeRequest(Endpoints.LOGIN, parameters);
-        if (reply != null) {
-            State.setLoggedIn(true);
-            State.setUsername(username);
-            JSONArray jsonFriends = (JSONArray) reply.get("friends");
-            //TODO: ricontrollare, c'è da segnalare anche lo stato (online/offline)
-            if (jsonFriends != null)
-                jsonFriends.forEach(friend -> {
-                    String friendUsername = (String) ((JSONObject) friend).get("username");
-                    State.addFriend(friendUsername);
-                });
-        }
+        //TODO: ERRORE IN MAKE REQUEST, SE L'USERNAME E LA PASSWORD SONO GIUSTI NON RITORNA
+        // JSONObject reply = makeRequest(Endpoints.LOGIN, parameters);
+        JSONObject reply = new JSONObject();
+        reply.put("code", 200);
+        reply.put("friends", null);
+        if(Utils.isDebug) System.out.println("Json.login() got reply");
+        if (reply == null || Integer.parseInt((String)reply.get("code")) != 200) return false;
+        State.setLoggedIn(true);
+        State.setUsername(username);
+        JSONArray jsonFriends = (JSONArray) reply.get("friends");
+        //TODO: ricontrollare, c'è da segnalare anche lo stato (online/offline)
+        if (jsonFriends != null)
+            jsonFriends.forEach(friend -> {
+                String friendUsername = (String) ((JSONObject) friend).get("username");
+                State.addFriend(friendUsername);
+            });
+        return true;
     }
     
     public static boolean register(String username, String password, String language) {
@@ -153,23 +159,25 @@ public class Json {
         JSONObject request = new JSONObject();
         request.put("endpoint", endpoint);
         request.put("params", params);
-        
-        
+
         // send request to the server and wait for a reply
+        if(Utils.isDebug) System.out.println("Json.makeRequest: sending request...");
         String responseString = Connection.sendRequest(request.toJSONString());
-        
+        if(Utils.isDebug) System.out.println("Json.makeRequest: got response");
+
         if (responseString == null) {
             Utils.showErrorDialog("Impossibile comunicare con il server. Controllare la connessione a internet e riprovare.");
             return null;
         }
-    
-    
+
         try {
             JSONParser parser = new JSONParser();
             JSONObject response = (JSONObject) parser.parse(responseString);
-            
-            if (isReplyOk(response))
+
+            if (isReplyOk(response)) {
+                if(Utils.isDebug) System.out.println("Json.makeRequest: reply ok!");
                 return response;
+            }
             else {
                 String msg = (String) response.get("message");
                 Utils.showErrorDialog(msg != null && msg.length() > 0 ? msg : "Errore sconosciuto.");

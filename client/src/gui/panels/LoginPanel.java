@@ -9,12 +9,12 @@ import gui.components.Logo;
 import javax.swing.*;
 import java.awt.*;
 
-public class Login extends JPanel {
+public class LoginPanel extends JPanel {
     private static final Dimension padding = new Dimension(65, 35);
     private final JPanel loginFormPanel;
     private JFrame registerWindow = null;
     
-    public Login() {
+    public LoginPanel() {
         // Init components
         JPanel logoPanel = new Logo(); // icon and title
         loginFormPanel = new LoginForm(this::loginCallback, this::registerCallback); // form, submit and register buttons
@@ -28,12 +28,14 @@ public class Login extends JPanel {
     }
     
     private void loginCallback(String username, String password) {
+        if(Utils.isDebug) System.out.println("LOGIN CALLBACK");
         if (this.registerWindow != null) {
             // if this method was called after a registration, close the registration form window
             this.registerWindow.dispose();
         }
-    
-        Json.login(username, password);
+        if (!Json.login(username, password))
+            System.err.println("Can't log in with username "+username);
+        if(Utils.isDebug) System.out.println("Logged in as "+username);
     }
     
     private void registerCallback() {

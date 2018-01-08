@@ -1,6 +1,7 @@
 package Connections;
 
 import base.Configuration;
+import gui.Utils;
 
 import java.io.*;
 import java.net.Socket;
@@ -60,8 +61,10 @@ public class Connection {
             writer.write(request);
             writer.newLine();
             writer.flush();
-        
-            return reader.readLine();
+            if(Utils.isDebug) System.out.println("Connection.send: sent!");
+            String toReturn = reader.readLine();
+            if(Utils.isDebug) System.out.println("Connection.send: received!");
+            return toReturn;
         }
         catch (IOException e) {
             System.err.println("Error occured while comunicating with the server.");

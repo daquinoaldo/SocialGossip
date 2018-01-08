@@ -2,7 +2,7 @@ package base;
 
 import Connections.Connection;
 import gui.Utils;
-import gui.panels.Login;
+import gui.panels.LoginPanel;
 import gui.panels.MainPanel;
 
 import javax.swing.*;
@@ -15,7 +15,7 @@ class MainClient {
         Connection.init();
         
         // Show login window
-        JPanel loginPanel = new Login();
+        JPanel loginPanel = new LoginPanel();
         JFrame loginWindow = Utils.createFixedWindow("Social Gossip", loginPanel, true, false);
         
         State.addLoginListener(isLoggedIn -> {
