@@ -10,23 +10,21 @@ import java.util.HashMap;
 import java.util.function.BiFunction;
 
 public class RequestsHandler {
-    private static final HashMap<String, BiFunction<User, JSONObject, JSONObject>> endpoints = new HashMap<>();
-    
-    /* Register endpoint methods to the endpoint string */
-    static {
-        endpoints.put(LOGIN, EndpointsHandler::login);
-        endpoints.put(REGISTER, EndpointsHandler::register);
-        endpoints.put(LOOKUP, EndpointsHandler::lookup);
-        endpoints.put(FRIENDSHIP, EndpointsHandler::friendship);
-        endpoints.put(LIST_FRIEND, EndpointsHandler::listFriend);
-        endpoints.put(CREATE_ROOM, EndpointsHandler::createRoom);
-        endpoints.put(ADD_ME, EndpointsHandler::addMe);
-        endpoints.put(CHAT_LIST, EndpointsHandler::chatList);
-        endpoints.put(CLOSE_ROOM, EndpointsHandler::closeRoom);
-        endpoints.put(FILE2FRIEND, EndpointsHandler::file2friend);
-        endpoints.put(MSG2FRIEND, EndpointsHandler::msg2friend);
-        endpoints.put(CHATROOM_MESSAGE, EndpointsHandler::chatroomMessage);
-    }
+    private static final HashMap<String, BiFunction<User, JSONObject, JSONObject>> endpoints = new HashMap<String, BiFunction<User, JSONObject, JSONObject>>(){{
+        /* Register endpoint methods to the endpoint string */
+        put(LOGIN,              EndpointsHandler::login);
+        put(REGISTER,           EndpointsHandler::register);
+        put(LOOKUP,             EndpointsHandler::lookup);
+        put(FRIENDSHIP,         EndpointsHandler::friendship);
+        put(LIST_FRIEND,        EndpointsHandler::listFriend);
+        put(CREATE_ROOM,        EndpointsHandler::createRoom);
+        put(ADD_ME,             EndpointsHandler::addMe);
+        put(CHAT_LIST,          EndpointsHandler::chatList);
+        put(CLOSE_ROOM,         EndpointsHandler::closeRoom);
+        put(FILE2FRIEND,        EndpointsHandler::file2friend);
+        put(MSG2FRIEND,         EndpointsHandler::msg2friend);
+        put(CHATROOM_MESSAGE,   EndpointsHandler::chatroomMessage);
+    }};
     
     /* DISPATCHER */
     /**
