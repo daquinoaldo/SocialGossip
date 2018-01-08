@@ -24,9 +24,9 @@ public class ListPanelFactory {
         offline.sort(String::compareToIgnoreCase);
 
         return new ListPanel(
-                "Online: double-click to open chat",
+                "Online friends: double-click to open chat",
                 online.toArray(new String[online.size()]),
-                "Offline",
+                "Offline friends",
                 offline.toArray(new String[offline.size()])
         );
     }
@@ -47,57 +47,5 @@ public class ListPanelFactory {
                 "Other rooms",
                 others.toArray(new String[others.size()])
         );
-    }
-
-
-    // Test per la schermata di chat
-    private static Collection<Friend> fakeFriends() {
-        Collection<Friend> friends = new ArrayList<>();
-        friends.add(new Friend("friend1", true));
-        friends.add(new Friend("friend2", false));
-        friends.add(new Friend("friend3", true));
-        friends.add(new Friend("friend4", true));
-        friends.add(new Friend("friend5", false));
-        friends.add(new Friend("friend6", false));
-        friends.add(new Friend("friend7", true));
-
-        friends.add(new Friend("friend1", true));
-        friends.add(new Friend("friend2", false));
-        friends.add(new Friend("friend3", true));
-        friends.add(new Friend("friend4", true));
-        friends.add(new Friend("friend5", false));
-        friends.add(new Friend("friend6", false));
-        friends.add(new Friend("friend7", true));
-        friends.add(new Friend("friend1", true));
-        friends.add(new Friend("friend2", false));
-        friends.add(new Friend("friend3", true));
-        friends.add(new Friend("friend4", true));
-        friends.add(new Friend("friend5", false));
-        friends.add(new Friend("friend6", false));
-        friends.add(new Friend("friend7", true));
-        friends.add(new Friend("friend1", true));
-        friends.add(new Friend("friend2", false));
-        friends.add(new Friend("friend3", true));
-        friends.add(new Friend("friend4", true));
-        friends.add(new Friend("friend5", false));
-        friends.add(new Friend("friend6", false));
-        friends.add(new Friend("friend7", true));
-        friends.add(new Friend("friend1", true));
-        friends.add(new Friend("friend2", false));
-        friends.add(new Friend("friend3", true));
-        friends.add(new Friend("friend4", true));
-        friends.add(new Friend("friend5", false));
-        friends.add(new Friend("friend6", false));
-        friends.add(new Friend("friend7", true));
-        return friends;
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); }
-            catch (Exception e) { e.printStackTrace(); }
-        });
-        JPanel panel = ListPanelFactory.newFriendsPane(fakeFriends());
-        Utils.createWindow("User list", panel, Dimensions.LIST_PANE);
     }
 }

@@ -20,7 +20,7 @@ public class Json {
             
             String endpoint = (String) response.get("endpoint");
             String status = (String) response.get("status");
-            
+
             if (endpoint.equals(Endpoints.LOGIN) && !status.equals("ok")) {
                 // Second login request failed
                 System.err.println("Fatal error: Login failed on message connection but succeded on primary connection");
