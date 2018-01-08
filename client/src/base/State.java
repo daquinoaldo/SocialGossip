@@ -9,10 +9,12 @@ import java.util.function.Consumer;
 public class State {
     // Sub-classes
     public static class Friend {
-        public String username;
-        public boolean isOnline = false;
+        private String username;
+        private boolean online = false;
         public Friend(String username) { this.username = username; }
-        public void setStatus(boolean isOnline) { this.isOnline = isOnline; }
+        public void setStatus(boolean online) { this.online = online; }
+        public String getUsername() { return username; }
+        public boolean isOnline() { return online; }
     }
     
     public static class Message {

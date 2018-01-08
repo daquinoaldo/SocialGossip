@@ -22,8 +22,8 @@ class ListPanel extends JPanel {
         List<String> online = new ArrayList<>();
         List<String> offline = new ArrayList<>();
         for (Friend friend : friends) {
-            if(friend.isOnline) online.add(friend.username);
-            else offline.add(friend.username);
+            if(friend.isOnline()) online.add(friend.getUsername());
+            else offline.add(friend.getUsername());
         }
         if (!onlineOnly) online.addAll(offline);
         return online.toArray(new String[online.size()]);
