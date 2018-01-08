@@ -7,11 +7,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.net.InetAddress;
 
-class ChatPanel extends JPanel {
+public class ChatPanel extends JPanel {
     private final JTextArea chatHistory;
     private final JTextField msgField;
     
-    ChatPanel() {
+    public ChatPanel() {
         setLayout(new BorderLayout());
         
         // Send a new message input and button

@@ -20,6 +20,19 @@ public class State {
         public String getUsername() { return username; }
         public boolean isOnline() { return online; }
     }
+
+    public static class Room {
+        private String name;
+        private boolean subscribed = false;
+        public Room(String name) { this.name = name; }
+        public Room(String name, boolean subscribed) {
+            this(name);
+            this.subscribed = subscribed;
+        }
+        public void setStatus(boolean subscribed) { this.subscribed = subscribed; }
+        public String getName() { return name; }
+        public boolean isSubscribed() { return subscribed; }
+    }
     
     public static class Message {
         final String sender;
@@ -32,7 +45,7 @@ public class State {
     private static boolean isLoggedIn = false;
     private static String username = null;
     private static final HashMap<String, Friend> friends = new HashMap<>();
-    private static final ArrayList<String> rooms = new ArrayList<>();
+    private static final ArrayList<Room> rooms = new ArrayList<>();
     
     // Callbacks
     private static final ArrayList<Consumer<Boolean>> loginCallbacks = new ArrayList<>();
@@ -45,7 +58,7 @@ public class State {
     public static boolean isIsLoggedIn() { return isLoggedIn; }
     public static String username() { return username; }
     public static Collection<Friend> friends() { return friends.values(); }
-    public static ArrayList<String> rooms() { return rooms; }
+    public static Collection<Room> rooms() { return rooms; }
     
     // State changes, will trigger a callback if any was set
     public static void setLoggedIn(boolean loggedIn) {
@@ -69,8 +82,8 @@ public class State {
         friendsListCallbacks.forEach(c -> c.accept(friends.values()));
     }
 
-    public static void addRoom(String newRoom) {
-        rooms.add(newRoom);
+    public static void addRoom(String roomName) {
+        rooms.add(new Room(roomName));
         //TODO: roomsCallbacks.forEach(c -> c.accept(rooms));
     }
     

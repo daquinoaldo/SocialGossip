@@ -23,6 +23,12 @@ public class Utils {
         window.setVisible(true);                                            // show it
         return window;
     }
+
+    public static JFrame createWindow(String title, JPanel panel, Dimension dimension, boolean exitOnClose) {
+        JFrame window = createWindow(title, panel, dimension);
+        if (exitOnClose) window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        return window;
+    }
     
     // crea una finestra centrata, non ridimensionabile, con il panel specificato
     public static JFrame createFixedWindow(String title, JPanel panel, boolean exitOnClose, boolean alwaysOnTop) {
