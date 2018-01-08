@@ -7,13 +7,13 @@ import constants.Dimensions;
 
 public class ListPanel extends JPanel {
 
-    public ListPanel(String text, String[] chats, MouseListener mouseListener) {
+    public ListPanel(String text, String[] elems, MouseListener mouseListener) {
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         this.setBorder(Dimensions.V_PADDING_BORDER);
 
         JLabel label = new JLabel(text);
 
-        JList<String> list = new JList<>(chats);
+        JList<String> list = new JList<>(elems);
         if (mouseListener != null) list.addMouseListener(mouseListener);
 
         JScrollPane panel = new JScrollPane(list);
