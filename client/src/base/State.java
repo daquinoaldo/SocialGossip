@@ -20,6 +20,19 @@ public class State {
         public String getUsername() { return username; }
         public boolean isOnline() { return online; }
     }
+
+    public static class Room {
+        private String name;
+        private boolean subscribed = false;
+        public Room(String name) { this.name = name; }
+        public Room(String name, boolean subscribed) {
+            this(name);
+            this.subscribed = subscribed;
+        }
+        public void setStatus(boolean subscribed) { this.subscribed = subscribed; }
+        public String getName() { return name; }
+        public boolean isSubscribed() { return subscribed; }
+    }
     
     public static class Message {
         final String sender;

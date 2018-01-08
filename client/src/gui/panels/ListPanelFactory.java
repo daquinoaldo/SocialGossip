@@ -1,6 +1,8 @@
 package gui.panels;
 
+import base.State;
 import base.State.Friend;
+import base.State.Room;
 import constants.Dimensions;
 import gui.Utils;
 
@@ -30,11 +32,11 @@ class ListPanelFactory {
         );
     }
 
-    /*static ListPanel newChatPane(Collection<Room> rooms) {
+    static JPanel newChatPane(Collection<Room> rooms) {
         List<String> subscriptions = new ArrayList<>();
         List<String> others = new ArrayList<>();
         for (Room room : rooms) {
-            if(room.subscribed()) subscriptions.add(room.getName());
+            if(room.isSubscribed()) subscriptions.add(room.getName());
             else others.add(room.getName());
         }
         subscriptions.sort(String::compareToIgnoreCase);
@@ -46,7 +48,7 @@ class ListPanelFactory {
                 "Other rooms",
                 others.toArray(new String[others.size()])
         );
-    }*/
+    }
 
 
     // Test per la schermata di chat
