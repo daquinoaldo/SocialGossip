@@ -7,11 +7,44 @@ import gui.Utils;
 
 import javax.swing.*;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class ListPanelFactory {
+
+    // Double click listener on online user or joined room start the chat
+    private static MouseListener startChatListener = new MouseAdapter() {
+        public void mouseClicked(MouseEvent mouseEvent) {
+            JList jlist = (JList) mouseEvent.getSource();
+            if (mouseEvent.getClickCount() == 2) {
+                int index = jlist.locationToIndex(mouseEvent.getPoint());
+                if (index >= 0) {
+                    String username = jlist.getModel().getElementAt(index).toString();
+
+                    JPanel chatPanel = new ChatPanel();
+                    Utils.createWindow(username, chatPanel, Dimensions.CHAT_PANE);
+                }
+            }
+        }
+    };
+
+    // Double click listener on online user or joined room start the chat
+    private static MouseListener addRoomListener = new MouseAdapter() {
+        public void mouseClicked(MouseEvent mouseEvent) {
+            JList jlist = (JList) mouseEvent.getSource();
+            if (mouseEvent.getClickCount() == 2) {
+                int index = jlist.locationToIndex(mouseEvent.getPoint());
+                if (index >= 0) {
+                    String room = jlist.getModel().getElementAt(index).toString();
+                    // TODO: add the room to my rooms
+                }
+            }
+        }
+    };
 
     public static JPanel newFriendsPane(Collection<Friend> friends) {
         List<String> online = new ArrayList<>();
@@ -23,12 +56,23 @@ public class ListPanelFactory {
         online.sort(String::compareToIgnoreCase);
         offline.sort(String::compareToIgnoreCase);
 
-        return new ListPanel(
+        ListPanel onlinePanel = new ListPanel(
                 "Online friends: double-click to open chat",
                 online.toArray(new String[online.size()]),
-                "Offline friends",
-                offline.toArray(new String[offline.size()])
+                startChatListener
         );
+
+        ListPanel offlinePanel = new ListPanel(
+                "Offline friends",
+                offline.toArray(new String[offline.size()]),
+                null
+        );
+
+        JPanel userPanel = new JPanel();
+        userPanel.setLayout(new BoxLayout(userPanel, BoxLayout.PAGE_AXIS));
+        userPanel.add(onlinePanel);
+        userPanel.add(offlinePanel);
+        return userPanel;
     }
 
     public static JPanel newRoomsPane(Collection<Room> rooms) {
@@ -41,11 +85,21 @@ public class ListPanelFactory {
         subscriptions.sort(String::compareToIgnoreCase);
         others.sort(String::compareToIgnoreCase);
 
-        return new ListPanel(
+        ListPanel subscriptionsPanel = new ListPanel(
                 "My rooms: double-click to open chat",
                 subscriptions.toArray(new String[subscriptions.size()]),
-                "Other rooms",
-                others.toArray(new String[others.size()])
+                startChatListener
         );
+
+        ListPanel othersPanel = new ListPanel(
+                "Other rooms",
+                others.toArray(new String[others.size()]),
+                addRoomListener
+        );
+        JPanel roomsPanel = new JPanel();
+        roomsPanel.setLayout(new BoxLayout(roomsPanel, BoxLayout.PAGE_AXIS));
+        roomsPanel.add(subscriptionsPanel);
+        roomsPanel.add(othersPanel);
+        return roomsPanel;
     }
 }
