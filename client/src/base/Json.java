@@ -42,10 +42,13 @@ public class Json {
         parameters.put("password", password);
         
         JSONObject reply = makeRequest(Endpoints.LOGIN, parameters);
-        JSONObject msgReply = makeMsgLoginRequest(Endpoints.LOGIN, parameters);
-
-        if(Utils.isDebug) System.out.println("Json.login() got reply");
-        if (reply == null || msgReply != null) return false;
+        if (reply == null)
+            return false;
+        
+        JSONObject msgReply = makeMsgRequest(Endpoints.LOGIN, parameters);
+        if (msgReply != null)
+            return false;
+        
         State.setLoggedIn(true);
         State.setUsername(username);
         return true;
@@ -139,18 +142,14 @@ public class Json {
      */
     @SuppressWarnings("unchecked")
     private static JSONObject makeRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
-        return makeGenericRequest(endpoint, keyvalues, false, true);
+        return makeGenericRequest(endpoint, keyvalues, false);
     }
 
     private static JSONObject makeMsgRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
-        return makeGenericRequest(endpoint, keyvalues, true, true);
-    }
-    
-    private static JSONObject makeMsgLoginRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
-        return makeGenericRequest(endpoint, keyvalues, true, false);
+        return makeGenericRequest(endpoint, keyvalues, true);
     }
 
-    private static JSONObject makeGenericRequest(String endpoint, Map keyvalues, boolean isMsgRequest, boolean showErrorDialogs) throws IllegalArgumentException {
+    private static JSONObject makeGenericRequest(String endpoint, Map keyvalues, boolean isMsgRequest) throws IllegalArgumentException {
         if (endpoint == null || endpoint.length() == 0)
             throw new IllegalArgumentException("Invalid endpoint specified.");
 
@@ -171,8 +170,7 @@ public class Json {
         if(Utils.isDebug) System.out.println("Json.makeRequest: got response");
 
         if (responseString == null) {
-            if (showErrorDialogs)
-                Utils.showErrorDialog("Impossibile comunicare con il server. Controllare la connessione a internet e riprovare.");
+            Utils.showErrorDialog("Impossibile comunicare con il server. Controllare la connessione a internet e riprovare.");
             return null;
         }
 
@@ -187,14 +185,12 @@ public class Json {
             }
             else {
                 String msg = (String) response.get("message");
-                if (showErrorDialogs)
-                    Utils.showErrorDialog(msg != null && msg.length() > 0 ? msg : "Errore sconosciuto.");
+                Utils.showErrorDialog(msg != null && msg.length() > 0 ? msg : "Errore sconosciuto.");
                 return null;
             }
         }
         catch (ParseException e) {
-            if (showErrorDialogs)
-                Utils.showErrorDialog("Invalid JSON response from server");
+            Utils.showErrorDialog("Invalid JSON response from server");
             System.err.println("Invalid JSON response from server: \n" + responseString);
             e.printStackTrace();
         }
