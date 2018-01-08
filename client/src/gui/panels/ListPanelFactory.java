@@ -7,6 +7,7 @@ import gui.Utils;
 
 import javax.swing.*;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -32,7 +33,7 @@ public class ListPanelFactory {
         }
     };
 
-    // Double click listener on online user or joined room start the chat
+    // Double click listener on other room to join
     private static MouseListener addRoomListener = new MouseAdapter() {
         public void mouseClicked(MouseEvent mouseEvent) {
             JList jlist = (JList) mouseEvent.getSource();
@@ -45,6 +46,15 @@ public class ListPanelFactory {
             }
         }
     };
+
+    private static JPanel preparePanel(JPanel firstPanel, JPanel secondPanel) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+        panel.setBorder(Dimensions.PADDING_BORDER);
+        panel.add(firstPanel);
+        panel.add(secondPanel);
+        return panel;
+    }
 
     public static JPanel newFriendsPane(Collection<Friend> friends) {
         List<String> online = new ArrayList<>();
@@ -68,11 +78,21 @@ public class ListPanelFactory {
                 null
         );
 
-        JPanel userPanel = new JPanel();
-        userPanel.setLayout(new BoxLayout(userPanel, BoxLayout.PAGE_AXIS));
-        userPanel.add(onlinePanel);
-        userPanel.add(offlinePanel);
-        return userPanel;
+        JPanel friendPanel = preparePanel(onlinePanel, offlinePanel);
+
+        Action action = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JPanel lookupPanel = new LookupPanel();
+                Utils.createFixedWindow("Search for friend", lookupPanel, false, false);
+            }
+        };
+
+        JButton addFriend = new JButton("Add friend");
+        addFriend.addActionListener(action);
+        friendPanel.add(addFriend);
+
+        return friendPanel;
     }
 
     public static JPanel newRoomsPane(Collection<Room> rooms) {
@@ -96,10 +116,7 @@ public class ListPanelFactory {
                 others.toArray(new String[others.size()]),
                 addRoomListener
         );
-        JPanel roomsPanel = new JPanel();
-        roomsPanel.setLayout(new BoxLayout(roomsPanel, BoxLayout.PAGE_AXIS));
-        roomsPanel.add(subscriptionsPanel);
-        roomsPanel.add(othersPanel);
-        return roomsPanel;
+
+        return preparePanel(subscriptionsPanel, othersPanel);
     }
 }

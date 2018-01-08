@@ -1,8 +1,6 @@
 package gui.panels;
 
 import javax.swing.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import constants.Dimensions;
@@ -11,7 +9,7 @@ public class ListPanel extends JPanel {
 
     public ListPanel(String text, String[] chats, MouseListener mouseListener) {
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        this.setBorder(Dimensions.PADDING_BORDER);
+        this.setBorder(Dimensions.V_PADDING_BORDER);
 
         JLabel label = new JLabel(text);
 
