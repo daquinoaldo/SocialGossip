@@ -1,63 +1,77 @@
 package gui.panels;
 
+import base.Json;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class LookupPanel extends JPanel {
+class LookupPanel extends JPanel {
 
-    public LookupPanel() {
-        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+    private JLabel resultLabel = new JLabel();
+    private JButton addFriendButton = new JButton("Add");
+    private String foundUser = null;
 
+    LookupPanel() {
+        // Search panel
         JPanel searchPanel = new JPanel();
         searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.X_AXIS));
 
         JTextField textField = new JTextField(30);
         textField.requestFocusInWindow();
 
-        JButton button = new JButton("Search");
+        JButton searchButton = new JButton("Search");
 
         searchPanel.add(textField);
-        searchPanel.add(button);
+        searchPanel.add(searchButton);
 
+        // Result panel
+        JPanel resultPanel = new JPanel();
+        resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.X_AXIS));
+
+        addFriendButton.setEnabled(false);
+
+        searchPanel.add(resultLabel);
+        searchPanel.add(addFriendButton);
+
+        // Add all to this
+        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.add(searchPanel);
+        this.add(resultPanel);
 
-        // Send listeners
-        Action action = new AbstractAction() {
+        // Search listeners
+        Action searchAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!textField.getText().equals("")) {
-                    // TODO: lookup(textField.getText())
-                    String[] results = new String[] {textField.getText()};   // TODO: Risultato di lookup
-                    ListPanel listPanel = new ListPanel("Double-click to add a friend", results, addFriendListener);
-                    LookupPanel thiz = (LookupPanel) textField.getParent().getParent();
-                    JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(thiz);
-                    thiz.add(listPanel);
-                    frame.pack();
-                    thiz.revalidate();
-                    thiz.repaint();
-                    // TODO: non è allineato a sinistra
+                    if(Json.lookup(textField.getText())) {
+                        foundUser = textField.getText();
+                        resultLabel.setText(foundUser+" found!");
+                        addFriendButton.setEnabled(true);
+                    } else {
+                        resultLabel.setText("User not found.");
+                        addFriendButton.setEnabled(false);
+                        foundUser = null;
+                    }
                     textField.setText("");
                 }
             }
         };
-        textField.addActionListener(action);
-        button.addActionListener(action);
-    }
+        textField.addActionListener(searchAction);
+        searchButton.addActionListener(searchAction);
 
-    // Double click listener on other room to join
-    private static MouseListener addFriendListener = new MouseAdapter() {
-        public void mouseClicked(MouseEvent mouseEvent) {
-            JList jlist = (JList) mouseEvent.getSource();
-            if (mouseEvent.getClickCount() == 2) {
-                int index = jlist.locationToIndex(mouseEvent.getPoint());
-                if (index >= 0) {
-                    String friendname = jlist.getModel().getElementAt(index).toString();
-                    // TODO: add the friend
+        // Add friend listeners
+        Action addAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (foundUser != null && Json.friendship(foundUser)) {
+                    //TODO: chiamare i listener, sul server è stato aggiunto!
                 }
             }
-        }
-    };
+        };
+        addFriendButton.addActionListener(addAction);
+    }
+
 }
