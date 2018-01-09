@@ -1,5 +1,6 @@
 package base;
 
+import org.json.simple.JSONObject;
 import remoteinterfaces.ClientCallbackInterface;
 
 import java.io.IOException;
@@ -67,13 +68,17 @@ public class User implements Comparable<User> {
         }
     }
     
-    public void sendMsgRequest(String request) {
+    public void sendMsgRequest(String endpoint, JSONObject params) {
+        JSONObject req = new JSONObject();
+        req.put("endpoint", endpoint);
+        req.put("params", params);
+    
         try {
-            Connections.Helpers.send(this.messageSocket, request);
+            Connections.Helpers.send(this.messageSocket, req.toJSONString());
         }
         catch (IOException e) {
             System.err.println("Error while sending message request to " + this.username);
-            System.err.println("Request: " + request);
+            System.err.println("Request: " + req.toJSONString());
             e.printStackTrace();
         }
     }

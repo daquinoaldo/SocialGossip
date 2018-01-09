@@ -40,10 +40,10 @@ public class Json {
             switch (endpoint) {
                 case MSG2FRIEND:
                     // Got a message from friend
-                    String username = (String) payload.get("username");
+                    String sender = (String) payload.get("sender");
                     String text = (String) payload.get("text");
-                    Message msg = new Message(username, text);
-                    User.getFriend(username).newMessage(msg);
+                    Message msg = new Message(sender, text);
+                    User.getFriend(sender).newMessage(msg);
                     break;
                     
                 case FILE2FRIEND:

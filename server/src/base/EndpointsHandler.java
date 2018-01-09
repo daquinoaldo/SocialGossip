@@ -29,13 +29,6 @@ class EndpointsHandler {
         return realPasswordHash.equals(actualPasswordHash);
     }
     
-    private static JSONObject buildRequest(String endpoint, JSONObject params) {
-        JSONObject req = new JSONObject();
-        req.put("endpoint", endpoint);
-        req.put("params", params);
-        return req;
-    }
-
     @SuppressWarnings("unchecked")
     private static JSONArray getFriendsStatus(List<String> friends) {
         JSONArray friendsWithStatus = new JSONArray();
@@ -223,14 +216,29 @@ class EndpointsHandler {
             return buildErrorReply(400, "Invalid request.");
         }
         
-        JSONObject request = buildRequest(FILE2FRIEND, params);
-        OnlineUsers.getByUsername(to).sendMsgRequest(request.toJSONString());
+        OnlineUsers.getByUsername(to).sendMsgRequest(FILE2FRIEND, params);
         
         return buildSuccessReply();
     }
 
     static JSONObject msg2friend(User user, JSONObject params) {
-        return buildErrorReply(400, "Not implemented yet.");
+        String from = user.getUsername();
+        String to = (String) params.get("recipient");
+        String text = (String) params.get("text");
+        
+        if (to == null || text == null)
+            return buildErrorReply(400, "Malformed request");
+        else if (from.equals(to))
+            return buildErrorReply(403, "You can't send a message to yourself.");
+        else if (!db.checkFriendship(from, to))
+            return buildErrorReply(403, to + " is not your friend.");
+        else if (text.length() == 0)
+            return buildErrorReply(400, "Text cannot be empty.");
+        else if(!OnlineUsers.isOnline(to))
+            return buildErrorReply(400, to +" is offline.");
+        
+        OnlineUsers.getByUsername(to).sendMsgRequest(MSG2FRIEND, params);
+        return buildSuccessReply();
     }
 
     static JSONObject chatroomMessage(User user, JSONObject params) {

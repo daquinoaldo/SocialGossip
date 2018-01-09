@@ -20,17 +20,16 @@ public abstract class Chat {
         if (type != FRIEND_TYPE && type != CHATROOM_TYPE)
             throw new IllegalArgumentException("Invalid type. Please choose one of FRIEND_TYPE, CHATROOM_TYPE.");
         this.name = name;
+        chatPanel = new ChatPanel(name);
     }
     
     protected String getName() { return name; }
-    protected void setName(String newName) { name = newName; }
     
     protected boolean getFlag() { return flag; }
     protected void setFlag(boolean newValue) { flag = newValue; }
     
     public JFrame getWindow() { return window; }
     public void createWindow() {
-        ChatPanel chatPanel = new ChatPanel(name);
         window = Utils.createWindow(name, chatPanel, Dimensions.CHAT_PANE);
     }
     
