@@ -25,9 +25,11 @@ public class ChatPanel extends JPanel {
         msgField = new JTextField(30);
         msgField.requestFocusInWindow();
         JButton sendButton = new JButton("Send");
+        JButton fileButton = new JButton("Attach file");
         
         southPanel.add(msgField);
         southPanel.add(sendButton);
+        southPanel.add(fileButton);
         
         // ChatPanel messages
         chatHistory = new JTextArea();
@@ -41,7 +43,7 @@ public class ChatPanel extends JPanel {
         this.add(southPanel, BorderLayout.SOUTH);
 
         // Send listeners
-        Action action = new AbstractAction() {
+        Action sendMsgAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!msgField.getText().equals("")) {
@@ -52,8 +54,17 @@ public class ChatPanel extends JPanel {
                 }
             }
         };
-        msgField.addActionListener(action);
-        sendButton.addActionListener(action);
+        msgField.addActionListener(sendMsgAction);
+        sendButton.addActionListener(sendMsgAction);
+
+        // Send listeners
+        Action attachmentListener = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO: seleziona file e invialo
+            }
+        };
+        fileButton.addActionListener(attachmentListener);
 
         // Msg listener
         State.addChatMsgListener(username, this::newMessage);
