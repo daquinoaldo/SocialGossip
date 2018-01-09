@@ -128,8 +128,8 @@ public class Json {
             throw new IllegalArgumentException("Username must be a non-empty string.");
         Map<String, String> parameters = new HashMap<>();
         parameters.put("username", username);
-        JSONObject reply = makeRequest(Endpoints.IS_ONLINE, parameters);
-        return isReplyOk(reply);
+        JSONObject result = makeRequest(Endpoints.IS_ONLINE, parameters);
+        return result != null;
     }
     
     public static void listFriends() {
