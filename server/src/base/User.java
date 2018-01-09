@@ -8,6 +8,8 @@ import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.concurrent.Future;
 
+import static base.Utils.printDebug;
+
 public class User implements Comparable<User> {
     private final String username;
     private Socket primarySocket;
@@ -44,6 +46,7 @@ public class User implements Comparable<User> {
     public void notifyNewFriend(String username) {
         try {
             this.callback.newFriend(username);
+            printDebug("[RMI] Notified " + this.username + " - " + username + " added you as a friend");
         }
         catch (RemoteException e) {
             System.err.println("Can't notify user " + this.username + " about:");
@@ -55,10 +58,11 @@ public class User implements Comparable<User> {
     public void notifyFriendStatus(String username, boolean isOnline) {
         try {
             this.callback.changedStatus(username, isOnline);
+            printDebug("[RMI] Notified " + this.username + " - Friend " + username + " is gone " + (isOnline ? "online" : "offline"));
         }
         catch (RemoteException e) {
             System.err.println("Can't notify user " + this.username + " about:");
-            System.err.println("-- Friend: " + username + "is gone " + (isOnline ? "online" : "offline"));
+            System.err.println("-- Friend: " + username + " is gone " + (isOnline ? "online" : "offline"));
             e.printStackTrace();
         }
     }
