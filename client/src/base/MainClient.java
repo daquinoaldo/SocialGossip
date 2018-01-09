@@ -34,21 +34,5 @@ class MainClient {
                 mainWindow.setTitle(username + " - Social Gossip");
             rmi.Manager.registerCallback();
         });
-
-
-        //TEST
-        State.addFriend("user1");
-        State.addFriend("user2");
-        State.addFriend("user3");
-        State.addFriend("user4");
-        State.addFriend("user5");
-        State.setFriendStatus("user1", true);
-        State.setFriendStatus("user3", true);
-        State.setFriendStatus("user4", true);
-        State.addRoom("room1");
-        State.addRoom("room2");
-        State.addRoom("room3");
-        State.setLoggedIn(true);
-        State.setUsername("aldo");
     }
 }
