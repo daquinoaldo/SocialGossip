@@ -1,6 +1,8 @@
 package gui.panels;
 
-import base.State;
+import State.Friend;
+import State.User;
+import State.Room;
 
 import javax.swing.*;
 import java.util.Collection;
@@ -10,7 +12,7 @@ public class MainPanel extends JPanel {
     private JPanel friendsPane;
     private JPanel roomsPane;
 
-    private void updateFriends(Collection<State.Friend> friends) {
+    private void updateFriends(Collection<Friend> friends) {
         this.remove(friendsPane);
         this.remove(roomsPane);
         friendsPane = ListPanelFactory.newFriendsPane(friends);
@@ -20,7 +22,7 @@ public class MainPanel extends JPanel {
         this.repaint();
     }
 
-    private void updateRooms(Collection<State.Room> room) {
+    private void updateRooms(Collection<Room> room) {
         this.remove(friendsPane);
         this.remove(roomsPane);
         roomsPane = ListPanelFactory.newRoomsPane(room);
@@ -33,14 +35,14 @@ public class MainPanel extends JPanel {
     public MainPanel() {
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
-        friendsPane = ListPanelFactory.newFriendsPane(State.friends());
-        roomsPane = ListPanelFactory.newRoomsPane(State.rooms());
+        friendsPane = ListPanelFactory.newFriendsPane(User.friends());
+        roomsPane = ListPanelFactory.newRoomsPane(User.rooms());
 
         this.add(friendsPane);
         this.add(roomsPane);
 
-        State.addFriendsListener(this::updateFriends);
-        State.addChatsListener(this::updateRooms);
+        User.addFriendsListener(this::updateFriends);
+        User.addChatsListener(this::updateRooms);
     }
 
 }

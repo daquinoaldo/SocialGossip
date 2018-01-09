@@ -1,8 +1,6 @@
 package Connections;
 
 import base.Configuration;
-import base.Json;
-import base.State;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

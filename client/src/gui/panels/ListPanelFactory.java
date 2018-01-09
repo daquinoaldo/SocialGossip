@@ -1,14 +1,14 @@
 package gui.panels;
 
-import base.State;
-import base.State.Friend;
-import base.State.Room;
+import State.Chat;
+import State.Friend;
+import State.User;
+import State.Room;
 import constants.Dimensions;
 import gui.Utils;
 
 import javax.swing.*;
 
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -26,31 +26,13 @@ public class ListPanelFactory {
             if (mouseEvent.getClickCount() == 2) {
                 int index = jlist.locationToIndex(mouseEvent.getPoint());
                 if (index >= 0) {
-                    String username = jlist.getModel().getElementAt(index).toString();
-
-                    ChatPanel chatPanel = new ChatPanel(username);
-                    JFrame frame = Utils.createWindow(username, chatPanel, Dimensions.CHAT_PANE);
+                    String name = jlist.getModel().getElementAt(index).toString();
                     
-                    // TODO: if FRIEND -> questo va bene
-                    // Register callback for incoming messages
-                    State.setFriendMsgListener(username, chatPanel::newMessage);
-                    // De-register it when the window gets closed
-                    frame.addWindowListener(new java.awt.event.WindowAdapter() {
-                        @Override
-                        public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                            State.delFriendMsgListener(username);
-                        }
-                    });
+                    // TODO: cercare un modo di capire se è stata cliccata la lista amici o la lista chat
+                    boolean isFriendChat = true;
                     
-                    // TODO: else -> registrarlo per le chat in questo modo:
-//                    State.setChatMsgListener(username, chatPanel::newMessage);
-//                    frame.addWindowListener(new java.awt.event.WindowAdapter() {
-//                        @Override
-//                        public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-//                            State.delChatMsgListener(username);
-//                        }
-//                    });
-    
+                    Chat chat = isFriendChat ? User.getFriend(name) : User.getRoom(name);
+                    chat.createWindow();
                 }
             }
         }
@@ -63,8 +45,10 @@ public class ListPanelFactory {
             if (mouseEvent.getClickCount() == 2) {
                 int index = jlist.locationToIndex(mouseEvent.getPoint());
                 if (index >= 0) {
-                    String room = jlist.getModel().getElementAt(index).toString();
+                    String name = jlist.getModel().getElementAt(index).toString();
                     // TODO: add the room to my rooms
+                    // TODO <antonio>: credo tu intenda di fare così:
+                    User.getRoom(name).setStatus(true);
                 }
             }
         }

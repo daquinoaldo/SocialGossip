@@ -1,9 +1,8 @@
 package base;
 
 import Connections.Connection;
-import constants.Dimensions;
+import State.User;
 import gui.Utils;
-import gui.panels.ListPanelFactory;
 import gui.panels.LoginPanel;
 import gui.panels.MainPanel;
 
@@ -20,7 +19,7 @@ class MainClient {
         JPanel loginPanel = new LoginPanel();
         JFrame loginWindow = Utils.createFixedWindow("Social Gossip", loginPanel, true, false);
         
-        State.addLoginListener(isLoggedIn -> {
+        User.addLoginListener(isLoggedIn -> {
             if (isLoggedIn) {
                 loginWindow.dispose();
 
@@ -29,7 +28,7 @@ class MainClient {
             }
         });
 
-        State.addUsernameListener(username -> {
+        User.addUsernameListener(username -> {
             if (mainWindow != null)
                 mainWindow.setTitle(username + " - Social Gossip");
             rmi.Manager.registerCallback();

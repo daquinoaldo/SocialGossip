@@ -1,7 +1,7 @@
 package gui.panels;
 
+import State.User;
 import base.Json;
-import base.State;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -23,7 +23,7 @@ class CreateRoomPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (!textField.getText().equals("")) {
                     if(Json.createRoom(textField.getText()))
-                        State.addRoom(textField.getText(), true);   //TODO: è sottoscritta?
+                        User.addRoom(textField.getText(), true);   //TODO: è sottoscritta?
                     textField.setText("");
                 }
             }

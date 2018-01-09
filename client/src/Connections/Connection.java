@@ -1,14 +1,13 @@
 package Connections;
 
+import State.User;
 import base.Configuration;
 import base.Filesystem;
 import base.Json;
-import base.State;
 import gui.Utils;
 
 import java.io.*;
 import java.net.*;
-import java.nio.channels.SocketChannel;
 
 @SuppressWarnings("EmptyMethod")
 public class Connection {
@@ -57,7 +56,7 @@ public class Connection {
                 catch (InterruptedException e) { }
             }
         });
-        State.addLoginListener((loggedIn) -> {
+        User.addLoginListener((loggedIn) -> {
             if (loggedIn) heart.start();
             else heart.interrupt();
         });

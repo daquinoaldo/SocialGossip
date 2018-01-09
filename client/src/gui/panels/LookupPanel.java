@@ -1,13 +1,10 @@
 package gui.panels;
 
+import State.User;
 import base.Json;
-import base.State;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 class LookupPanel extends JPanel {
 
@@ -68,7 +65,7 @@ class LookupPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (foundUser != null && Json.friendship(foundUser))
-                    State.addFriend(foundUser, Json.isOnline(foundUser));
+                    User.addFriend(foundUser, Json.isOnline(foundUser));
             }
         };
         addFriendButton.addActionListener(addAction);

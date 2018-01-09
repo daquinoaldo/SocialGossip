@@ -1,9 +1,8 @@
 package gui.panels;
 
-import Connections.Connection;
+import State.Message;
 import base.Json;
-import base.State;
-import base.State.Message;
+import State.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,7 +46,7 @@ public class ChatPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!msgField.getText().equals("")) {
-                    Message msg = new Message(State.username(), msgField.getText());
+                    Message msg = new Message(User.username(), msgField.getText());
                     Json.sendMsg(username, msgField.getText());
                     chatHistory.append(msg.toString() + "\n");
                     msgField.setText("");

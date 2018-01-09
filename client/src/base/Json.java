@@ -1,6 +1,10 @@
 package base;
 
 import Connections.Connection;
+import State.Friend;
+import State.User;
+import State.Message;
+import State.Room;
 import gui.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -38,8 +42,8 @@ public class Json {
                     // Got a message from friend
                     String username = (String) payload.get("username");
                     String text = (String) payload.get("text");
-                    State.Message msg = new State.Message(username, text);
-                    State.newFriendMessage(username, msg);
+                    Message msg = new Message(username, text);
+                    User.getFriend(username).newMessage(msg);
                     break;
                     
                 case FILE2FRIEND:
@@ -86,8 +90,8 @@ public class Json {
         
         makeMsgRequest(LOGIN, parameters);
         
-        State.setLoggedIn(true);
-        State.setUsername(username);
+        User.setLoggedIn(true);
+        User.setUsername(username);
 
         listFriends();
         chatList();
@@ -141,13 +145,13 @@ public class Json {
         if(result == null) return;
         JSONArray jsonArray = (JSONArray) result.get("friends");
         if (jsonArray == null) return; // no friends yet
-        List<State.Friend> friends = new ArrayList<>();
+        List<Friend> friends = new ArrayList<>();
         for (Object jsonObject : jsonArray) {
             String username = (String) ((JSONObject) jsonObject).get("username");
             boolean online = (boolean) ((JSONObject) jsonObject).get("online");
-            friends.add(new State.Friend(username, online));
+            friends.add(new Friend(username, online));
         }
-        State.setFriendList(friends);
+        User.setFriendList(friends);
     }
 
     public static boolean createRoom(String room) {
@@ -173,13 +177,13 @@ public class Json {
         if(result == null) return;
         JSONArray jsonArray = (JSONArray) result.get("rooms");
         if (jsonArray == null) return; // no chats yet
-        List<State.Room> rooms = new ArrayList<>();
+        List<Room> rooms = new ArrayList<>();
         for (Object jsonObject : jsonArray) {
             String name = (String) ((JSONObject) jsonObject).get("name");
             boolean added = (boolean) ((JSONObject) jsonObject).get("added");
-            rooms.add(new State.Room(name, added));
+            rooms.add(new Room(name, added));
         }
-        State.setRoomList(rooms);
+        User.setRoomList(rooms);
     }
 
     public static boolean closeRoom(String room) {
@@ -194,7 +198,7 @@ public class Json {
     //TODO: Pitasi ricontrolla!
     public static boolean sendMsg(String recipient, String text) {
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("sender", State.username());
+        parameters.put("sender", User.username());
         parameters.put("recipient", recipient);
         parameters.put("text", text);
         JSONObject result = makeRequest(Endpoints.MSG2FRIEND, parameters);
@@ -212,7 +216,7 @@ public class Json {
             return;
         }
     
-        payload.put("from", State.username());
+        payload.put("from", User.username());
         payload.put("to", toUsername);
         payload.put("port", serverSocket.getLocalPort());
         payload.put("hostname", serverSocket.getInetAddress().getHostName());

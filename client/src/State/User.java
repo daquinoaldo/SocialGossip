@@ -1,5 +1,5 @@
 
-package base;
+package State;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,72 +7,46 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class State {
-    // Sub-classes
-    public static class Friend {
-        private String username;
-        private boolean online = false;
-        public Friend(String username) { this.username = username; }
-        public Friend(String username, boolean online) {
-            this(username);
-            this.online = online;
-        }
-        public void setStatus(boolean online) { this.online = online; }
-        public String getUsername() { return username; }
-        public boolean isOnline() { return online; }
-    }
+// Main State structure - representing the User who is using the client
+// if a state change is triggered, previously registered callbacks will be called passing the new state as a parameter
 
-    public static class Room {
-        private String name;
-        private boolean subscribed = false;
-        public Room(String name) { this.name = name; }
-        public Room(String name, boolean subscribed) {
-            this(name);
-            this.subscribed = subscribed;
-        }
-        public void setStatus(boolean subscribed) { this.subscribed = subscribed; }
-        public String getName() { return name; }
-        public boolean isSubscribed() { return subscribed; }
-    }
-    
-    public static class Message {
-        final String sender;
-        final String text;
-        public Message(String sender, String text) {
-            this.sender = sender;
-            this.text = text;
-        }
-        public String toString() { return "<" + sender + ">: " + text; }
-    }
-    
-    // State structure
+/*
+ *   1. State change request      ->      2. internal data structure change        ->      3. callbacks are called with new state
+ * (ex. user adds a new friend)        (this class private fields gets updated)          (GUI components can self-update themselves)
+ *
+ *  This strategy allows easier debugging and testing (it's possible to programmatically request a state change and log
+ *  the resulted changes). But also simpler GUI components who just need to access this single central State container
+ *  and can update their informations accordingly registering callbacks.
+ */
+
+public class User {
     private static boolean isLoggedIn = false;
     private static String username = null;
     private static final HashMap<String, Friend> friends = new HashMap<>();
     private static final HashMap<String, Room> rooms = new HashMap<>();
     
-    // Callbacks
+    // Callbacks store
     private static final ArrayList<Consumer<Boolean>> loginCallbacks = new ArrayList<>();
     private static final ArrayList<Consumer<String>> usernameCallbacks = new ArrayList<>();
     private static final ArrayList<Consumer<Collection<Friend>>> friendsListCallbacks = new ArrayList<>();
     private static final ArrayList<Consumer<Collection<Room>>> chatsListCallbacks = new ArrayList<>();
-    private static final HashMap<String, Consumer<Message>> chatMsgCallbacks = new HashMap<>(); // one callback per chat only
-    private static final HashMap<String, Consumer<Message>> friendMsgCallbacks = new HashMap<>(); // one callback per chat only
     
     // Getters
-    public static boolean isIsLoggedIn() { return isLoggedIn; }
+    public static boolean isLoggedIn() { return isLoggedIn; }
     public static String username() { return username; }
     public static Collection<Friend> friends() { return friends.values(); }
+    public static Friend getFriend(String username) { return friends.get(username); }
     public static Collection<Room> rooms() { return rooms.values(); }
+    public static Room getRoom(String name) { return rooms.get(name); }
     
-    // State changes, will trigger a callback if any was set
+    // User changes, will trigger a callback if any was set
     public static void setLoggedIn(boolean loggedIn) {
         isLoggedIn = loggedIn;
         loginCallbacks.forEach(c -> c.accept(isLoggedIn));
     }
     
     public static void setUsername(String username) {
-        State.username = username;
+        User.username = username;
         usernameCallbacks.forEach(c -> c.accept(username));
     }
     
@@ -92,9 +66,9 @@ public class State {
     }
 
     public static void setFriendList(List<Friend> friends) {
-        State.friends.clear();
+        User.friends.clear();
         for (Friend friend : friends)
-            State.friends.put(friend.getUsername(), friend);
+            User.friends.put(friend.getUsername(), friend);
     
         friendsListCallbacks.forEach(c -> c.accept(friends));
     }
@@ -110,23 +84,12 @@ public class State {
     }
 
     public static void setRoomList(List<Room> rooms) {
-        State.rooms.clear();
+        User.rooms.clear();
         for (Room room : rooms)
-            State.rooms.put(room.getName(), room);
+            User.rooms.put(room.getName(), room);
         chatsListCallbacks.forEach(c -> c.accept(rooms));
     }
     
-    public static void newChatroomMessage(String chatname, Message msg) {
-        if (chatMsgCallbacks.containsKey(chatname)) {
-            chatMsgCallbacks.get(chatname).accept(msg);
-        }
-    }
-    
-    public static void newFriendMessage(String username, Message msg) {
-        if (friendMsgCallbacks.containsKey(username)) {
-            friendMsgCallbacks.get(username).accept(msg);
-        }
-    }
     
     // Basic setters for callbacks
     public static void addLoginListener(Consumer<Boolean> callback) {
@@ -145,19 +108,4 @@ public class State {
         chatsListCallbacks.add(callback);
     }
     
-    public static void setChatMsgListener(String chatname, Consumer<Message> callback) {
-        chatMsgCallbacks.put(chatname, callback);
-    }
-    
-    public static void delChatMsgListener(String chatname) {
-        chatMsgCallbacks.remove(chatname);
-    }
-    
-    public static void setFriendMsgListener(String chatname, Consumer<Message> callback) {
-        chatMsgCallbacks.put(chatname, callback);
-    }
-    
-    public static void delFriendMsgListener(String chatname) {
-        chatMsgCallbacks.remove(chatname);
-    }
 }

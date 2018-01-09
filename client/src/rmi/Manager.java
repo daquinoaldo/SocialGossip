@@ -1,7 +1,7 @@
 package rmi;
 
+import State.User;
 import base.Configuration;
-import base.State;
 import remoteinterfaces.ClientCallbackInterface;
 import remoteinterfaces.ServerInterface;
 
@@ -37,7 +37,7 @@ public class Manager {
     public static void registerCallback() {
         try {
             ClientCallbackInterface stub = (ClientCallbackInterface) UnicastRemoteObject.exportObject(callback, 0);
-            boolean success = server.registerCallback(State.username(), stub);
+            boolean success = server.registerCallback(User.username(), stub);
             if (!success) {
                 throw new RemoteException("User offline for the server");
             }
