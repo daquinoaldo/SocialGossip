@@ -11,13 +11,21 @@ public class MainPanel extends JPanel {
     private JPanel roomsPane;
 
     private void updateFriends(Collection<State.Friend> friends) {
+        this.remove(friendsPane);
+        this.remove(roomsPane);
         friendsPane = ListPanelFactory.newFriendsPane(friends);
+        this.add(friendsPane);
+        this.add(roomsPane);
         this.revalidate();
         this.repaint();
     }
 
     private void updateRooms(Collection<State.Room> room) {
+        this.remove(friendsPane);
+        this.remove(roomsPane);
         roomsPane = ListPanelFactory.newRoomsPane(room);
+        this.add(friendsPane);
+        this.add(roomsPane);
         this.revalidate();
         this.repaint();
     }
