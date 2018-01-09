@@ -16,6 +16,9 @@ import java.util.Map;
 
 import static base.Endpoints.*;
 
+// TODO: se due thread inviano una richiesta insieme potrebbero incrociarsi e scambiarsi le risposte?
+// mettere makeRequest synchronized risolve?
+
 public class Json {
     public static void parseMessageRequest(String jsonString) {
         try {
