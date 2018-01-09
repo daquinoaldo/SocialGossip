@@ -61,7 +61,7 @@ public class ChatPanel extends JPanel {
         Action attachmentListener = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: seleziona file e invialo
+                Json.sendFileRequest(username);
             }
         };
         fileButton.addActionListener(attachmentListener);
