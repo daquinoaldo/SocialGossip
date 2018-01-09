@@ -26,7 +26,7 @@ public class ListPanelFactory {
                 if (index >= 0) {
                     String username = jlist.getModel().getElementAt(index).toString();
 
-                    JPanel chatPanel = new ChatPanel();
+                    JPanel chatPanel = new ChatPanel(username);
                     Utils.createWindow(username, chatPanel, Dimensions.CHAT_PANE);
                 }
             }

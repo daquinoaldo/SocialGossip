@@ -25,7 +25,7 @@ class MainClient {
                 loginWindow.dispose();
 
                 JPanel mainPanel = new MainPanel();
-                Utils.createFixedWindow("Social Gossip", mainPanel, true, false);
+                mainWindow = Utils.createFixedWindow("Social Gossip", mainPanel, true, false);
             }
         });
 
@@ -33,10 +33,6 @@ class MainClient {
             if (mainWindow != null)
                 mainWindow.setTitle(username + " - Social Gossip");
             rmi.Manager.registerCallback();
-        });
-
-        State.addFriendsListener(friends -> {
-           //
         });
 
 

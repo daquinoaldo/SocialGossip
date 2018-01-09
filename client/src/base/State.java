@@ -37,7 +37,10 @@ public class State {
     public static class Message {
         final String sender;
         final String text;
-        public Message(String username, String text) { this.sender = username; this.text = text; }
+        public Message(String sender, String text) {
+            this.sender = sender;
+            this.text = text;
+        }
         public String toString() { return "<" + sender + ">: " + text; }
     }
     
@@ -51,6 +54,7 @@ public class State {
     private static final ArrayList<Consumer<Boolean>> loginCallbacks = new ArrayList<>();
     private static final ArrayList<Consumer<String>> usernameCallbacks = new ArrayList<>();
     private static final ArrayList<Consumer<Collection<Friend>>> friendsListCallbacks = new ArrayList<>();
+    private static final ArrayList<Consumer<Collection<Room>>> chatsListCallbacks = new ArrayList<>();
     private static final HashMap<String, Consumer<Message>> chatMsgCallbacks = new HashMap<>(); // one callback per chat only
     
     // Getters
@@ -82,7 +86,7 @@ public class State {
 
     public static void addRoom(String roomName) {
         rooms.add(new Room(roomName));
-        //TODO: roomsCallbacks.forEach(c -> c.accept(rooms));
+        chatsListCallbacks.forEach(c -> c.accept(rooms));
     }
     
     public static void newMessage(String chatname, Message msg) {
@@ -104,8 +108,8 @@ public class State {
         friendsListCallbacks.add(callback);
     }
 
-    public static void addChatsListener(Consumer<Collection<Friend>> callback) {
-        friendsListCallbacks.add(callback);
+    public static void addChatsListener(Consumer<Collection<Room>> callback) {
+        chatsListCallbacks.add(callback);
     }
 
     public static void addChatMsgListener(String chatname, Consumer<Message> callback) {

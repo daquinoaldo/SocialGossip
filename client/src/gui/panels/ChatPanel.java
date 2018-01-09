@@ -1,5 +1,7 @@
 package gui.panels;
 
+import Connections.Connection;
+import base.Json;
 import base.State;
 import base.State.Message;
 
@@ -13,7 +15,7 @@ public class ChatPanel extends JPanel {
     private final JTextArea chatHistory;
     private final JTextField msgField;
     
-    public ChatPanel() {
+    public ChatPanel(String username) {
         setLayout(new BorderLayout());
         
         // Send a new message input and button
@@ -44,7 +46,7 @@ public class ChatPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (!msgField.getText().equals("")) {
                     Message msg = new Message(State.username(), msgField.getText());
-                    // TODO: send(msg)
+                    Json.sendMsg(username, msgField.getText());
                     chatHistory.append(msg.toString() + "\n");
                     msgField.setText("");
                 }
@@ -52,6 +54,10 @@ public class ChatPanel extends JPanel {
         };
         msgField.addActionListener(action);
         sendButton.addActionListener(action);
+
+        // Msg listener
+        State.addChatMsgListener(username, this::newMessage);
+        //TODO: ma quando lo deregistro?????
     }
     
     private void newMessage(Message msg) {

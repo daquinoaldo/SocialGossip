@@ -156,6 +156,16 @@ public class Json {
         JSONObject reply = makeRequest(Endpoints.CLOSE_ROOM, parameters);
         return isReplyOk(reply);
     }
+
+    //TODO: Pitasi ricontrolla!
+    public static boolean sendMsg(String recipient, String text) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("sender", State.username());
+        parameters.put("recipient", recipient);
+        parameters.put("text", text);
+        JSONObject reply = makeRequest(Endpoints.MSG2FRIEND, parameters);
+        return isReplyOk(reply);
+    }
     
     /* Private helpers */
     

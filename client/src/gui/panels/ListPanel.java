@@ -5,9 +5,9 @@ import java.awt.event.MouseListener;
 
 import constants.Dimensions;
 
-public class ListPanel extends JPanel {
+class ListPanel extends JPanel {
 
-    public ListPanel(String text, String[] elems, MouseListener mouseListener) {
+    ListPanel(String text, String[] elems, MouseListener mouseListener) {
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         this.setBorder(Dimensions.V_PADDING_BORDER);
 
@@ -22,7 +22,6 @@ public class ListPanel extends JPanel {
         this.add(label);
         this.add(Dimensions.V_SPACER);
         this.add(panel);
-
     }
 
 }
