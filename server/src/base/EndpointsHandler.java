@@ -104,6 +104,8 @@ class EndpointsHandler {
         if (messageSocket != null)
             user.setMessageSocket(messageSocket);
         
+        user.setHeartbeat(System.currentTimeMillis());
+        
         if (OnlineUsers.isOnline(user)) {
             // All sockets have been correctly set up - notify his friends
             for (User friend : OnlineUsers.getOnlineFriends(user)) {
