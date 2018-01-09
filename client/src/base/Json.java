@@ -127,6 +127,7 @@ public class Json {
         JSONObject reply = makeRequest(Endpoints.LIST_FRIEND, null);
         if(!isReplyOk(reply)) return;
         JSONArray jsonArray = (JSONArray) reply.get("friends");
+        if (jsonArray == null) return; // no friends yet
         List<State.Friend> friends = new ArrayList<>();
         for (Object jsonObject : jsonArray) {
             String username = (String) ((JSONObject) jsonObject).get("username");
@@ -158,6 +159,7 @@ public class Json {
         JSONObject reply = makeRequest(Endpoints.CHAT_LIST, null);
         if(!isReplyOk(reply)) return;
         JSONArray jsonArray = (JSONArray) reply.get("rooms");
+        if (jsonArray == null) return; // no chats yet
         List<State.Room> rooms = new ArrayList<>();
         for (Object jsonObject : jsonArray) {
             String name = (String) ((JSONObject) jsonObject).get("name");
