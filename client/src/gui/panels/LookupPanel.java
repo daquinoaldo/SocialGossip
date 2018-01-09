@@ -69,8 +69,6 @@ class LookupPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (foundUser != null && Json.friendship(foundUser))
                     State.addFriend(foundUser, Json.isOnline(foundUser));
-                for (State.Friend friend : State.friends())
-                    System.out.println(friend.getUsername());
             }
         };
         addFriendButton.addActionListener(addAction);

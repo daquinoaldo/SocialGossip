@@ -10,7 +10,6 @@ public class ClientCallback implements ClientCallbackInterface {
     }
     
     public void changedStatus(String username, boolean isOnline) {
-        System.out.println("username = [" + username + "], isOnline = [" + isOnline + "]");
         State.setFriendStatus(username, isOnline);
     }
 }
