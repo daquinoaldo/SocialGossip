@@ -138,9 +138,14 @@ class EndpointsHandler {
 
     static JSONObject friendship(User user, JSONObject params) {
         String username = (String) params.get("username");
-        if(!db.existUser(username)) return buildErrorReply(400, "User not exists.");
+        if(user.getUsername().equals(username))
+            return buildErrorReply(400, "You can't add yourself as a friend.");
+        if(!db.existUser(username))
+            return buildErrorReply(400, "User not exists.");
+        if(db.checkFriendship(user.getUsername(), username))
+            return buildErrorReply(400, "You are already friend of this user!");
         if(!db.addFriendship(user.getUsername(), username))
-            return buildErrorReply(400, "Database error.");
+            return buildErrorReply(400, "A database error occured.");
         if (OnlineUsers.isOnline(username))
             OnlineUsers.getByUsername(username).notifyNewFriend(user.getUsername());
         return buildSuccessReply();
@@ -148,7 +153,7 @@ class EndpointsHandler {
 
     static JSONObject isOnline(User user, JSONObject params) {
         String username = (String) params.get("username");
-        if (!OnlineUsers.isOnline(username)) return buildErrorReply(400, "User offline");
+        if (!OnlineUsers.isOnline(username))return buildErrorReply(400, "User offline");
         return buildSuccessReply();
     }
 
