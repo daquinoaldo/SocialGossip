@@ -1,6 +1,7 @@
 package gui.panels;
 
 import base.Json;
+import base.State;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -67,7 +68,7 @@ class LookupPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (foundUser != null && Json.friendship(foundUser)) {
-                    //TODO: chiamare i listener, sul server è stato aggiunto!
+                    State.addFriend(foundUser, Json.isOnline(foundUser));
                 }
             }
         };

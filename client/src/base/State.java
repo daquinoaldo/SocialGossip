@@ -79,9 +79,14 @@ public class State {
         friends.get(username).setStatus(isOnline);
         friendsListCallbacks.forEach(c -> c.accept(friends.values()));
     }
-    
+
     public static void addFriend(String friendUsername) {
         friends.put(friendUsername, new Friend(friendUsername));
+        friendsListCallbacks.forEach(c -> c.accept(friends.values()));
+    }
+    
+    public static void addFriend(String friendUsername, boolean isOnline) {
+        friends.put(friendUsername, new Friend(friendUsername, isOnline));
         friendsListCallbacks.forEach(c -> c.accept(friends.values()));
     }
 

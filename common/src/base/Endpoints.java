@@ -6,6 +6,7 @@ public interface Endpoints {
     String REGISTER = "REGISTER";
     String LOOKUP = "LOOKUP";
     String FRIENDSHIP = "FRIENDSHIP";
+    String IS_ONLINE = "IS_ONLINE";
     String LIST_FRIEND = "LIST_FRIEND";
     String CREATE_ROOM = "CREATE_ROOM";
     String ADD_ME = "ADD_ME";

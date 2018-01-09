@@ -17,6 +17,7 @@ public class RequestsHandler {
         put(REGISTER,           EndpointsHandler::register);
         put(LOOKUP,             EndpointsHandler::lookup);
         put(FRIENDSHIP,         EndpointsHandler::friendship);
+        put(IS_ONLINE,         EndpointsHandler::isOnline);
         put(LIST_FRIEND,        EndpointsHandler::listFriend);
         put(CREATE_ROOM,        EndpointsHandler::createRoom);
         put(ADD_ME,             EndpointsHandler::addMe);
