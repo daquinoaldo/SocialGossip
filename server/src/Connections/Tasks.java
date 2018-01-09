@@ -6,9 +6,10 @@ import base.User;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 
+import static Connections.Helpers.recv;
+import static Connections.Helpers.send;
 import static base.Utils.printDebug;
 
 public class Tasks {
@@ -19,12 +20,7 @@ public class Tasks {
      */
     public static void primaryConnectionTask(Socket socket) {
         try {
-            // Note: closing the reader or the writer will close the original socket too.
-            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-    
-            String req = reader.readLine();
-            
+            String req = recv(socket);
             printDebug("<- [PRIMARY] Got request:\n" + req);
             
             User user = OnlineUsers.getBySocket(socket);
@@ -36,10 +32,7 @@ public class Tasks {
             String reply = RequestsHandler.parseRequest(user, req);
     
             printDebug("-> [PRIMARY] Sending reply:\n" + reply);
-            
-            writer.write(reply);
-            writer.newLine();
-            writer.flush();
+            send(socket, reply);
         }
         catch (IOException e) {
             System.err.println("Error while reading request (primary connection):");
@@ -53,11 +46,7 @@ public class Tasks {
      */
     public static void messageConnectionTask(Socket socket) {
         try {
-            // Note: closing the reader or the writer will close the original socket too.
-            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-    
-            String req = reader.readLine();
+            String req = recv(socket);
         
             printDebug("<- [MESSAGE] Got request:\n" + req);
             
@@ -71,9 +60,7 @@ public class Tasks {
 
             printDebug("-> [MESSAGE] Sending reply:\n" + reply);
 
-            writer.write(reply);
-            writer.newLine();
-            writer.flush();
+            send(socket, reply);
         }
         catch (IOException e) {
             System.err.println("Error while reading request (primary connection):");

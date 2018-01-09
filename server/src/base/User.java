@@ -2,6 +2,7 @@ package base;
 
 import remoteinterfaces.ClientCallbackInterface;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.rmi.RemoteException;
 import java.util.Date;
@@ -58,6 +59,17 @@ public class User implements Comparable<User> {
         catch (RemoteException e) {
             System.err.println("Can't notify user " + this.username + " about:");
             System.err.println("-- Friend: " + username + "is gone " + (isOnline ? "online" : "offline"));
+        }
+    }
+    
+    public void sendMsgRequest(String request) {
+        try {
+            Connections.Helpers.send(this.messageSocket, request);
+        }
+        catch (IOException e) {
+            System.err.println("Error while sending message request to " + this.username);
+            System.err.println("Request: " + request);
+            e.printStackTrace();
         }
     }
 }

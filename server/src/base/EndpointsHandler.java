@@ -6,6 +6,8 @@ import org.json.simple.JSONObject;
 import java.net.Socket;
 import java.util.List;
 
+import static base.Endpoints.FILE2FRIEND;
+import static base.Endpoints.MSG2FRIEND;
 import static base.RequestsHandler.buildErrorReply;
 import static base.RequestsHandler.buildSuccessReply;
 import static base.Utils.isDebug;
@@ -24,6 +26,13 @@ class EndpointsHandler {
         String realPasswordHash = db.getPassword(username);
         String actualPasswordHash = Utils.md5(password);
         return realPasswordHash.equals(actualPasswordHash);
+    }
+    
+    private static JSONObject buildRequest(String endpoint, JSONObject params) {
+        JSONObject req = new JSONObject();
+        req.put("endpoint", endpoint);
+        req.put("params", params);
+        return req;
     }
 
     @SuppressWarnings("unchecked")
@@ -177,6 +186,7 @@ class EndpointsHandler {
     }
 
     static JSONObject file2friend(User user, JSONObject params) {
+        String from = (String) params.get("from");
         String to = (String) params.get("to");
         int port = (int) params.get("to");
         String hostname = (String) params.get("to");
@@ -187,12 +197,17 @@ class EndpointsHandler {
         else if (!db.checkFriendship(user.getUsername(), to)) {
             return buildErrorReply(403, to + " is not your friend.");
         }
-        else if (port <= 1024 || hostname == null || hostname.length() == 0) {
+        else if (!OnlineUsers.isOnline(to)) {
+            return buildErrorReply(449, "User is currently offline.");
+        }
+        else if (port <= 1024 || hostname == null || hostname.length() == 0 || !from.equals(user.getUsername())) {
             return buildErrorReply(400, "Invalid request.");
         }
         
+        JSONObject request = buildRequest(FILE2FRIEND, params);
+        OnlineUsers.getByUsername(to).sendMsgRequest(request.toJSONString());
         
-        return buildErrorReply(400, "Not implemented yet.");
+        return buildSuccessReply();
     }
 
     static JSONObject msg2friend(User user, JSONObject params) {

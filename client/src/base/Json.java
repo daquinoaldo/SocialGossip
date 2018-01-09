@@ -196,7 +196,8 @@ public class Json {
             Utils.showErrorDialog("Error while opening server socket.");
             return;
         }
-        
+    
+        payload.put("from", State.username());
         payload.put("to", toUsername);
         payload.put("port", serverSocket.getLocalPort());
         payload.put("hostname", serverSocket.getInetAddress().getHostName());
