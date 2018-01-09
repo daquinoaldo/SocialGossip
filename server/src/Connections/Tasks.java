@@ -21,7 +21,6 @@ public class Tasks {
     public static void primaryConnectionTask(Socket socket) {
         try {
             String req = recv(socket);
-            printDebug("<- [PRIMARY] Got request:\n" + req);
             
             User user = OnlineUsers.getBySocket(socket);
             if (user == null) {
@@ -31,7 +30,6 @@ public class Tasks {
     
             String reply = RequestsHandler.parseRequest(user, req);
     
-            printDebug("-> [PRIMARY] Sending reply:\n" + reply);
             send(socket, reply);
         }
         catch (IOException e) {
@@ -47,8 +45,6 @@ public class Tasks {
     public static void messageConnectionTask(Socket socket) {
         try {
             String req = recv(socket);
-        
-            printDebug("<- [MESSAGE] Got request:\n" + req);
             
             User user = OnlineUsers.getBySocket(socket);
             if (user == null) {
@@ -57,9 +53,7 @@ public class Tasks {
             }
             
             String reply = RequestsHandler.parseRequest(user, req);
-
-            printDebug("-> [MESSAGE] Sending reply:\n" + reply);
-
+            
             send(socket, reply);
         }
         catch (IOException e) {

@@ -48,7 +48,7 @@ public class User implements Comparable<User> {
         catch (RemoteException e) {
             System.err.println("Can't notify user " + this.username + " about:");
             System.err.println("-- New friend: " + username);
-            // TODO: rimuovere questo utente dagli utenti online
+            e.printStackTrace();
         }
     }
     
@@ -59,6 +59,7 @@ public class User implements Comparable<User> {
         catch (RemoteException e) {
             System.err.println("Can't notify user " + this.username + " about:");
             System.err.println("-- Friend: " + username + "is gone " + (isOnline ? "online" : "offline"));
+            e.printStackTrace();
         }
     }
     
