@@ -3,11 +3,13 @@ package Connections;
 import base.OnlineUsers;
 import base.RequestsHandler;
 import base.User;
-import base.Utils;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+
+import static base.Utils.printDebug;
 
 public class Tasks {
     /**
@@ -23,8 +25,7 @@ public class Tasks {
     
             String req = reader.readLine();
             
-            if (Utils.isDebug)
-                System.out.println("<- [PRIMARY] Got request:\n" + req);
+            printDebug("<- [PRIMARY] Got request:\n" + req);
             
             User user = OnlineUsers.getBySocket(socket);
             if (user == null) {
@@ -34,8 +35,7 @@ public class Tasks {
     
             String reply = RequestsHandler.parseRequest(user, req);
     
-            if (Utils.isDebug)
-                System.out.println("-> [PRIMARY] Sending reply:\n" + reply);
+            printDebug("-> [PRIMARY] Sending reply:\n" + reply);
             
             writer.write(reply);
             writer.newLine();
@@ -59,8 +59,7 @@ public class Tasks {
     
             String req = reader.readLine();
         
-            if (Utils.isDebug)
-                System.out.println("<- [MESSAGE] Got request:\n" + req);
+            printDebug("<- [MESSAGE] Got request:\n" + req);
             
             User user = OnlineUsers.getBySocket(socket);
             if (user == null) {
@@ -70,8 +69,7 @@ public class Tasks {
             
             String reply = RequestsHandler.parseRequest(user, req);
 
-            if (Utils.isDebug)
-                System.out.println("-> [MESSAGE] Sending reply:\n" + reply);
+            printDebug("-> [MESSAGE] Sending reply:\n" + reply);
 
             writer.write(reply);
             writer.newLine();

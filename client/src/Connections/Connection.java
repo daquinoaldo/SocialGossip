@@ -33,7 +33,7 @@ public class Connection {
             System.exit(1);
         }
         
-        Thread t = new Thread(() -> {
+        Thread msgRequestListener = new Thread(() -> {
             while (true) {
                 try {
                     String msgRequest = msgReader.readLine();
@@ -45,7 +45,16 @@ public class Connection {
                 }
             }
         });
-        t.start();
+        msgRequestListener.start();
+        
+        Thread heart = new Thread(() -> {
+            while (true) {
+                Json.heartbeat();
+                try { Thread.sleep(500); }
+                catch (InterruptedException e) { }
+            }
+        });
+        heart.start();
     }
     
     /**
@@ -67,8 +76,8 @@ public class Connection {
      * @param request String to be sent.
      * @return String returned by the server, can be null.
      */
-    public static String sendMsgRequest(String request) {
-        return send(msgWriter, msgReader, request);
+    public static void sendMsgRequest(String request) {
+        send(msgWriter, null, request);
     }
     
     private static String send(BufferedWriter writer, BufferedReader reader, String request) {
@@ -77,7 +86,11 @@ public class Connection {
             writer.newLine();
             writer.flush();
             if(Utils.isDebug) System.out.println("Connection.send: sent!");
-            String toReturn = reader.readLine();
+    
+            String toReturn = null;
+            if (reader != null)
+                toReturn = reader.readLine();
+            
             if(Utils.isDebug) System.out.println("Connection.send: received!");
             return toReturn;
         }

@@ -52,6 +52,11 @@ class EndpointsHandler {
         return roomSubscriptions;
     }
 
+    static JSONObject heartbeat(User user, JSONObject params) {
+        user.setHeartbeat( System.currentTimeMillis() );
+        return new JSONObject();
+    }
+    
     @SuppressWarnings({"unchecked", "unused"})
     static JSONObject login(User stubUser, JSONObject params) {
         Socket primarySocket = stubUser.getPrimarySocket();

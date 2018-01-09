@@ -4,12 +4,23 @@ import remoteinterfaces.ClientCallbackInterface;
 
 import java.net.Socket;
 import java.rmi.RemoteException;
+import java.util.Date;
+import java.util.concurrent.Future;
 
 public class User implements Comparable<User> {
     private final String username;
     private Socket primarySocket;
     private Socket messageSocket;
     private ClientCallbackInterface callback; // RMI interface
+    
+    // This will be used in a ScheduledThreadpoolExecutor to check if the user is still connected
+    private long lastHeartbeat = 0;
+    public void setHeartbeat(long time) { this.lastHeartbeat = time; }
+    public long getLastHeartbeat() { return this.lastHeartbeat; }
+    private Future<?> ghostbusterFuture;
+    public Future<?> getGhostbusterFuture() { return ghostbusterFuture; }
+    public void setGhostbusterFuture(Future<?> ghostbusterFuture) { this.ghostbusterFuture = ghostbusterFuture; }
+    
     
     @SuppressWarnings("WeakerAccess")
     public User(String username) {

@@ -12,6 +12,7 @@ import java.util.function.BiFunction;
 public class RequestsHandler {
     private static final HashMap<String, BiFunction<User, JSONObject, JSONObject>> endpoints = new HashMap<String, BiFunction<User, JSONObject, JSONObject>>(){{
         /* Register endpoint methods to the endpoint string */
+        put(HEARTBEAT,          EndpointsHandler::heartbeat);
         put(LOGIN,              EndpointsHandler::login);
         put(REGISTER,           EndpointsHandler::register);
         put(LOOKUP,             EndpointsHandler::lookup);

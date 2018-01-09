@@ -1,12 +1,14 @@
 package base;
 
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class Utils {
-    
     public static final boolean isDebug = System.getenv().getOrDefault("DEBUG", "false").equals("TRUE");
+    
+    public static void printDebug(String s) {
+        if (isDebug) System.out.println(s);
+    }
     
     /**
      * Return MD5 hash of a String.

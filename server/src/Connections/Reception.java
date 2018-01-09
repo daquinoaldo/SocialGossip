@@ -37,6 +37,7 @@ public class Reception {
             while (!stop) {
                 try {
                     Socket socket = serverSocket.accept();
+                    socket.setSoTimeout(500);
                     System.out.println("Accepted connection (port " + port + ")");
                     selector.addSocket(socket);
                 } catch (SocketTimeoutException e) { /* socket accept timed out, not really an exception */ } catch (IOException e) {

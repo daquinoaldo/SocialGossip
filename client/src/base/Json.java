@@ -10,42 +10,51 @@ import org.json.simple.parser.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static base.Endpoints.*;
+
 public class Json {
     public static void parseMessageRequest(String jsonString) {
-        
         try {
             JSONParser parser = new JSONParser();
-            JSONObject response = (JSONObject) parser.parse(jsonString);
-            JSONObject payload = (JSONObject) response.get("params");
+            JSONObject request = (JSONObject) parser.parse(jsonString);
+            JSONObject payload = (JSONObject) request.get("params");
             
-            String endpoint = (String) response.get("endpoint");
-            String status = (String) response.get("status");
+            String endpoint = (String) request.get("endpoint");
+            String status = (String) request.get("status");
             
-            if (endpoint.equals(Endpoints.LOGIN) && !status.equals("ok")) {
-                // Second login request failed
-                System.err.println("Fatal error: Login failed on message connection but succeded on primary connection");
-                System.exit(1);
+            if (endpoint == null) {
+                // not a request
+                return;
             }
-            else if (endpoint.equals(Endpoints.MSG2FRIEND)) {
-                // Got a message from friend
-                String username = (String) payload.get("username");
-                String text = (String) payload.get("text");
-                State.Message msg = new State.Message(username, text);
-                // TODO: update State    - State.newPrivateMessage(username, msg)
-            }
-            else if (endpoint.equals(Endpoints.FILE2FRIEND)){
-                // Got a request to send a file to me
-                String fromUsername = (String) payload.get("username");
-                // if (!State.isFriend(fromUsername)) return;
-                
-                // aprire dialog di conferma
-                // aprire dialog di selezione destinazione
-                
-                // int port = Connection.receiveFile();
-                JSONObject reply = new JSONObject();
-                reply.put("status", "ok");
-                // reply.put("port", port);
-                Connection.sendMsgRequest(reply.toJSONString());
+            
+            switch (endpoint) {
+                case MSG2FRIEND:
+                    // Got a message from friend
+                    String username = (String) payload.get("username");
+                    String text = (String) payload.get("text");
+                    State.Message msg = new State.Message(username, text);
+                    // TODO: update State    - State.newPrivateMessage(username, msg)
+                    break;
+                    
+                case FILE2FRIEND:
+                    // Got a request to send a file to me
+                    String fromUsername = (String) payload.get("username");
+                    // if (!State.isFriend(fromUsername)) return;
+    
+                    // aprire dialog di conferma
+                    // aprire dialog di selezione destinazione
+    
+                    // int port = Connection.receiveFile();
+                    JSONObject reply = new JSONObject();
+                    reply.put("status", "ok");
+                    // reply.put("port", port);
+                    Connection.sendMsgRequest(reply.toJSONString());
+                    break;
+                case HEARTBEAT:
+                    JSONObject response = new JSONObject();
+                    response.put("username", State.username());
+                    //Connection.sendMsgRequest(response.toJSONString());
+                    break;
             }
         }
         catch (ParseException e) {
@@ -56,6 +65,10 @@ public class Json {
     }
     
     /* Request builders */
+    public static void heartbeat() {
+        makeMsgRequest(HEARTBEAT, null);
+    }
+    
     @SuppressWarnings("unchecked")
     public static void login(String username, String password) {
         if (username == null || password == null || username.length() == 0 || password.length() == 0)
@@ -65,11 +78,11 @@ public class Json {
         parameters.put("username", username);
         parameters.put("password", password);
         
-        JSONObject reply = makeRequest(Endpoints.LOGIN, parameters);
+        JSONObject reply = makeRequest(LOGIN, parameters);
         if (reply == null)
             return;
         
-        makeMsgRequest(Endpoints.LOGIN, parameters);
+        makeMsgRequest(LOGIN, parameters);
         
         State.setLoggedIn(true);
         State.setUsername(username);
