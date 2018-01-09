@@ -7,7 +7,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static base.Endpoints.*;
@@ -120,9 +122,17 @@ public class Json {
         return isReplyOk(reply);
     }
     
-    public static void listFriends() {
+    public static List<State.Friend> listFriends() {
         JSONObject reply = makeRequest(Endpoints.LIST_FRIEND, null);
-        //TODO: reply
+        if(!isReplyOk(reply)) return null;
+        JSONArray jsonArray = (JSONArray) reply.get("friends");
+        List<State.Friend> friends = new ArrayList<>();
+        for (Object jsonObject : jsonArray) {
+            String username = (String) ((JSONObject) jsonObject).get("username");
+            boolean online = (boolean) ((JSONObject) jsonObject).get("online");
+            friends.add(new State.Friend(username, online));
+        }
+        return friends;
     }
 
     public static boolean createRoom(String room) {
@@ -143,9 +153,17 @@ public class Json {
         return isReplyOk(reply);
     }
 
-    public static void chatList() {
+    public static List<State.Room> chatList() {
         JSONObject reply = makeRequest(Endpoints.CHAT_LIST, null);
-        //TODO: reply
+        if(!isReplyOk(reply)) return null;
+        JSONArray jsonArray = (JSONArray) reply.get("rooms");
+        List<State.Room> rooms = new ArrayList<>();
+        for (Object jsonObject : jsonArray) {
+            String name = (String) ((JSONObject) jsonObject).get("name");
+            boolean added = (boolean) ((JSONObject) jsonObject).get("added");
+            rooms.add(new State.Room(name, added));
+        }
+        return rooms;
     }
 
     public static boolean closeRoom(String room) {
