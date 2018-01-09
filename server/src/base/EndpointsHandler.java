@@ -148,8 +148,14 @@ class EndpointsHandler {
 
     static JSONObject isOnline(User user, JSONObject params) {
         String username = (String) params.get("username");
-        if (!OnlineUsers.isOnline(username))return buildErrorReply(400, "User offline");
-        return buildSuccessReply();
+        if (!db.existUser(username))
+            return buildErrorReply(404, "Username not found.");
+        if (!db.checkFriendship(user.getUsername(), username))
+            return buildErrorReply(403, "You are not friend of this user.");
+        
+        JSONObject result = new JSONObject();
+        result.put("online", OnlineUsers.isOnline(username));
+        return buildSuccessReply(result);
     }
 
     @SuppressWarnings({"unchecked", "unused"})

@@ -126,10 +126,12 @@ public class Json {
     public static boolean isOnline(String username) {
         if (username == null || username.length() == 0)
             throw new IllegalArgumentException("Username must be a non-empty string.");
+        
         Map<String, String> parameters = new HashMap<>();
         parameters.put("username", username);
+        
         JSONObject result = makeRequest(Endpoints.IS_ONLINE, parameters);
-        return result != null;
+        return result != null && (boolean) result.get("online");
     }
     
     public static void listFriends() {
