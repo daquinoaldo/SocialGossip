@@ -35,6 +35,10 @@ class MainClient {
             rmi.Manager.registerCallback();
         });
 
+        State.addFriendsListener(friends -> {
+           //
+        });
+
 
         //TEST
         State.addFriend("user1");

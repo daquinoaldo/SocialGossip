@@ -51,7 +51,6 @@ public class State {
     private static final ArrayList<Consumer<Boolean>> loginCallbacks = new ArrayList<>();
     private static final ArrayList<Consumer<String>> usernameCallbacks = new ArrayList<>();
     private static final ArrayList<Consumer<Collection<Friend>>> friendsListCallbacks = new ArrayList<>();
-    private static final HashMap<String, Consumer<Boolean>> friendStatusCallback = new HashMap<>();
     private static final HashMap<String, Consumer<Message>> chatMsgCallbacks = new HashMap<>(); // one callback per chat only
     
     // Getters
@@ -73,7 +72,6 @@ public class State {
     
     public static void setFriendStatus(String username, boolean isOnline) {
         friends.get(username).setStatus(isOnline);
-        if (friendStatusCallback.containsKey(username)) friendStatusCallback.get(username).accept(isOnline);
         friendsListCallbacks.forEach(c -> c.accept(friends.values()));
     }
     
@@ -106,11 +104,11 @@ public class State {
         friendsListCallbacks.add(callback);
     }
 
+    public static void addChatsListener(Consumer<Collection<Friend>> callback) {
+        friendsListCallbacks.add(callback);
+    }
+
     public static void addChatMsgListener(String chatname, Consumer<Message> callback) {
         chatMsgCallbacks.put(chatname, callback);
-    }
-    
-    public static void addFriendStatusListener(String username, Consumer<Boolean> callback) {
-        friendStatusCallback.put(username, callback);
     }
 }
