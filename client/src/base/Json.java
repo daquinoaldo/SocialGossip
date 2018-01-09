@@ -27,7 +27,6 @@ public class Json {
             JSONObject payload = (JSONObject) request.get("params");
             
             String endpoint = (String) request.get("endpoint");
-            String status = (String) request.get("status");
             
             if (endpoint == null) {
                 // not a request
@@ -40,7 +39,7 @@ public class Json {
                     String username = (String) payload.get("username");
                     String text = (String) payload.get("text");
                     State.Message msg = new State.Message(username, text);
-                    // TODO: update State    - State.newPrivateMessage(username, msg)
+                    State.newFriendMessage(username, msg);
                     break;
                     
                 case FILE2FRIEND:

@@ -1,5 +1,6 @@
 package gui.panels;
 
+import base.State;
 import base.State.Friend;
 import base.State.Room;
 import constants.Dimensions;
@@ -7,6 +8,7 @@ import gui.Utils;
 
 import javax.swing.*;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -26,8 +28,29 @@ public class ListPanelFactory {
                 if (index >= 0) {
                     String username = jlist.getModel().getElementAt(index).toString();
 
-                    JPanel chatPanel = new ChatPanel(username);
-                    Utils.createWindow(username, chatPanel, Dimensions.CHAT_PANE);
+                    ChatPanel chatPanel = new ChatPanel(username);
+                    JFrame frame = Utils.createWindow(username, chatPanel, Dimensions.CHAT_PANE);
+                    
+                    // TODO: if FRIEND -> questo va bene
+                    // Register callback for incoming messages
+                    State.setFriendMsgListener(username, chatPanel::newMessage);
+                    // De-register it when the window gets closed
+                    frame.addWindowListener(new java.awt.event.WindowAdapter() {
+                        @Override
+                        public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                            State.delFriendMsgListener(username);
+                        }
+                    });
+                    
+                    // TODO: else -> registrarlo per le chat in questo modo:
+//                    State.setChatMsgListener(username, chatPanel::newMessage);
+//                    frame.addWindowListener(new java.awt.event.WindowAdapter() {
+//                        @Override
+//                        public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+//                            State.delChatMsgListener(username);
+//                        }
+//                    });
+    
                 }
             }
         }

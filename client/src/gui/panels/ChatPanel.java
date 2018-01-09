@@ -65,13 +65,9 @@ public class ChatPanel extends JPanel {
             }
         };
         fileButton.addActionListener(attachmentListener);
-
-        // Msg listener
-        State.addChatMsgListener(username, this::newMessage);
-        //TODO: ma quando lo deregistro?????
     }
     
-    private void newMessage(Message msg) {
+    public void newMessage(Message msg) {
         chatHistory.append(msg.toString() + "\n");
     }
 

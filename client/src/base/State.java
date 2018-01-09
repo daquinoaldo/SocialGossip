@@ -57,6 +57,7 @@ public class State {
     private static final ArrayList<Consumer<Collection<Friend>>> friendsListCallbacks = new ArrayList<>();
     private static final ArrayList<Consumer<Collection<Room>>> chatsListCallbacks = new ArrayList<>();
     private static final HashMap<String, Consumer<Message>> chatMsgCallbacks = new HashMap<>(); // one callback per chat only
+    private static final HashMap<String, Consumer<Message>> friendMsgCallbacks = new HashMap<>(); // one callback per chat only
     
     // Getters
     public static boolean isIsLoggedIn() { return isLoggedIn; }
@@ -115,9 +116,15 @@ public class State {
         chatsListCallbacks.forEach(c -> c.accept(rooms));
     }
     
-    public static void newMessage(String chatname, Message msg) {
+    public static void newChatroomMessage(String chatname, Message msg) {
         if (chatMsgCallbacks.containsKey(chatname)) {
             chatMsgCallbacks.get(chatname).accept(msg);
+        }
+    }
+    
+    public static void newFriendMessage(String username, Message msg) {
+        if (friendMsgCallbacks.containsKey(username)) {
+            friendMsgCallbacks.get(username).accept(msg);
         }
     }
     
@@ -137,8 +144,20 @@ public class State {
     public static void addChatsListener(Consumer<Collection<Room>> callback) {
         chatsListCallbacks.add(callback);
     }
-
-    public static void addChatMsgListener(String chatname, Consumer<Message> callback) {
+    
+    public static void setChatMsgListener(String chatname, Consumer<Message> callback) {
         chatMsgCallbacks.put(chatname, callback);
+    }
+    
+    public static void delChatMsgListener(String chatname) {
+        chatMsgCallbacks.remove(chatname);
+    }
+    
+    public static void setFriendMsgListener(String chatname, Consumer<Message> callback) {
+        chatMsgCallbacks.put(chatname, callback);
+    }
+    
+    public static void delFriendMsgListener(String chatname) {
+        chatMsgCallbacks.remove(chatname);
     }
 }
