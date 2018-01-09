@@ -107,7 +107,6 @@ class EndpointsHandler {
         if (OnlineUsers.isOnline(user)) {
             // All sockets have been correctly set up - notify his friends
             for (User friend : OnlineUsers.getOnlineFriends(user)) {
-                System.out.println("notify " +friend.getUsername() + " - " + user.getUsername() + " changed status");
                 friend.notifyFriendStatus(user.getUsername(), true);
             }
         }

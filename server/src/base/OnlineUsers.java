@@ -22,7 +22,6 @@ public class OnlineUsers {
         if (result) {
             // Add the user to the ghostbusting service
             ScheduledFuture<?> future = ghostbuster.scheduleAtFixedRate(() -> {
-                printDebug("[GHOSTBUSTER] Checking user " + user.getUsername());
                 long lastHeartbeat = user.getLastHeartbeat();
                 long now = System.currentTimeMillis();
                 
