@@ -8,10 +8,6 @@ import java.awt.event.ActionEvent;
 
 class CreateRoomPanel extends JPanel {
 
-    private JLabel resultLabel = new JLabel();
-    private JButton addFriendButton = new JButton("Add");
-    private String foundUser = null;
-
     CreateRoomPanel() {
         // Search panel
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
