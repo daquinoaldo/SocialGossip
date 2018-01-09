@@ -109,9 +109,12 @@ class DatabaseTest {
         ArrayList<String> expectedFriends = new ArrayList<>();
         expectedFriends.add("daquinoaldo");
         expectedFriends.add("username");
-        
-        ArrayList<String> actualFriends = database.getFriendships("zaphodias");
-        
-        assertLinesMatch(expectedFriends, actualFriends);
+    
+        ArrayList<String> zaphodiasFriends = database.getFriendships("zaphodias");
+        ArrayList<String> aldoFriends = database.getFriendships("daquinoaldo");
+    
+        assertEquals(2, zaphodiasFriends.size());
+        assertEquals(1, aldoFriends.size());
+        assertLinesMatch(expectedFriends, zaphodiasFriends);
     }
 }

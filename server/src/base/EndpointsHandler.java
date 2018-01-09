@@ -41,8 +41,8 @@ class EndpointsHandler {
         for (String friend : friends) {
             JSONObject jsonFriend = new JSONObject();
             jsonFriend.put("username", friend);
-            if (OnlineUsers.isOnline(friend)) jsonFriend.put("online", true);
-            else jsonFriend.put("online", false);
+            jsonFriend.put("online", OnlineUsers.isOnline(friend));
+
             friendsWithStatus.add(jsonFriend);
         }
         return friendsWithStatus;
@@ -103,6 +103,14 @@ class EndpointsHandler {
             user.setPrimarySocket(primarySocket);
         if (messageSocket != null)
             user.setMessageSocket(messageSocket);
+        
+        if (OnlineUsers.isOnline(user)) {
+            // All sockets have been correctly set up - notify his friends
+            for (User friend : OnlineUsers.getOnlineFriends(user)) {
+                System.out.println("notify " +friend.getUsername() + " - " + user.getUsername() + " changed status");
+                friend.notifyFriendStatus(user.getUsername(), true);
+            }
+        }
         
         return buildSuccessReply();
     }

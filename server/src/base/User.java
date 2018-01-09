@@ -15,7 +15,7 @@ public class User implements Comparable<User> {
     private ClientCallbackInterface callback; // RMI interface
     
     // This will be used in a ScheduledThreadpoolExecutor to check if the user is still connected
-    private long lastHeartbeat = 0;
+    private long lastHeartbeat = System.currentTimeMillis();
     public void setHeartbeat(long time) { this.lastHeartbeat = time; }
     public long getLastHeartbeat() { return this.lastHeartbeat; }
     private Future<?> ghostbusterFuture;

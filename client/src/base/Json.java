@@ -73,7 +73,7 @@ public class Json {
     public static void login(String username, String password) {
         if (username == null || password == null || username.length() == 0 || password.length() == 0)
             throw new IllegalArgumentException("Username and password must be a non-empty string.");
-        if(Utils.isDebug) System.out.println("Json.login()");
+
         Map<String, String> parameters = new HashMap<>();
         parameters.put("username", username);
         parameters.put("password", password);
@@ -101,8 +101,8 @@ public class Json {
         parameters.put("password", password);
         parameters.put("language", language);
 
-        JSONObject reply = makeRequest(Endpoints.REGISTER, parameters);
-        return isReplyOk(reply);
+        JSONObject result = makeRequest(Endpoints.REGISTER, parameters);
+        return result != null;
     }
     
     public static boolean lookup(String username) {
@@ -110,8 +110,8 @@ public class Json {
             throw new IllegalArgumentException("Username must be a non-empty string.");
         Map<String, String> parameters = new HashMap<>();
         parameters.put("username", username);
-        JSONObject reply = makeRequest(Endpoints.LOOKUP, parameters);
-        return isReplyOk(reply);
+        JSONObject result = makeRequest(Endpoints.LOOKUP, parameters);
+        return result != null;
     }
     
     public static boolean friendship(String username) {
@@ -119,14 +119,14 @@ public class Json {
             throw new IllegalArgumentException("Username must be a non-empty string.");
         Map<String, String> parameters = new HashMap<>();
         parameters.put("username", username);
-        JSONObject reply = makeRequest(Endpoints.FRIENDSHIP, parameters);
-        return isReplyOk(reply);
+        JSONObject result = makeRequest(Endpoints.FRIENDSHIP, parameters);
+        return result != null;
     }
     
     public static void listFriends() {
-        JSONObject reply = makeRequest(Endpoints.LIST_FRIEND, null);
-        if(!isReplyOk(reply)) return;
-        JSONArray jsonArray = (JSONArray) reply.get("friends");
+        JSONObject result = makeRequest(Endpoints.LIST_FRIEND, null);
+        if(result == null) return;
+        JSONArray jsonArray = (JSONArray) result.get("friends");
         if (jsonArray == null) return; // no friends yet
         List<State.Friend> friends = new ArrayList<>();
         for (Object jsonObject : jsonArray) {
@@ -142,8 +142,8 @@ public class Json {
             throw new IllegalArgumentException("The room name must be a non-empty string.");
         Map<String, String> parameters = new HashMap<>();
         parameters.put("room", room);
-        JSONObject reply = makeRequest(Endpoints.CREATE_ROOM, parameters);
-        return isReplyOk(reply);
+        JSONObject result = makeRequest(Endpoints.CREATE_ROOM, parameters);
+        return result != null;
     }
 
     public static boolean addMe(String room) {
@@ -151,14 +151,14 @@ public class Json {
             throw new IllegalArgumentException("The room name must be a non-empty string.");
         Map<String, String> parameters = new HashMap<>();
         parameters.put("room", room);
-        JSONObject reply = makeRequest(Endpoints.ADD_ME, parameters);
-        return isReplyOk(reply);
+        JSONObject result = makeRequest(Endpoints.ADD_ME, parameters);
+        return result != null;
     }
 
     public static void chatList() {
-        JSONObject reply = makeRequest(Endpoints.CHAT_LIST, null);
-        if(!isReplyOk(reply)) return;
-        JSONArray jsonArray = (JSONArray) reply.get("rooms");
+        JSONObject result = makeRequest(Endpoints.CHAT_LIST, null);
+        if(result == null) return;
+        JSONArray jsonArray = (JSONArray) result.get("rooms");
         if (jsonArray == null) return; // no chats yet
         List<State.Room> rooms = new ArrayList<>();
         for (Object jsonObject : jsonArray) {
@@ -174,8 +174,8 @@ public class Json {
             throw new IllegalArgumentException("The room name must be a non-empty string.");
         Map<String, String> parameters = new HashMap<>();
         parameters.put("room", room);
-        JSONObject reply = makeRequest(Endpoints.CLOSE_ROOM, parameters);
-        return isReplyOk(reply);
+        JSONObject result = makeRequest(Endpoints.CLOSE_ROOM, parameters);
+        return result != null;
     }
 
     //TODO: Pitasi ricontrolla!
@@ -184,8 +184,8 @@ public class Json {
         parameters.put("sender", State.username());
         parameters.put("recipient", recipient);
         parameters.put("text", text);
-        JSONObject reply = makeRequest(Endpoints.MSG2FRIEND, parameters);
-        return isReplyOk(reply);
+        JSONObject result = makeRequest(Endpoints.MSG2FRIEND, parameters);
+        return result != null;
     }
     
     public static void sendFileRequest(String toUsername) {
@@ -204,8 +204,8 @@ public class Json {
         payload.put("port", serverSocket.getLocalPort());
         payload.put("hostname", serverSocket.getInetAddress().getHostName());
         
-        JSONObject reply = makeRequest(FILE2FRIEND, payload); // la risposta del server deve notificare se l'utente non esiste o se non è un amico - altrimenti successo
-        if (reply != null) {
+        JSONObject result = makeRequest(FILE2FRIEND, payload); // la risposta del server deve notificare se l'utente non esiste o se non è un amico - altrimenti successo
+        if (result != null) {
             Connection.startFileSender(serverSocket, file);
         }
     }
@@ -249,8 +249,6 @@ public class Json {
 
 
         // send request to the server using the right socket, and wait for a reply
-        if(Utils.isDebug) System.out.println("Json.makeRequest: sending request...");
-        
         if (isMsgRequest) {
             Connection.sendMsgRequest(request.toJSONString());
             return null;
@@ -258,8 +256,6 @@ public class Json {
         
         String responseString = Connection.sendRequest(request.toJSONString());
         
-        if(Utils.isDebug) System.out.println("Json.makeRequest: got response");
-
         if (responseString == null) {
             Utils.showErrorDialog("Impossibile comunicare con il server. Controllare la connessione a internet e riprovare.");
             return null;
@@ -271,8 +267,9 @@ public class Json {
 
 
             if (isReplyOk(response)) {
-                if(Utils.isDebug) System.out.println("Json.makeRequest: reply ok!");
-                return response;
+                JSONObject result = (JSONObject) response.get("result");
+                if (result == null) result = new JSONObject();
+                return result;
             }
             else {
                 String msg = (String) response.get("message");

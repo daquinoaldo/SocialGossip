@@ -87,14 +87,11 @@ public class Connection {
             writer.write(request);
             writer.newLine();
             writer.flush();
-            if(Utils.isDebug) System.out.println("Connection.send: sent!");
-    
+            
             String toReturn = null;
             if (reader != null)
                 toReturn = reader.readLine();
             
-     
-            if(Utils.isDebug) System.out.println("Connection.send: received!");
             return toReturn;
         }
         catch (IOException e) {

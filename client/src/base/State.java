@@ -89,6 +89,7 @@ public class State {
         State.friends.clear();
         for (Friend friend : friends)
             State.friends.put(friend.getUsername(), friend);
+    
         friendsListCallbacks.forEach(c -> c.accept(friends));
     }
 
