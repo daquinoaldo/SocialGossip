@@ -3,6 +3,7 @@ package Connections;
 import base.Configuration;
 import base.Filesystem;
 import base.Json;
+import base.State;
 import gui.Utils;
 
 import java.io.*;
@@ -50,13 +51,16 @@ public class Connection {
         msgRequestListener.start();
         
         Thread heart = new Thread(() -> {
-            while (true) {
+            while (!Thread.interrupted()) {
                 Json.heartbeat();
                 try { Thread.sleep(500); }
                 catch (InterruptedException e) { }
             }
         });
-        heart.start();
+        State.addLoginListener((loggedIn) -> {
+            if (loggedIn) heart.start();
+            else heart.interrupt();
+        });
     }
     
     /**

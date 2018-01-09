@@ -46,11 +46,13 @@ public class OnlineUsers {
     }
     
     public static boolean remove(User user) {
+        printDebug("Logged out: " + user.getUsername());
         return users.remove(user.getUsername()) != null;
     }
     
     public static boolean isOnline(String username) {
-        return users.containsKey(username);
+        User user = users.get(username);
+        return user != null && user.getPrimarySocket() != null && user.getMessageSocket() != null;
     }
     
     public static boolean isOnline(User u) { return isOnline(u.getUsername()); }

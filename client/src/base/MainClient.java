@@ -34,9 +34,5 @@ class MainClient {
                 mainWindow.setTitle(username + " - Social Gossip");
             rmi.Manager.registerCallback();
         });
-
-
-        //TODO: test
-        Json.login("aldo", "pass");
     }
 }

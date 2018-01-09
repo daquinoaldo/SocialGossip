@@ -65,10 +65,11 @@ public class Tasks {
     public static void socketClosed(Socket socket) {
         User user = OnlineUsers.getBySocket(socket);
         if (user == null) return;
+        
         ArrayList<User> friends = OnlineUsers.getOnlineFriends(user);
-        if(!OnlineUsers.remove(user)) System.err.println("Error while changing user status\n" +
-                "Error occurred in Task.socketClosed with user "+user.toString());
-    
+        
+        if(!OnlineUsers.remove(user)) System.err.println("User was already offline");
+        
         for (User friend : friends) {
             friend.notifyFriendStatus(user.getUsername(), false);
         }

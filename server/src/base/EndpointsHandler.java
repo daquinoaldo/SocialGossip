@@ -11,6 +11,7 @@ import static base.Endpoints.MSG2FRIEND;
 import static base.RequestsHandler.buildErrorReply;
 import static base.RequestsHandler.buildSuccessReply;
 import static base.Utils.isDebug;
+import static base.Utils.printDebug;
 
 class EndpointsHandler {
 
@@ -72,21 +73,12 @@ class EndpointsHandler {
         Socket messageSocket = stubUser.getMessageSocket();
         String username = (String) params.get("username");
         String password = (String) params.get("password");
-    
-        if (isDebug)
-            System.out.println("Login request: <" + username + "," + password + ">");
         
         if(!db.existUser(username))
             return buildErrorReply(401, "Username not found.");
     
-        if (isDebug)
-            System.out.println("User found in database, checking password...");
-    
         if(!checkPassword(username, password))
             return buildErrorReply(401, "Incorrect password.");
-    
-        if (isDebug)
-            System.out.println("Password correct, adding to OnlineUsers");
         
         // Check if this is not first login request (-> update socket informations)
         User user = OnlineUsers.getByUsername(username);
@@ -108,6 +100,7 @@ class EndpointsHandler {
         
         if (OnlineUsers.isOnline(user)) {
             // All sockets have been correctly set up - notify his friends
+            printDebug("Logged in: " + user.getUsername());
             for (User friend : OnlineUsers.getOnlineFriends(user)) {
                 friend.notifyFriendStatus(user.getUsername(), true);
             }
