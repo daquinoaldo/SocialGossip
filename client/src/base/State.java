@@ -103,6 +103,11 @@ public class State {
         chatsListCallbacks.forEach(c -> c.accept(rooms.values()));
     }
 
+    public static void addRoom(String roomName, boolean subscribed) {
+        rooms.put(roomName, new Room(roomName, subscribed));
+        chatsListCallbacks.forEach(c -> c.accept(rooms.values()));
+    }
+
     public static void setRoomList(List<Room> rooms) {
         State.rooms.clear();
         for (Room room : rooms)

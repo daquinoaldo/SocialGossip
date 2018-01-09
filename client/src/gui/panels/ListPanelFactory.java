@@ -47,12 +47,13 @@ public class ListPanelFactory {
         }
     };
 
-    private static JPanel preparePanel(JPanel firstPanel, JPanel secondPanel) {
+    private static JPanel preparePanel(JPanel firstPanel, JPanel secondPanel, JButton button) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         panel.setBorder(Dimensions.PADDING_BORDER);
         panel.add(firstPanel);
         panel.add(secondPanel);
+        panel.add(button);
         return panel;
     }
 
@@ -78,8 +79,6 @@ public class ListPanelFactory {
                 null
         );
 
-        JPanel friendPanel = preparePanel(onlinePanel, offlinePanel);
-
         Action action = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -88,11 +87,10 @@ public class ListPanelFactory {
             }
         };
 
-        JButton addFriend = new JButton("Add friend");
-        addFriend.addActionListener(action);
-        friendPanel.add(addFriend);
+        JButton button = new JButton("Add friend");
+        button.addActionListener(action);
 
-        return friendPanel;
+        return preparePanel(onlinePanel, offlinePanel, button);
     }
 
     public static JPanel newRoomsPane(Collection<Room> rooms) {
@@ -117,6 +115,17 @@ public class ListPanelFactory {
                 addRoomListener
         );
 
-        return preparePanel(subscriptionsPanel, othersPanel);
+        Action action = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JPanel createRoomPanel = new CreateRoomPanel();
+                Utils.createFixedWindow("Create new room", createRoomPanel, false, false);
+            }
+        };
+
+        JButton button = new JButton("Create room");
+        button.addActionListener(action);
+
+        return preparePanel(subscriptionsPanel, othersPanel, button);
     }
 }
