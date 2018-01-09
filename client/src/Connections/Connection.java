@@ -95,8 +95,9 @@ public class Connection {
             return toReturn;
         }
         catch (IOException e) {
-            System.err.println("Error occured while comunicating with the server.");
+            System.err.println("Fatal error occured while comunicating with the server.");
             e.printStackTrace();
+            System.exit(1);
         }
     
         return null;
