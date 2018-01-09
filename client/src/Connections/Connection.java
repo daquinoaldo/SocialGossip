@@ -1,11 +1,13 @@
 package Connections;
 
 import base.Configuration;
+import base.Filesystem;
 import base.Json;
 import gui.Utils;
 
 import java.io.*;
-import java.net.Socket;
+import java.net.*;
+import java.nio.channels.SocketChannel;
 
 @SuppressWarnings("EmptyMethod")
 public class Connection {
@@ -91,6 +93,7 @@ public class Connection {
             if (reader != null)
                 toReturn = reader.readLine();
             
+     
             if(Utils.isDebug) System.out.println("Connection.send: received!");
             return toReturn;
         }
@@ -103,5 +106,64 @@ public class Connection {
     }
     
     // TODO:  Peer to peer file exchange
-    public static void sendFile() {}
+    public static void receiveFile(File destFile, String hostname, int port) {
+        Thread asyncWriter = new Thread(() -> {
+            int failedCount = 0;
+            boolean stop = false;
+            do {
+                try {
+                    Socket socket = new Socket(hostname, port);
+                    socket.setSoTimeout(5000);
+                    Filesystem.writeFile(socket, destFile);
+                } catch (IOException e) {
+                    if (failedCount < 3) {
+                        try {
+                            failedCount++;
+                            Thread.sleep(5000);
+                        } catch (InterruptedException intexc) { }
+                    }
+                    else {
+                        stop = true;
+                        System.err.println("Can't connect to the other peer");
+                        e.printStackTrace();
+                        
+                    }
+                }
+            } while (!stop);
+        });
+        asyncWriter.start();
+    }
+    
+    public static ServerSocket openFileSocket() {
+        try {
+            ServerSocket serverSocket = new ServerSocket(0);
+            serverSocket.setSoTimeout(5000);
+            return serverSocket;
+        }
+        catch (IOException e) {
+            System.err.println("Error while openening p2p socket for sending file");
+            e.printStackTrace();
+        }
+        
+        return null;
+    }
+    
+    
+    public static void startFileSender(ServerSocket serverSocket, File file) {
+        Thread listener = new Thread(() -> {
+            try {
+                serverSocket.setSoTimeout(5000);
+                Socket socket = serverSocket.accept();
+                socket.setSoTimeout(5000);
+                
+                Filesystem.readFile(file, socket);
+            
+                Utils.showErrorDialog("The user refused to receive the file.");
+            } catch (IOException e) {
+                System.err.println("Error while accepting connection from other peer");
+                e.printStackTrace();
+            }
+        });
+        listener.start();
+    }
 }

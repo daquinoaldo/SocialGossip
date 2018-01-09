@@ -1,11 +1,5 @@
 package base;
 
-//public static File filePathDialog() {
-//        JFileChooser chooser = new JFileChooser();
-//        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-//
-//        }
-
 import gui.Utils;
 
 import java.io.*;
@@ -21,7 +15,7 @@ public class Filesystem {
      * @param file File object, the file to be read
      * @param socket Socket where the file will be sent
      */
-    public void readFile(File file, Socket socket) {
+    public static void readFile(File file, Socket socket) {
         try (
                 FileChannel inChannel = new FileInputStream(file).getChannel();
                 SocketChannel outChannel = socket.getChannel()
@@ -42,7 +36,7 @@ public class Filesystem {
      * @param socket Socket from where data will be read
      * @param file File object, destinationation of the data
      */
-    public void writeFile(Socket socket, File file) {
+    public static void writeFile(Socket socket, File file) {
         try (
                 SocketChannel inChannel = socket.getChannel();
                 FileChannel outChannel = new FileOutputStream(file).getChannel()
@@ -58,7 +52,7 @@ public class Filesystem {
         }
     }
     
-    private void transfer(ReadableByteChannel in, WritableByteChannel out) throws IOException {
+    private static void transfer(ReadableByteChannel in, WritableByteChannel out) throws IOException {
         int read = 0;
         while (read != -1) {
             // Read into buffer

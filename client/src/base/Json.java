@@ -8,6 +8,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
+import java.io.File;
+import java.net.ServerSocket;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,21 +43,17 @@ public class Json {
                 case FILE2FRIEND:
                     // Got a request to send a file to me
                     String fromUsername = (String) payload.get("username");
-                    // if (!State.isFriend(fromUsername)) return;
-    
-                    // aprire dialog di conferma
+                    
+                    boolean confirm = Utils.showConfirmationDialog(fromUsername + " wants to send you a file. Save it?");
+                    if (!confirm) break;
+                    
                     // aprire dialog di selezione destinazione
-    
-                    // int port = Connection.receiveFile();
-                    JSONObject reply = new JSONObject();
-                    reply.put("status", "ok");
-                    // reply.put("port", port);
-                    Connection.sendMsgRequest(reply.toJSONString());
-                    break;
-                case HEARTBEAT:
-                    JSONObject response = new JSONObject();
-                    response.put("username", State.username());
-                    //Connection.sendMsgRequest(response.toJSONString());
+                    File destFile = Utils.saveFileDialog();
+                    
+                    String hostname = (String) payload.get("hostname");
+                    int port = (int) payload.get("port");
+                    
+                    Connection.receiveFile(destFile, hostname, port);
                     break;
             }
         }
@@ -183,6 +181,27 @@ public class Json {
         parameters.put("text", text);
         JSONObject reply = makeRequest(Endpoints.MSG2FRIEND, parameters);
         return isReplyOk(reply);
+    }
+    
+    public static void sendFileRequest(String toUsername) {
+        File file = Utils.openFileDialog();
+        
+        JSONObject payload = new JSONObject();
+        ServerSocket serverSocket = Connection.openFileSocket();
+        
+        if (serverSocket == null) {
+            Utils.showErrorDialog("Error while opening server socket.");
+            return;
+        }
+        
+        payload.put("to", toUsername);
+        payload.put("port", serverSocket.getLocalPort());
+        payload.put("hostname", serverSocket.getInetAddress().getHostName());
+        
+        JSONObject reply = makeRequest(FILE2FRIEND, payload); // la risposta del server deve notificare se l'utente non esiste o se non è un amico - altrimenti successo
+        if (reply != null) {
+            Connection.startFileSender(serverSocket, file);
+        }
     }
     
     /* Private helpers */

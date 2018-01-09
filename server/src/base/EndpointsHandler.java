@@ -177,6 +177,21 @@ class EndpointsHandler {
     }
 
     static JSONObject file2friend(User user, JSONObject params) {
+        String to = (String) params.get("to");
+        int port = (int) params.get("to");
+        String hostname = (String) params.get("to");
+        
+        if (!db.existUser(to)) {
+            return buildErrorReply(404, "User not found");
+        }
+        else if (!db.checkFriendship(user.getUsername(), to)) {
+            return buildErrorReply(403, to + " is not your friend.");
+        }
+        else if (port <= 1024 || hostname == null || hostname.length() == 0) {
+            return buildErrorReply(400, "Invalid request.");
+        }
+        
+        
         return buildErrorReply(400, "Not implemented yet.");
     }
 
