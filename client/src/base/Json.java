@@ -86,6 +86,9 @@ public class Json {
         
         State.setLoggedIn(true);
         State.setUsername(username);
+
+        listFriends();
+        chatList();
     }
     
     public static boolean register(String username, String password, String language) {
@@ -120,9 +123,9 @@ public class Json {
         return isReplyOk(reply);
     }
     
-    public static List<State.Friend> listFriends() {
+    public static void listFriends() {
         JSONObject reply = makeRequest(Endpoints.LIST_FRIEND, null);
-        if(!isReplyOk(reply)) return null;
+        if(!isReplyOk(reply)) return;
         JSONArray jsonArray = (JSONArray) reply.get("friends");
         List<State.Friend> friends = new ArrayList<>();
         for (Object jsonObject : jsonArray) {
@@ -130,7 +133,7 @@ public class Json {
             boolean online = (boolean) ((JSONObject) jsonObject).get("online");
             friends.add(new State.Friend(username, online));
         }
-        return friends;
+        State.setFriendList(friends);
     }
 
     public static boolean createRoom(String room) {
@@ -151,9 +154,9 @@ public class Json {
         return isReplyOk(reply);
     }
 
-    public static List<State.Room> chatList() {
+    public static void chatList() {
         JSONObject reply = makeRequest(Endpoints.CHAT_LIST, null);
-        if(!isReplyOk(reply)) return null;
+        if(!isReplyOk(reply)) return;
         JSONArray jsonArray = (JSONArray) reply.get("rooms");
         List<State.Room> rooms = new ArrayList<>();
         for (Object jsonObject : jsonArray) {
@@ -161,7 +164,7 @@ public class Json {
             boolean added = (boolean) ((JSONObject) jsonObject).get("added");
             rooms.add(new State.Room(name, added));
         }
-        return rooms;
+        State.setRoomList(rooms);
     }
 
     public static boolean closeRoom(String room) {

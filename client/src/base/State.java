@@ -4,6 +4,7 @@ package base;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class State {
@@ -48,7 +49,7 @@ public class State {
     private static boolean isLoggedIn = false;
     private static String username = null;
     private static final HashMap<String, Friend> friends = new HashMap<>();
-    private static final ArrayList<Room> rooms = new ArrayList<>();
+    private static final HashMap<String, Room> rooms = new HashMap<>();
     
     // Callbacks
     private static final ArrayList<Consumer<Boolean>> loginCallbacks = new ArrayList<>();
@@ -61,7 +62,7 @@ public class State {
     public static boolean isIsLoggedIn() { return isLoggedIn; }
     public static String username() { return username; }
     public static Collection<Friend> friends() { return friends.values(); }
-    public static Collection<Room> rooms() { return rooms; }
+    public static Collection<Room> rooms() { return rooms.values(); }
     
     // State changes, will trigger a callback if any was set
     public static void setLoggedIn(boolean loggedIn) {
@@ -84,8 +85,22 @@ public class State {
         friendsListCallbacks.forEach(c -> c.accept(friends.values()));
     }
 
+    public static void setFriendList(List<Friend> friends) {
+        State.friends.clear();
+        for (Friend friend : friends)
+            State.friends.put(friend.getUsername(), friend);
+        friendsListCallbacks.forEach(c -> c.accept(friends));
+    }
+
     public static void addRoom(String roomName) {
-        rooms.add(new Room(roomName));
+        rooms.put(roomName, new Room(roomName));
+        chatsListCallbacks.forEach(c -> c.accept(rooms.values()));
+    }
+
+    public static void setRoomList(List<Room> rooms) {
+        State.rooms.clear();
+        for (Room room : rooms)
+            State.rooms.put(room.getName(), room);
         chatsListCallbacks.forEach(c -> c.accept(rooms));
     }
     
