@@ -13,11 +13,13 @@ import static base.RequestsHandler.buildErrorReply;
 import static base.RequestsHandler.buildSuccessReply;
 import static base.Utils.isDebug;
 import static base.Utils.printDebug;
+import static base.Utils.writeToFile;
 
 class EndpointsHandler {
 
     private static final Database db = new Database();
-    private static String lastBroadcastIP = "239.0.0.0";    //TODO: deve essere salvato (su file?)
+    private static String lastBroadcastIP = null;
+    private static final String LASTIP_PATH = "last-broadcast-ip.txt";
     
     static {
         db.init();
@@ -162,6 +164,7 @@ class EndpointsHandler {
     }
 
     static JSONObject createRoom(User user, JSONObject params) {
+        if (lastBroadcastIP == null) lastBroadcastIP = Utils.readFromFile(LASTIP_PATH);
         String nextBroadcastIP = Utils.nextBroadcastIP(lastBroadcastIP);
         if (nextBroadcastIP == null) {
             System.err.println("No more multicast address left!");
@@ -173,6 +176,7 @@ class EndpointsHandler {
             return buildErrorReply(400, "Database error.");
         
         lastBroadcastIP = nextBroadcastIP;  // only if success
+        writeToFile(nextBroadcastIP, LASTIP_PATH);
         JSONObject result = new JSONObject();
         result.put("name", roomName);
         result.put("address", nextBroadcastIP);

@@ -1,5 +1,7 @@
 *.db
 
+last-broadcast-ip.txt
+
 # output latex
 relazione/_minted-main/
 relazione/*.aux
