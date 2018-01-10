@@ -29,8 +29,8 @@ class MainClient {
                 mainWindow = Utils.createFixedWindow("Social Gossip", mainPanel, true, false);
 
                 // Every 1s refresh the room list
-                ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-                scheduler.scheduleAtFixedRate(Json::chatList, 0, 1, TimeUnit.SECONDS);
+                // ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+                // scheduler.scheduleAtFixedRate(Json::chatList, 0, 5, TimeUnit.SECONDS);
             }
         });
 

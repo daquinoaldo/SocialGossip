@@ -27,7 +27,9 @@ import static base.Endpoints.*;
 // mettere makeRequest synchronized risolve?
 
 public class Json {
-    private static JSONObject parse(String s) {
+    private synchronized static JSONObject parse(String s) {
+        if (s == null) return null;
+        
         try {
             JSONParser parser = new JSONParser();
             return (JSONObject) parser.parse(s);
@@ -41,6 +43,8 @@ public class Json {
     
     public synchronized static void parseMessageRequest(String jsonString) {
         JSONObject request = parse(jsonString);
+        if (request == null) return;
+        
         JSONObject payload = (JSONObject) request.get("params");
 
         String endpoint = (String) request.get("endpoint");
@@ -361,7 +365,7 @@ public class Json {
         request.put("params", params);
 
 
-        // send request to the server using the right socket, and wait for a reply
+        // send request to the server using the right socket
         if (isMsgRequest) {
             Connection.sendMsgRequest(request.toJSONString());
             return null;

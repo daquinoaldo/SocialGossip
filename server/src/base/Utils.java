@@ -79,8 +79,7 @@ public class Utils {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             return br.readLine();
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            return "239.0.0.0";
         }
     }
 

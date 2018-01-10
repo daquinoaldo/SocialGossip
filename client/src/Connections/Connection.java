@@ -74,7 +74,7 @@ public class Connection {
      * @param request String to be sent.
      * @return String returned by the server, can be null.
      */
-    public static String sendRequest(String request) {
+    public synchronized static String sendRequest(String request) {
         return send(primaryWriter, primaryReader, request);
     }
     
@@ -83,11 +83,11 @@ public class Connection {
      * @param request String to be sent.
      * @return String returned by the server, can be null.
      */
-    public static void sendMsgRequest(String request) {
+    public synchronized static void sendMsgRequest(String request) {
         send(msgWriter, null, request);
     }
     
-    private static String send(BufferedWriter writer, BufferedReader reader, String request) {
+    private synchronized static String send(BufferedWriter writer, BufferedReader reader, String request) {
         try {
             writer.write(request);
             writer.newLine();
