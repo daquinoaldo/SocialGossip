@@ -75,7 +75,7 @@ public class Multicast {
             throw new IllegalArgumentException("Not a valid multicast address: " + address.getHostName());
         }
         
-        if (!addressToChatname.containsKey(address))
+        if (addressToChatname.containsKey(address))
             return;
         
         try {
