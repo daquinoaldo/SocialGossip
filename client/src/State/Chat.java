@@ -22,7 +22,8 @@ public abstract class Chat {
             throw new IllegalArgumentException("Invalid type. Please choose one of FRIEND_TYPE, CHATROOM_TYPE.");
         this.type = type;
         this.name = name;
-        chatPanel = new ChatPanel(this);
+        if (type == FRIEND_TYPE) chatPanel = new ChatPanel((Friend) this);
+        if (type == CHATROOM_TYPE) chatPanel = new ChatPanel((Room) this);
     }
     
     public int getType() { return type; }

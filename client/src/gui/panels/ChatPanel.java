@@ -16,8 +16,7 @@ public class ChatPanel extends JPanel {
     Action sendMsgAction;
     
     public ChatPanel(Room room) {
-        // TODO: qualcosa del genere
-        // non so come si faccia anche perchè è passata l'una di notte e non ragiono
+        this((Chat) room);
         
         if (room.getCreator().equals(User.username())) {
             JButton closeButton = new JButton("Close room");
@@ -29,18 +28,17 @@ public class ChatPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (!msgField.getText().equals("")) {
                     Message msg = new Message(User.username(), msgField.getText());
-                    Json.sendChatMsg(room, msgField.getText();
+                    Json.sendChatMsg(room, msgField.getText());
                     chatHistory.append(msg.toString() + "\n");
                     msgField.setText("");
                 }
             }
         };
-    
-    
-        return ChatPanel((Chat) room);
     }
     
     public ChatPanel(Friend friend) {
+        this((Chat) friend);
+
         JButton fileButton = new JButton("Attach file");
         fileButton.addActionListener(e -> Json.sendFileRequest(friend.getUsername()));
     
@@ -55,8 +53,6 @@ public class ChatPanel extends JPanel {
                 }
             }
         };
-    
-        return ChatPanel((Chat) friend);
     }
     
     private ChatPanel(Chat chat) {
