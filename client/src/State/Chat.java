@@ -51,7 +51,6 @@ public abstract class Chat {
                 
                 @Override
                 public void windowActivated(WindowEvent e) {
-                    System.out.println(123);
                     chatPanel.focusGained();
                 }
             });

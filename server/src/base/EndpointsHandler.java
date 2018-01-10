@@ -266,6 +266,11 @@ class EndpointsHandler {
         else if(!OnlineUsers.isOnline(to))
             return buildErrorReply(400, to +" is offline.");
         
+        String fromLang = db.getUserLang(user.getUsername());
+        String toLang = db.getUserLang(to);
+        if (!fromLang.equals(toLang))
+            params.put("text", Translation.translate(text, fromLang, toLang));
+            
         OnlineUsers.getByUsername(to).sendMsgRequest(MSG2FRIEND, params);
         return buildSuccessReply();
     }
