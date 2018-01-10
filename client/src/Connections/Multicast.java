@@ -5,6 +5,7 @@ import base.Configuration;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.HashMap;
@@ -13,15 +14,17 @@ public class Multicast {
     private Thread listener;
     private static boolean stop = false;
     private static MulticastSocket ms = null;
+    private static DatagramSocket outputDatagramSocket;
     
     private static final HashMap<InetAddress, String> addressToChatname = new HashMap<>();
     
     static {
         try {
             ms = new MulticastSocket(Configuration.MULTICAST_PORT);
+            outputDatagramSocket = new DatagramSocket();
         }
         catch (IOException e) {
-            System.err.println("Fatal error while binding multicast port:");
+            System.err.println("Fatal error while binding UDP port:");
             e.printStackTrace();
             System.exit(1);
         }
@@ -58,8 +61,15 @@ public class Multicast {
     }
     
     public static void send(InetAddress address, String request) {
-        // TODO: questo metodo lo userà Json
-        // creare pacchetto UDP con request e mandarlo a address
+        try {
+            byte[] data = request.getBytes();
+            DatagramPacket datagramPacket = new DatagramPacket(data, data.length, address, Configuration.MULTICAST_PORT);
+            outputDatagramSocket.send(datagramPacket);
+        }
+        catch (IOException e) {
+            System.err.println("Error while sending multicast packet");
+            e.printStackTrace();
+        }
     }
     
     public static void joinGroup(String chatname, InetAddress address) throws IllegalArgumentException {
