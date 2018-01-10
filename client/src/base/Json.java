@@ -77,10 +77,17 @@ public class Json {
                 
                 // aprire dialog di selezione destinazione
                 File destFile = Utils.saveFileDialog(filename);
+                if (destFile == null) {
+                    User.getFriend(fromUsername).newMessage(
+                            new Message("SYSTEM", "Download from " + fromUsername + " aborted."));
+                    break;
+                }
     
-                User.getFriend(fromUsername).newMessage( new Message("SYSTEM", "Starting download from " + fromUsername + " completed.") );
+                User.getFriend(fromUsername).newMessage(
+                        new Message("SYSTEM", "Starting download from "+fromUsername+"."));
                 Connection.receiveFile(destFile, hostname, port);
-                User.getFriend(fromUsername).newMessage( new Message("SYSTEM", "Download from " + fromUsername + " completed.") );
+                User.getFriend(fromUsername).newMessage(
+                        new Message("SYSTEM", "Download from " + fromUsername + " completed.") );
                 break;
                 
             case CHATROOM_MESSAGE:
@@ -293,6 +300,7 @@ public class Json {
     
     public static void sendFileRequest(String toUsername) {
         File file = Utils.openFileDialog();
+        if (file == null) return;
         
         JSONObject payload = new JSONObject();
         ServerSocketChannel serverSocketChannel = Connection.openFileSocket();
@@ -310,9 +318,9 @@ public class Json {
         JSONObject result = makeRequest(FILE2FRIEND, payload);
     
         if (result != null) {
-            User.getFriend(toUsername).newMessage( new Message("SYSTEM", "Starting upload to" + toUsername + ".") );
+            User.getFriend(toUsername).newMessage( new Message("SYSTEM", "Starting upload to "+toUsername+".") );
             Connection.startFileSender(serverSocketChannel, file, () -> {
-                User.getFriend(toUsername).newMessage( new Message("SYSTEM", "Completed upload to" + toUsername + ".") );
+                User.getFriend(toUsername).newMessage( new Message("SYSTEM", "Completed upload to "+toUsername+".") );
             });
         }
     }
