@@ -75,6 +75,9 @@ public class Multicast {
             throw new IllegalArgumentException("Not a valid multicast address: " + address.getHostName());
         }
         
+        if (!addressToChatname.containsKey(address))
+            return;
+        
         try {
             ms.joinGroup(address);
             addressToChatname.put(address, chatname);
