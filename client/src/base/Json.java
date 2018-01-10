@@ -105,6 +105,7 @@ public class Json {
         String chatClosed = (String) request.get("chat_closed");
         if (chatClosed != null && chatClosed.length() > 0) {
             // Chatroom has been closed
+            if (chatname == null) return;
             Utils.showErrorDialog(chatname + " has been closed.");
             Room room = User.getRoom(chatname);
             room.closeWindow();
