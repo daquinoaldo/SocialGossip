@@ -32,7 +32,10 @@ public abstract class Chat {
     
     public JFrame getWindow() { return window; }
     public void createWindow() {
-        window = Utils.createWindow(name, chatPanel, Dimensions.CHAT_PANE);
+        if (window == null)
+            window = Utils.createWindow(name, chatPanel, Dimensions.CHAT_PANE);
+        else
+            window.requestFocus();
     }
     
     public void newMessage(Message message) {
