@@ -71,11 +71,15 @@ class EndpointsHandler {
         String username = (String) params.get("username");
         String password = (String) params.get("password");
         
-        if(!db.existUser(username))
+        if (!db.existUser(username))
             return buildErrorReply(401, "Username not found.");
     
-        if(!checkPassword(username, password))
+        if (!checkPassword(username, password))
             return buildErrorReply(401, "Incorrect password.");
+        
+        if (OnlineUsers.isOnline(username)) {
+            return buildErrorReply(403, "Already logged in!");
+        }
         
         // Check if this is not first login request (-> update socket informations)
         User user = OnlineUsers.getByUsername(username);
