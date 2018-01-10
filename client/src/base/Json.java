@@ -250,20 +250,22 @@ public class Json {
         User.removeRoom(room);
     }
 
-    public static boolean sendMsg(String recipient, String text) {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("sender", User.username());
-        parameters.put("recipient", recipient);
-        parameters.put("text", text);
-        JSONObject result = makeRequest(Endpoints.MSG2FRIEND, parameters);
+    private static JSONObject genericMsg(String recipient, String text) {
+        JSONObject req = new JSONObject();
+        req.put("sender", User.username());
+        req.put("recipient", recipient);
+        req.put("text", text);
+        return req;
+    }
+    
+    public static boolean sendMsg(String to, String recipient) {
+        JSONObject req = genericMsg(to, recipient);
+        JSONObject result = makeRequest(Endpoints.MSG2FRIEND, req);
         return result != null;
     }
     
-    public static void sendChatMsg(Room dest, String text) {
-        JSONObject req = new JSONObject();
-        req.put("sender", User.username());
-        req.put("recipient", dest.getName());
-        req.put("text", text);
+    public static void sendChatMsg(String to, String recipient) {
+        JSONObject req = genericMsg(to, recipient);
         Multicast.send(req.toJSONString());
     }
     

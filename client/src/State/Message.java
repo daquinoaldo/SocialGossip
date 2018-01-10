@@ -1,8 +1,8 @@
 package State;
 
 public  class Message {
-    final String sender;
-    final String text;
+    public final String sender;
+    public final String text;
     public Message(String sender, String text) {
         this.sender = sender;
         this.text = text;
