@@ -1,17 +1,27 @@
 package State;
 
+import Connections.Multicast;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 public class Room extends Chat {
-    public Room(String username) {
-        super(Chat.CHATROOM_TYPE, username);
-    }
+    private InetAddress address;
+    private String creator;
     
-    public Room(String username, boolean online) {
+    public Room(String username, String mcAddress, String creator, boolean online) throws UnknownHostException {
         super(Chat.CHATROOM_TYPE, username);
+        if (mcAddress == null || creator == null)
+            throw new IllegalArgumentException("Invalid chat parameters: <" + mcAddress + "," + creator + ">");
+        
         this.setStatus(online);
+        this.address = InetAddress.getByName(mcAddress);
+        this.creator = creator;
+        Multicast.joinGroup(username, address);
     }
     
+    public InetAddress getAddress() { return address; }
+    public String getCreator() { return creator; }
     public boolean isSubscribed() { return getFlag(); }
     public void setStatus(boolean subscribed) { setFlag(subscribed); }
-    
-    public String getName() { return getName(); }
 }

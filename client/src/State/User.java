@@ -1,6 +1,7 @@
 
 package State;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -72,15 +73,21 @@ public class User {
     
         friendsListCallbacks.forEach(c -> c.accept(friends));
     }
-
-    public static void addRoom(String roomName) {
-        rooms.put(roomName, new Room(roomName));
+    
+    public static void addRoom(String roomName, String address, String creator, boolean subscribed) {
+        try {
+            rooms.put(roomName, new Room(roomName, address, creator, subscribed));
+        }
+        catch (UnknownHostException e) {
+            System.err.println("Can't join the chatroom: " + roomName);
+            e.printStackTrace();
+            return;
+        }
         chatsListCallbacks.forEach(c -> c.accept(rooms.values()));
     }
-
-    public static void addRoom(String roomName, boolean subscribed) {
-        rooms.put(roomName, new Room(roomName, subscribed));
-        chatsListCallbacks.forEach(c -> c.accept(rooms.values()));
+    
+    public static boolean removeRoom(String roomName) {
+        return rooms.remove(roomName) != null;
     }
 
     public static void setRoomList(List<Room> rooms) {

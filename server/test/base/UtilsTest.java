@@ -22,6 +22,8 @@ class UtilsTest {
     
     @Test
     void nextBroadcastIP() {
-        // TODO
+        assertEquals("239.225.225.226", Utils.nextBroadcastIP("239.225.225.225"));
+        assertEquals("239.225.226.0", Utils.nextBroadcastIP("239.225.225.255"));
+        assertNull(Utils.nextBroadcastIP("239.255.255.255"));
     }
 }

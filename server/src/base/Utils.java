@@ -41,7 +41,7 @@ public class Utils {
         String[] tokens = actualIP.split("\\.");
         if (tokens.length != 4) throw new IllegalArgumentException();
         // Starting from the last
-        for (int i = 4; i >= 0; i--) {
+        for (int i = 3; i >= 0; i--) {
             int item = Integer.parseInt(tokens[i]);
             // if can be incremented:
             if (item < 255) {
@@ -60,7 +60,7 @@ public class Utils {
         String nextIP = nextIP(actualIP);
         String[] tokens = nextIP.split("\\.");
         int item = Integer.parseInt(tokens[0]);
-        if (item < 224 || item > 239) return null;
+        if (item != 239) return null;
         return nextIP;
     }
 

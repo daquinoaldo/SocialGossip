@@ -1,5 +1,6 @@
 package Connections;
 
+import State.User;
 import base.Configuration;
 
 import java.io.IOException;
@@ -8,7 +9,7 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.HashMap;
 
-class Multicast {
+public class Multicast {
     private Thread listener;
     private static boolean stop = false;
     private static MulticastSocket ms = null;
@@ -43,8 +44,8 @@ class Multicast {
                 String chatname = addressToChatname.get(from);
                 String data = new String(packet.getData());
                 if (chatname != null) {
-                    //TODO:
-                    // Json.parseChatMessage(chatname, data);
+                    // TODO:
+                    // Json.parseChatMessage(chatname, data); <- deve controllare se è messaggio di eliminazione chat oppure messaggio vero
                 }
                 else {
                     System.err.println("Got message from unknown address:");
@@ -54,6 +55,11 @@ class Multicast {
             }
         });
         t.start();
+    }
+    
+    public static void send(InetAddress address, String request) {
+        // TODO: questo metodo lo userà Json
+        // creare pacchetto UDP con request e mandarlo a address
     }
     
     public static void joinGroup(String chatname, InetAddress address) throws IllegalArgumentException {

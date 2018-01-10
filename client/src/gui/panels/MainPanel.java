@@ -13,23 +13,22 @@ public class MainPanel extends JPanel {
     private JPanel roomsPane;
 
     private void updateFriends(Collection<Friend> friends) {
-        this.remove(friendsPane);
-        this.remove(roomsPane);
         friendsPane = ListPanelFactory.newFriendsPane(friends);
-        this.add(friendsPane);
-        this.add(roomsPane);
-        this.revalidate();
-        this.repaint();
+        refresh();
     }
 
     private void updateRooms(Collection<Room> room) {
-        this.remove(friendsPane);
-        this.remove(roomsPane);
         roomsPane = ListPanelFactory.newRoomsPane(room);
+        refresh();
+    }
+    
+    private void refresh() {
+        this.removeAll();
         this.add(friendsPane);
         this.add(roomsPane);
         this.revalidate();
         this.repaint();
+    
     }
 
     public MainPanel() {

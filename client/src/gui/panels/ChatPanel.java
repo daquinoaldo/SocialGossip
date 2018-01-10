@@ -1,8 +1,7 @@
 package gui.panels;
 
-import State.Message;
+import State.*;
 import base.Json;
-import State.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,11 +9,57 @@ import java.awt.event.ActionEvent;
 
 
 public class ChatPanel extends JPanel {
-
-    private final JTextArea chatHistory;
-    private final JTextField msgField;
+    private JTextArea chatHistory;
+    private JTextField msgField;
     
-    public ChatPanel(String username) {
+    private JButton secondButton;
+    Action sendMsgAction;
+    
+    public ChatPanel(Room room) {
+        // TODO: qualcosa del genere
+        // non so come si faccia anche perchè è passata l'una di notte e non ragiono
+        
+        if (room.getCreator().equals(User.username())) {
+            JButton closeButton = new JButton("Close room");
+            closeButton.addActionListener(e -> Json.closeRoom(room.getName()));
+        }
+    
+        sendMsgAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!msgField.getText().equals("")) {
+                    Message msg = new Message(User.username(), msgField.getText());
+                    Json.sendChatMsg(room, msgField.getText();
+                    chatHistory.append(msg.toString() + "\n");
+                    msgField.setText("");
+                }
+            }
+        };
+    
+    
+        return ChatPanel((Chat) room);
+    }
+    
+    public ChatPanel(Friend friend) {
+        JButton fileButton = new JButton("Attach file");
+        fileButton.addActionListener(e -> Json.sendFileRequest(friend.getUsername()));
+    
+        sendMsgAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!msgField.getText().equals("")) {
+                    Message msg = new Message(User.username(), msgField.getText());
+                    Json.sendMsg(friend.getUsername(), msgField.getText());
+                    chatHistory.append(msg.toString() + "\n");
+                    msgField.setText("");
+                }
+            }
+        };
+    
+        return ChatPanel((Chat) friend);
+    }
+    
+    private ChatPanel(Chat chat) {
         setLayout(new BorderLayout());
         
         // Send a new message input and button
@@ -24,11 +69,10 @@ public class ChatPanel extends JPanel {
         msgField = new JTextField(30);
         msgField.requestFocusInWindow();
         JButton sendButton = new JButton("Send");
-        JButton fileButton = new JButton("Attach file");
         
         southPanel.add(msgField);
         southPanel.add(sendButton);
-        southPanel.add(fileButton);
+        if (secondButton != null) southPanel.add(secondButton);
         
         // ChatPanel messages
         chatHistory = new JTextArea();
@@ -42,28 +86,8 @@ public class ChatPanel extends JPanel {
         this.add(southPanel, BorderLayout.SOUTH);
 
         // Send listeners
-        Action sendMsgAction = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!msgField.getText().equals("")) {
-                    Message msg = new Message(User.username(), msgField.getText());
-                    Json.sendMsg(username, msgField.getText());
-                    chatHistory.append(msg.toString() + "\n");
-                    msgField.setText("");
-                }
-            }
-        };
         msgField.addActionListener(sendMsgAction);
         sendButton.addActionListener(sendMsgAction);
-
-        // Send listeners
-        Action attachmentListener = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Json.sendFileRequest(username);
-            }
-        };
-        fileButton.addActionListener(attachmentListener);
     }
     
     public void newMessage(Message msg) {

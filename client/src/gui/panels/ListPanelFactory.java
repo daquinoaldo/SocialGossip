@@ -29,9 +29,11 @@ public class ListPanelFactory {
                     String name = jlist.getModel().getElementAt(index).toString();
                     
                     // TODO: cercare un modo di capire se è stata cliccata la lista amici o la lista chat
-                    boolean isFriendChat = true;
                     
-                    Chat chat = isFriendChat ? User.getFriend(name) : User.getRoom(name);
+                    // nel frattempo prima cerco nella lista di amici poi nelle chat --> errore in caso di anonimie
+                    Chat chat = User.getFriend(name);
+                    if (chat == null) chat = User.getRoom(name);
+                    if (chat == null) return;
                     chat.createWindow();
                 }
             }
@@ -48,7 +50,9 @@ public class ListPanelFactory {
                     String name = jlist.getModel().getElementAt(index).toString();
                     // TODO: add the room to my rooms
                     // TODO <antonio>: credo tu intenda di fare così:
-                    User.getRoom(name).setStatus(true);
+                    Room room = User.getRoom(name);
+                    if (room == null) return;
+                    room.setStatus(true);
                 }
             }
         }

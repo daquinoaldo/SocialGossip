@@ -22,8 +22,7 @@ class CreateRoomPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!textField.getText().equals("")) {
-                    if(Json.createRoom(textField.getText()))
-                        User.addRoom(textField.getText(), true);   //TODO: è sottoscritta?
+                    Json.createRoom(textField.getText());
                     textField.setText("");
                 }
             }

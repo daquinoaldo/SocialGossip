@@ -1,6 +1,7 @@
 package base;
 
 import Connections.Connection;
+import Connections.Multicast;
 import State.Friend;
 import State.User;
 import State.Message;
@@ -11,6 +12,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.io.File;
 import java.net.ServerSocket;
@@ -29,7 +31,7 @@ public class Json {
             JSONParser parser = new JSONParser();
             JSONObject request = (JSONObject) parser.parse(jsonString);
             JSONObject payload = (JSONObject) request.get("params");
-            
+    
             String endpoint = (String) request.get("endpoint");
             
             if (endpoint == null) {
@@ -60,6 +62,19 @@ public class Json {
                     int port = (int) payload.get("port");
                     
                     Connection.receiveFile(destFile, hostname, port);
+                    break;
+                    
+                case CHATROOM_MESSAGE:
+                    // If a chatroom message is here, it's probably an error
+                    String status = (String) payload.get("status");
+                    String message = (String) payload.get("message");
+                    if (status != null && status.equals("err")) {
+                        String roomName = (String) payload.get("recipient");
+                        Room room = User.getRoom(roomName);
+                        if (room != null) room.newMessage(new Message("SYSTEM", message));
+                        else Utils.showErrorDialog("Chatroom error: " + message);
+                    }
+                    else System.err.println("Invalid chat message request received.");
                     break;
             }
         }
@@ -154,13 +169,17 @@ public class Json {
         User.setFriendList(friends);
     }
 
-    public static boolean createRoom(String room) {
-        if (room == null || room.length() == 0)
+    public static boolean createRoom(String roomName) {
+        if (roomName == null || roomName.length() == 0)
             throw new IllegalArgumentException("The room name must be a non-empty string.");
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("room", room);
+        parameters.put("room", roomName);
         JSONObject result = makeRequest(Endpoints.CREATE_ROOM, parameters);
-        return result != null;
+        if (result == null) return false;
+        
+        String address = (String) result.get("address");
+        User.addRoom(roomName, address, User.username(), true);
+        return true;
     }
 
     public static boolean addMe(String room) {
@@ -180,22 +199,31 @@ public class Json {
         List<Room> rooms = new ArrayList<>();
         for (Object jsonObject : jsonArray) {
             String name = (String) ((JSONObject) jsonObject).get("name");
-            boolean added = (boolean) ((JSONObject) jsonObject).get("added");
-            rooms.add(new Room(name, added));
+            String address = (String) ((JSONObject) jsonObject).get("address");
+            String creator = (String) ((JSONObject) jsonObject).get("creator");
+            boolean subscribed = (boolean) ((JSONObject) jsonObject).get("subscribed");
+            try {
+                rooms.add(new Room(name, address, creator, subscribed));
+            }
+            catch (UnknownHostException e) {
+                System.err.println("Unable to join the room " + name);
+                e.printStackTrace();
+            }
         }
         User.setRoomList(rooms);
     }
 
-    public static boolean closeRoom(String room) {
+    public static void closeRoom(String room) {
         if (room == null || room.length() == 0)
             throw new IllegalArgumentException("The room name must be a non-empty string.");
         Map<String, String> parameters = new HashMap<>();
         parameters.put("room", room);
         JSONObject result = makeRequest(Endpoints.CLOSE_ROOM, parameters);
-        return result != null;
+        if (result == null) return;
+        
+        User.removeRoom(room);
     }
 
-    //TODO: Pitasi ricontrolla!
     public static boolean sendMsg(String recipient, String text) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("sender", User.username());
@@ -203,6 +231,14 @@ public class Json {
         parameters.put("text", text);
         JSONObject result = makeRequest(Endpoints.MSG2FRIEND, parameters);
         return result != null;
+    }
+    
+    public static void sendChatMsg(Room dest, String text) {
+        JSONObject req = new JSONObject();
+        req.put("sender", User.username());
+        req.put("recipient", dest.getName());
+        req.put("text", text);
+        Multicast.send(dest.getAddress(), req.toJSONString());
     }
     
     public static void sendFileRequest(String toUsername) {

@@ -3,6 +3,7 @@ package base;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import static base.Utils.printDebug;
 class EndpointsHandler {
 
     private static final Database db = new Database();
-    private static String lastBroadcastIP = "224.0.0.0";    //TODO: deve essere salvato (su file?)
+    private static String lastBroadcastIP = "239.0.0.0";    //TODO: deve essere salvato (su file?)
     
     static {
         db.init();
@@ -48,8 +49,9 @@ class EndpointsHandler {
         for (String room : rooms) {
             JSONObject jsonRoom = new JSONObject();
             jsonRoom.put("name", room);
-            if (subscriptions.contains(room)) jsonRoom.put("added", true);
-            else jsonRoom.put("added", false);
+            jsonRoom.put("address", db.getBroadcastIP(room));
+            jsonRoom.put("creator", db.getCreator(room));
+            jsonRoom.put("subscribed", subscriptions.contains(room));
             roomSubscriptions.add(jsonRoom);
         }
         return roomSubscriptions;
@@ -161,10 +163,21 @@ class EndpointsHandler {
 
     static JSONObject createRoom(User user, JSONObject params) {
         String nextBroadcastIP = Utils.nextBroadcastIP(lastBroadcastIP);
-        if(!db.addRoom((String) params.get("room"), user.getUsername(), nextBroadcastIP))
+        if (nextBroadcastIP == null) {
+            System.err.println("No more multicast address left!");
+            return buildErrorReply(500, "Internal server error");
+        }
+        
+        String roomName = (String) params.get("room");
+        if(!db.addRoom(roomName, user.getUsername(), nextBroadcastIP) || !db.addSubscription(user.getUsername(), roomName))
             return buildErrorReply(400, "Database error.");
+        
         lastBroadcastIP = nextBroadcastIP;  // only if success
-        return buildSuccessReply();
+        JSONObject result = new JSONObject();
+        result.put("name", roomName);
+        result.put("address", nextBroadcastIP);
+        
+        return buildSuccessReply(result);
     }
 
     @SuppressWarnings("unchecked")
