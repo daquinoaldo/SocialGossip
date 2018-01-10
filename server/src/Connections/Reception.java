@@ -24,7 +24,7 @@ public class Reception {
         SocketSelector selector = new SocketSelector(pool, socketTask, onSocketClose);
 
         Thread listener = new Thread(() -> {
-            System.out.println("Listening on port " + port);
+            System.out.println("[TCP] Listening on port " + port);
 
             try {
                 serverSocket = new ServerSocket(port);

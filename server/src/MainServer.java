@@ -1,3 +1,4 @@
+import Connections.Multicast;
 import Connections.Reception;
 import Connections.Tasks;
 import base.Configuration;
@@ -10,6 +11,8 @@ class MainServer {
 
     public static void main(String[] args) {
         rmi.Manager.start();
+        Multicast.init();
+        
         ScheduledExecutorService threadpool = Executors.newScheduledThreadPool(4);
     
         Reception primaryConnectionsListener = new Reception(

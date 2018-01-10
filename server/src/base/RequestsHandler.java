@@ -98,7 +98,7 @@ public class RequestsHandler {
             return;
         }
         
-        ArrayList<String> subscribers = database.getSubscriptions(chatroomName);
+        ArrayList<String> subscribers = database.getChatSubscribers(chatroomName);
         int online = 0;
         for (String username : subscribers) {
             if (!username.equals(senderUsername) && OnlineUsers.isOnline(username))
@@ -113,7 +113,7 @@ public class RequestsHandler {
             return;
         }
     
-        Multicast.broadcast(text, broadcastIP);
+        Multicast.broadcast(data, broadcastIP);
     }
     
     /* Helpers */

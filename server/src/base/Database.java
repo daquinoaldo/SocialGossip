@@ -324,9 +324,14 @@ public class Database {
         return getList(sql,"name");
     }
 
-    public ArrayList<String> getSubscriptions(String username) {
+    public ArrayList<String> getUserSubscriptions(String username) {
         String sql = "SELECT room FROM subscriptions WHERE username = '"+username+"'";
         return getList(sql,"room");
+    }
+    
+    public ArrayList<String> getChatSubscribers(String chatname) {
+        String sql = "SELECT username FROM subscriptions WHERE room = '" + chatname + "'";
+        return getList(sql, "username");
     }
 
 }

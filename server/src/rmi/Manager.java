@@ -30,7 +30,7 @@ public class Manager {
             impl = new ServerImpl();
             ServerInterface stub = (ServerInterface) UnicastRemoteObject.exportObject(impl, 0);
             registry.bind(Configuration.RMI_NAME, stub);
-            System.out.println("Exported RMI object, registry listening on port " + Configuration.RMI_PORT);
+            System.out.println("[RMI] Listening on port " + Configuration.RMI_PORT);
         }
         catch (RemoteException e) {
             System.err.println("Fatal error: can't bind remote object");

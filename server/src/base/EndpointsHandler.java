@@ -3,7 +3,6 @@ package base;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.net.InetAddress;
 import java.net.Socket;
 import java.util.List;
 
@@ -194,7 +193,7 @@ class EndpointsHandler {
     @SuppressWarnings({"unchecked", "unused"})
     static JSONObject chatList(User user, JSONObject params) {
         List<String> rooms = db.getRooms();
-        List<String> subscriptions = db.getSubscriptions(user.getUsername());
+        List<String> subscriptions = db.getUserSubscriptions(user.getUsername());
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("rooms", getRoomSubscriptions(rooms, subscriptions));
         return buildSuccessReply(jsonObject);

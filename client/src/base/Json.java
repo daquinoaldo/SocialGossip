@@ -264,7 +264,7 @@ public class Json {
         req.put("sender", User.username());
         req.put("recipient", dest.getName());
         req.put("text", text);
-        Multicast.send(dest.getAddress(), req.toJSONString());
+        Multicast.send(req.toJSONString());
     }
     
     public static void sendFileRequest(String toUsername) {

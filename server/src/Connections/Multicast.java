@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.*;
 
 public class Multicast {
-    private static final int port = Configuration.MULTICAST_PORT;
     private static DatagramSocket socket;
     
     static {
@@ -21,9 +20,11 @@ public class Multicast {
         }
         
         Thread listener = new Thread(() -> {
-            try {
-                DatagramSocket listenerSocket = new DatagramSocket(Configuration.MULTICAST_PORT);
-    
+            try (
+                    DatagramSocket listenerSocket = new DatagramSocket(Configuration.UDP_PORT);
+
+            ) {
+                System.out.println("[UDP] Listening on port " + Configuration.UDP_PORT);
                 while (!Thread.interrupted()) {
                     byte[] buffer = new byte[8192];
                     DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
@@ -37,8 +38,9 @@ public class Multicast {
                     }
         
                     InetAddress sender = packet.getAddress();
-                    String data = new String(packet.getData());
-                    RequestsHandler.parseChatroomMessage(sender, data);
+                    byte[] data = packet.getData();
+                    String dataString = new String(data, 0, packet.getLength());
+                    RequestsHandler.parseChatroomMessage(sender, dataString);
                 }
             }
             catch (SocketException e) {
@@ -50,10 +52,13 @@ public class Multicast {
         listener.start();
     }
     
+    // Force static initializer
+    public static void init() { }
+    
     public static void broadcast(String message, String address) {
         try {
             InetAddress group = InetAddress.getByName(address);
-            DatagramPacket datagramPacket = new DatagramPacket(message.getBytes(), message.length(), group, port);
+            DatagramPacket datagramPacket = new DatagramPacket(message.getBytes(), message.length(), group, Configuration.MULTICAST_PORT);
             socket.send(datagramPacket);
         }
         catch (IOException e) {

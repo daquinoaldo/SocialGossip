@@ -1,6 +1,5 @@
 package Connections;
 
-import State.User;
 import base.Configuration;
 import base.Json;
 
@@ -23,6 +22,8 @@ public class Multicast {
     static {
         try {
             ms = new MulticastSocket(Configuration.MULTICAST_PORT);
+            ms.setReuseAddress(true);
+            
             outputDatagramSocket = new DatagramSocket();
         }
         catch (IOException e) {
@@ -56,14 +57,15 @@ public class Multicast {
         t.start();
     }
     
-    public static void send(InetAddress address, String request) {
+    public static void send(String request) {
         try {
+            InetAddress destAddress = InetAddress.getByName(Configuration.HOSTNAME);
             byte[] data = request.getBytes(StandardCharsets.UTF_8);
-            DatagramPacket datagramPacket = new DatagramPacket(data, data.length, address, Configuration.MULTICAST_PORT);
+            DatagramPacket datagramPacket = new DatagramPacket(data, data.length, destAddress, Configuration.UDP_PORT);
             outputDatagramSocket.send(datagramPacket);
         }
         catch (IOException e) {
-            System.err.println("Error while sending multicast packet");
+            System.err.println("Error while sending UDP packet");
             e.printStackTrace();
         }
     }
