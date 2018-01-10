@@ -4,6 +4,9 @@
     <root id="archive" name="Client.jar">
       <element id="module-output" name="client" />
       <element id="module-output" name="common" />
+      <element id="directory" name="media">
+        <element id="file-copy" path="$PROJECT_DIR$/client/src/media/logo.png" />
+      </element>
     </root>
   </artifact>
 </component>
