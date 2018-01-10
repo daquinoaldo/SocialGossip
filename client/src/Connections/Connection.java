@@ -108,16 +108,16 @@ public class Connection {
         return null;
     }
     
-    // TODO:  Peer to peer file exchange
     public static void receiveFile(File destFile, String hostname, int port) {
         Thread asyncWriter = new Thread(() -> {
             int failedCount = 0;
             boolean stop = false;
             do {
-                try (
-                        SocketChannel socket = SocketChannel.open(new InetSocketAddress(hostname, port))
-                        ) {
+                try (SocketChannel socket = SocketChannel.open(new InetSocketAddress(hostname, port))) {
+                    System.out.println("Started download: " + destFile.getAbsolutePath());
                     Filesystem.writeFile(socket, destFile);
+                    System.out.println("Download finished.");
+                    stop = true;
                 } catch (IOException e) {
                     if (failedCount < 3) {
                         try {
@@ -152,13 +152,15 @@ public class Connection {
     }
     
     
-    public static void startFileSender(ServerSocketChannel serverSocket, File file) {
+    public static void startFileSender(ServerSocketChannel serverSocket, File file, Runnable callback) {
         Thread listener = new Thread(() -> {
             try {
                 serverSocket.socket().setSoTimeout(60000);
                 SocketChannel socketChannel = serverSocket.accept();
-                
+                System.out.println("Started upload: " + file.getAbsolutePath());
                 Filesystem.readFile(file, socketChannel);
+                System.out.println("Upload finished.");
+                callback.run();
             }
             catch (SocketTimeoutException e) {
                 Utils.showErrorDialog("The user did not accept your request.");

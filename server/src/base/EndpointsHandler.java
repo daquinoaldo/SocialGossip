@@ -1,5 +1,6 @@
 package base;
 
+import Connections.Multicast;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -210,6 +211,13 @@ class EndpointsHandler {
         if(!creator.equals(user.getUsername()))
             return buildErrorReply(403, "Only the creator can close the room.");
         if(!db.deleteRoom(room)) return buildErrorReply(400, "Database error.");
+        
+        String broadcastIp = db.getBroadcastIP(room);
+        JSONObject closedMsg = new JSONObject();
+        closedMsg.put("recipient", room);
+        closedMsg.put("chat_closed", user.getUsername() + " closed this chatroom.");
+        Multicast.broadcast(closedMsg.toJSONString(), broadcastIp);
+        
         return buildSuccessReply();
     }
 
