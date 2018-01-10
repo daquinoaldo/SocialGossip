@@ -85,5 +85,9 @@ public class ChatPanel extends JPanel {
     public void newMessage(Message msg) {
         chatHistory.append(msg.toString() + "\n");
     }
+    
+    public void focusGained() {
+        msgField.requestFocusInWindow();
+    }
 
 }

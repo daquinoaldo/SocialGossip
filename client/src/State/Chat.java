@@ -36,12 +36,23 @@ public abstract class Chat {
     public void createWindow() {
         if (window == null) {
             window = Utils.createWindow(name, chatPanel, Dimensions.CHAT_PANE);
-            Chat self = this;
+
             window.addWindowListener(new WindowAdapter() {
                 @Override
+                public void windowOpened( WindowEvent e){
+                    chatPanel.focusGained();
+                }
+    
+                @Override
                 public void windowClosing(WindowEvent e) {
-                    self.window = null;
+                    window = null;
                     e.getWindow().dispose();
+                }
+                
+                @Override
+                public void windowActivated(WindowEvent e) {
+                    System.out.println(123);
+                    chatPanel.focusGained();
                 }
             });
         }
