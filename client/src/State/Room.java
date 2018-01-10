@@ -10,12 +10,12 @@ public class Room extends Chat {
     private InetAddress address;
     private String creator;
     
-    public Room(String username, String mcAddress, String creator, boolean online) throws UnknownHostException {
+    public Room(String username, String mcAddress, String creator, boolean subscribed) throws UnknownHostException {
         super(Chat.CHATROOM_TYPE, username);
         if (mcAddress == null || creator == null)
             throw new IllegalArgumentException("Invalid chat parameters: <" + mcAddress + "," + creator + ">");
         
-        this.setStatus(online);
+        this.setStatus(subscribed);
         this.address = InetAddress.getByName(mcAddress);
         this.creator = creator;
         Multicast.joinGroup(username, address);

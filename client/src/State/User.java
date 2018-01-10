@@ -30,7 +30,7 @@ public class User {
     private static final ArrayList<Consumer<Boolean>> loginCallbacks = new ArrayList<>();
     private static final ArrayList<Consumer<String>> usernameCallbacks = new ArrayList<>();
     private static final ArrayList<Consumer<Collection<Friend>>> friendsListCallbacks = new ArrayList<>();
-    private static final ArrayList<Consumer<Collection<Room>>> chatsListCallbacks = new ArrayList<>();
+    private static final ArrayList<Consumer<Collection<Room>>> roomsListCallbacks = new ArrayList<>();
     
     // Getters
     public static boolean isLoggedIn() { return isLoggedIn; }
@@ -51,16 +51,6 @@ public class User {
         usernameCallbacks.forEach(c -> c.accept(username));
     }
     
-    public static void setFriendStatus(String username, boolean isOnline) {
-        friends.get(username).setStatus(isOnline);
-        friendsListCallbacks.forEach(c -> c.accept(friends.values()));
-    }
-
-    public static void addFriend(String friendUsername) {
-        friends.put(friendUsername, new Friend(friendUsername));
-        friendsListCallbacks.forEach(c -> c.accept(friends.values()));
-    }
-    
     public static void addFriend(String friendUsername, boolean isOnline) {
         friends.put(friendUsername, new Friend(friendUsername, isOnline));
         friendsListCallbacks.forEach(c -> c.accept(friends.values()));
@@ -73,6 +63,11 @@ public class User {
     
         friendsListCallbacks.forEach(c -> c.accept(friends));
     }
+
+    public static void setFriendStatus(String username, boolean isOnline) {
+        friends.get(username).setStatus(isOnline);
+        friendsListCallbacks.forEach(c -> c.accept(friends.values()));
+    }
     
     public static void addRoom(String roomName, String address, String creator, boolean subscribed) {
         try {
@@ -83,7 +78,7 @@ public class User {
             e.printStackTrace();
             return;
         }
-        chatsListCallbacks.forEach(c -> c.accept(rooms.values()));
+        roomsListCallbacks.forEach(c -> c.accept(rooms.values()));
     }
     
     public static boolean removeRoom(String roomName) {
@@ -94,7 +89,12 @@ public class User {
         User.rooms.clear();
         for (Room room : rooms)
             User.rooms.put(room.getName(), room);
-        chatsListCallbacks.forEach(c -> c.accept(rooms));
+        roomsListCallbacks.forEach(c -> c.accept(rooms));
+    }
+
+    public static void setRoomStatus(String name, boolean subscribed) {
+        rooms.get(name).setStatus(subscribed);
+        roomsListCallbacks.forEach(c -> c.accept(rooms.values()));
     }
     
     
@@ -112,7 +112,7 @@ public class User {
     }
 
     public static void addChatsListener(Consumer<Collection<Room>> callback) {
-        chatsListCallbacks.add(callback);
+        roomsListCallbacks.add(callback);
     }
     
 }

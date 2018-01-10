@@ -4,6 +4,7 @@ import State.Chat;
 import State.Friend;
 import State.User;
 import State.Room;
+import base.Json;
 import constants.Dimensions;
 import gui.Utils;
 
@@ -48,11 +49,8 @@ public class ListPanelFactory {
                 int index = jlist.locationToIndex(mouseEvent.getPoint());
                 if (index >= 0) {
                     String name = jlist.getModel().getElementAt(index).toString();
-                    // TODO: add the room to my rooms
-                    // TODO <antonio>: credo tu intenda di fare così:
-                    Room room = User.getRoom(name);
-                    if (room == null) return;
-                    room.setStatus(true);
+                    if (Json.addMe(name))
+                        User.setRoomStatus(name, true);
                 }
             }
         }
