@@ -1,5 +1,6 @@
 package base;
 
+import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -62,6 +63,25 @@ public class Utils {
         int item = Integer.parseInt(tokens[0]);
         if (item != 239) return null;
         return nextIP;
+    }
+
+    public static boolean writeToFile(String text, String filename) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
+            bw.write(text+"\n");
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static String readFromFile(String filename) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            return br.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }
