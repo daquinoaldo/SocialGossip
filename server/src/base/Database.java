@@ -279,6 +279,17 @@ public class Database {
             return null;
         }
     }
+    
+    public String getUserLang(String username) {
+        String sql = "SELECT language FROM users WHERE username = '"+username+"'";
+        try {
+            return getString(sql, "language");
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public boolean checkFriendship(String user1, String user2) {
         String sql = "SELECT count(*) FROM friendships WHERE (user1 = '"+user1+"' AND user2 = '"+user2+"') OR " +
