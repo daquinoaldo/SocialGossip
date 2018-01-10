@@ -49,7 +49,7 @@ public class Multicast {
                 // Extract data byte from packet and convert them to String
                 int size = packet.getLength();
                 byte[] data = packet.getData();
-                String stringData = new String(data, 0, size);
+                String stringData = new String(data, 0, size, StandardCharsets.UTF_8);
                 
                 Json.parseChatMessage(stringData);
             }

@@ -5,6 +5,7 @@ import base.RequestsHandler;
 
 import java.io.IOException;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 
 public class Multicast {
     private static DatagramSocket socket;
@@ -39,7 +40,7 @@ public class Multicast {
         
                     InetAddress sender = packet.getAddress();
                     byte[] data = packet.getData();
-                    String dataString = new String(data, 0, packet.getLength());
+                    String dataString = new String(data, 0, packet.getLength(), StandardCharsets.UTF_8);
                     RequestsHandler.parseChatroomMessage(sender, dataString);
                 }
             }
@@ -58,7 +59,8 @@ public class Multicast {
     public static void broadcast(String message, String address) {
         try {
             InetAddress group = InetAddress.getByName(address);
-            DatagramPacket datagramPacket = new DatagramPacket(message.getBytes(), message.length(), group, Configuration.MULTICAST_PORT);
+            byte[] data = message.getBytes(StandardCharsets.UTF_8);
+            DatagramPacket datagramPacket = new DatagramPacket(data, data.length, group, Configuration.MULTICAST_PORT);
             socket.send(datagramPacket);
         }
         catch (IOException e) {
