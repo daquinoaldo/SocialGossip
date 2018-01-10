@@ -11,12 +11,11 @@ public class ClientCallback implements ClientCallbackInterface {
     }
     
     public void changedStatus(String username, boolean isOnline) {
+        User.setFriendStatus(username, isOnline);
+    
+        // Show a System message if there is a chat window open
         Friend friend = User.getFriend(username);
         if (friend == null) return;
-        
-        friend.setStatus(isOnline);
-        
-        // Show a System message if there is a chat window open
         if (friend.getWindow() == null) return;
         Message systemInfo = new Message("SYSTEM", friend.getUsername() + " is now " + (isOnline ? "online" : "offline") + ".");
         friend.newMessage(systemInfo);
