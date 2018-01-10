@@ -22,13 +22,13 @@ class MainClient {
         User.addLoginListener(isLoggedIn -> {
             if (isLoggedIn) {
                 loginWindow.dispose();
-
                 JPanel mainPanel = new MainPanel();
                 mainWindow = Utils.createFixedWindow("Social Gossip", mainPanel, true, false);
             }
         });
 
         User.addUsernameListener(username -> {
+            System.out.println("Logged in as " + username);
             if (mainWindow != null)
                 mainWindow.setTitle(username + " - Social Gossip");
             rmi.Manager.registerCallback();

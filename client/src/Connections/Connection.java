@@ -8,6 +8,8 @@ import gui.Utils;
 
 import java.io.*;
 import java.net.*;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 
 @SuppressWarnings("EmptyMethod")
 public class Connection {
@@ -112,9 +114,9 @@ public class Connection {
             int failedCount = 0;
             boolean stop = false;
             do {
-                try {
-                    Socket socket = new Socket(hostname, port);
-                    socket.setSoTimeout(5000);
+                try (
+                        SocketChannel socket = SocketChannel.open(new InetSocketAddress(hostname, port))
+                        ) {
                     Filesystem.writeFile(socket, destFile);
                 } catch (IOException e) {
                     if (failedCount < 3) {
@@ -135,11 +137,11 @@ public class Connection {
         asyncWriter.start();
     }
     
-    public static ServerSocket openFileSocket() {
+    public static ServerSocketChannel openFileSocket() {
         try {
-            ServerSocket serverSocket = new ServerSocket(0);
-            serverSocket.setSoTimeout(5000);
-            return serverSocket;
+            ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+            serverSocketChannel.bind(null);
+            return serverSocketChannel;
         }
         catch (IOException e) {
             System.err.println("Error while openening p2p socket for sending file");
@@ -150,17 +152,18 @@ public class Connection {
     }
     
     
-    public static void startFileSender(ServerSocket serverSocket, File file) {
+    public static void startFileSender(ServerSocketChannel serverSocket, File file) {
         Thread listener = new Thread(() -> {
             try {
-                serverSocket.setSoTimeout(5000);
-                Socket socket = serverSocket.accept();
-                socket.setSoTimeout(5000);
+                serverSocket.socket().setSoTimeout(60000);
+                SocketChannel socketChannel = serverSocket.accept();
                 
-                Filesystem.readFile(file, socket);
-            
-                Utils.showErrorDialog("The user refused to receive the file.");
-            } catch (IOException e) {
+                Filesystem.readFile(file, socketChannel);
+            }
+            catch (SocketTimeoutException e) {
+                Utils.showErrorDialog("The user did not accept your request.");
+            }
+            catch (IOException e) {
                 System.err.println("Error while accepting connection from other peer");
                 e.printStackTrace();
             }

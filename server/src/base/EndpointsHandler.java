@@ -212,10 +212,16 @@ class EndpointsHandler {
     static JSONObject file2friend(User user, JSONObject params) {
         String from = (String) params.get("from");
         String to = (String) params.get("to");
-        int port = (int) params.get("to");
-        String hostname = (String) params.get("to");
+        Integer port =  Integer.parseInt((String) params.get("port"));
+        String filename = (String) params.get("filename");
         
-        if (!db.existUser(to)) {
+        if (
+                from == null || to == null  || filename == null ||
+                port <= 1024 || to.equals(user.getUsername())
+                ) {
+            return buildErrorReply(400, "Malformed request.");
+        }
+        else if (!db.existUser(to)) {
             return buildErrorReply(404, "User not found");
         }
         else if (!db.checkFriendship(user.getUsername(), to)) {
@@ -224,9 +230,8 @@ class EndpointsHandler {
         else if (!OnlineUsers.isOnline(to)) {
             return buildErrorReply(449, "User is currently offline.");
         }
-        else if (port <= 1024 || hostname == null || hostname.length() == 0 || !from.equals(user.getUsername())) {
-            return buildErrorReply(400, "Invalid request.");
-        }
+        
+        params.put("hostname", user.getMessageSocket().getInetAddress().getHostName());
         
         OnlineUsers.getByUsername(to).sendMsgRequest(FILE2FRIEND, params);
         

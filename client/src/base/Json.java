@@ -13,6 +13,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.net.UnknownHostException;
+import java.nio.channels.ServerSocketChannel;
 import java.util.ArrayList;
 import java.io.File;
 import java.net.ServerSocket;
@@ -60,16 +61,23 @@ public class Json {
                 
             case FILE2FRIEND:
                 // Got a request to send a file to me
-                String fromUsername = (String) payload.get("username");
+                String filename = (String) payload.get("filename");
+                String fromUsername = (String) payload.get("from");
+                String hostname = (String) payload.get("hostname");
+                Integer port = Integer.parseInt((String) payload.get("port"));
+    
+                if (filename == null || fromUsername == null || hostname == null || port < 1024) {
+                    System.err.println("Invalid File2Friend request");
+                    System.err.println(fromUsername + "@" + hostname + ":" + port + " - " + filename);
+                    return; // malformed request
+                }
                 
                 boolean confirm = Utils.showConfirmationDialog(fromUsername + " wants to send you a file. Save it?");
                 if (!confirm) break;
                 
                 // aprire dialog di selezione destinazione
-                File destFile = Utils.saveFileDialog();
+                File destFile = Utils.saveFileDialog(filename);
                 
-                String hostname = (String) payload.get("hostname");
-                int port = (int) payload.get("port");
                 
                 Connection.receiveFile(destFile, hostname, port);
                 break;
@@ -273,21 +281,22 @@ public class Json {
         File file = Utils.openFileDialog();
         
         JSONObject payload = new JSONObject();
-        ServerSocket serverSocket = Connection.openFileSocket();
+        ServerSocketChannel serverSocketChannel = Connection.openFileSocket();
         
-        if (serverSocket == null) {
+        if (serverSocketChannel == null) {
             Utils.showErrorDialog("Error while opening server socket.");
             return;
         }
     
+        payload.put("filename", file.getName());
         payload.put("from", User.username());
         payload.put("to", toUsername);
-        payload.put("port", serverSocket.getLocalPort());
-        payload.put("hostname", serverSocket.getInetAddress().getHostName());
-        
-        JSONObject result = makeRequest(FILE2FRIEND, payload); // la risposta del server deve notificare se l'utente non esiste o se non è un amico - altrimenti successo
+        payload.put("port", Integer.toString(serverSocketChannel.socket().getLocalPort()));
+    
+        JSONObject result = makeRequest(FILE2FRIEND, payload);
+    
         if (result != null) {
-            Connection.startFileSender(serverSocket, file);
+            Connection.startFileSender(serverSocketChannel, file);
         }
     }
     

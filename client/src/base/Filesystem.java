@@ -3,9 +3,9 @@ package base;
 import gui.Utils;
 
 import java.io.*;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
+import java.nio.file.StandardOpenOption;
 
 public class Filesystem {
     private static final int BUFFER_SIZE = 1024 * 10;
@@ -13,12 +13,11 @@ public class Filesystem {
     /**
      * Read the specified File using NIO channels. Send the file to the specified socket.
      * @param file File object, the file to be read
-     * @param socket Socket where the file will be sent
+     * @param outChannel Socket where the file will be sent
      */
-    public static void readFile(File file, Socket socket) {
+    public static void readFile(File file, SocketChannel outChannel) {
         try (
-                FileChannel inChannel = new FileInputStream(file).getChannel();
-                SocketChannel outChannel = socket.getChannel()
+                FileChannel inChannel = FileChannel.open(file.toPath(), StandardOpenOption.READ)
         ) {
             transfer(inChannel, outChannel);
         } catch (FileNotFoundException e) {
@@ -33,15 +32,15 @@ public class Filesystem {
     
     /**
      * Read the specified Socket using NIO, and save the data to File.
-     * @param socket Socket from where data will be read
+     * @param inChannel Socket from where data will be read
      * @param file File object, destinationation of the data
      */
-    public static void writeFile(Socket socket, File file) {
+    public static void writeFile(SocketChannel inChannel, File file) {
         try (
-                SocketChannel inChannel = socket.getChannel();
-                FileChannel outChannel = new FileOutputStream(file).getChannel()
+                FileChannel outputChannel = FileChannel.open(file.toPath(),
+                        StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)
         ) {
-            transfer(inChannel, outChannel);
+            transfer(inChannel, outputChannel);
         } catch (FileNotFoundException e) {
             System.err.println("File not found: " + file.getAbsolutePath());
             Utils.showErrorDialog("File not found: " + file.getAbsolutePath());

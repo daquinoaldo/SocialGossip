@@ -65,13 +65,13 @@ public class Utils {
     }
     
     public static File openFileDialog() {
-        return fileDialog(true);
+        return fileDialog(true, null);
     }
-    public static File saveFileDialog() {
-        return fileDialog(false);
+    public static File saveFileDialog(String defaultName) {
+        return fileDialog(false, defaultName);
     }
     
-    private static File fileDialog(boolean isOpenDialog) {
+    private static File fileDialog(boolean isOpenDialog, String filename) {
         File selected;
         boolean aFileIsSelected = false;
     
@@ -85,7 +85,8 @@ public class Utils {
         }
     
         if (chooser == null) chooser = new JFileChooser();
-    
+        if (filename != null) chooser.setSelectedFile(new File(filename));
+        
         do {
             chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             int returnStatus = isOpenDialog ? chooser.showOpenDialog(null) : chooser.showSaveDialog(null);
