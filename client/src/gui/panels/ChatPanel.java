@@ -9,21 +9,11 @@ import java.awt.event.ActionEvent;
 
 
 public class ChatPanel extends JPanel {
-    private JTextArea chatHistory;
-    private JTextField msgField;
-    
-    private JButton secondButton;
-    Action sendMsgAction;
-    
-    public ChatPanel(Room room) {
-        this((Chat) room);
+    private static JTextArea chatHistory;
+    private static JTextField msgField;
 
-        if (room.getCreator().equals(User.username())) {
-            JButton closeButton = new JButton("Close room");
-            closeButton.addActionListener(e -> Json.closeRoom(room.getName()));
-        }
-    
-        sendMsgAction = new AbstractAction() {
+    private static Action getSendMsgAction(Room room) {
+        return new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!msgField.getText().equals("")) {
@@ -35,14 +25,9 @@ public class ChatPanel extends JPanel {
             }
         };
     }
-    
-    public ChatPanel(Friend friend) {
-        this((Chat) friend);
 
-        JButton fileButton = new JButton("Attach file");
-        fileButton.addActionListener(e -> Json.sendFileRequest(friend.getUsername()));
-    
-        sendMsgAction = new AbstractAction() {
+    private static Action getSendMsgAction(Friend friend) {
+        return new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!msgField.getText().equals("")) {
@@ -54,8 +39,31 @@ public class ChatPanel extends JPanel {
             }
         };
     }
+
+    private static JButton getSecondButton(Room room) {
+        if (room.getCreator().equals(User.username())) {
+            JButton secondButton = new JButton("Close room");
+            secondButton.addActionListener(e -> Json.closeRoom(room.getName()));
+            return secondButton;
+        }
+        return null;
+    }
+
+    private static JButton getSecondButton(Friend friend) {
+        JButton secondButton = new JButton("Attach file");
+        secondButton.addActionListener(e -> Json.sendFileRequest(friend.getUsername()));
+        return secondButton;
+    }
+
+    public ChatPanel(Room room) {
+        this(getSendMsgAction(room), getSecondButton(room));
+    }
     
-    private ChatPanel(Chat chat) {
+    public ChatPanel(Friend friend) {
+        this(getSendMsgAction(friend), getSecondButton(friend));
+    }
+    
+    private ChatPanel(Action sendMsgAction, JButton secondButton) {
         setLayout(new BorderLayout());
         
         // Send a new message input and button
