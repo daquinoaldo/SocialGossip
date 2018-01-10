@@ -48,6 +48,11 @@ public abstract class Chat {
         else
             window.requestFocus();
     }
+    public void closeWindow() {
+        if (window == null)
+            return;
+        window.dispose();
+    }
     
     public void newMessage(Message message) {
         if (window == null)

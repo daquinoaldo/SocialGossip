@@ -100,8 +100,18 @@ public class Json {
     
     public static void parseChatMessage(String data) {
         JSONObject request = parse(data);
-        
+    
         String chatname = (String) request.get("recipient");
+        String chatClosed = (String) request.get("chat_closed");
+        if (chatClosed != null && chatClosed.length() > 0) {
+            // Chatroom has been closed
+            Utils.showErrorDialog(chatname + " has been closed.");
+            Room room = User.getRoom(chatname);
+            room.closeWindow();
+            User.removeRoom(chatname);
+            return;
+        }
+        
         String sender = (String) request.get("sender");
         String text = (String) request.get("text");
         
@@ -248,15 +258,17 @@ public class Json {
         User.setRoomList(rooms);
     }
 
-    public static void closeRoom(String room) {
-        if (room == null || room.length() == 0)
+    public static void closeRoom(String roomName) {
+        if (roomName == null || roomName.length() == 0)
             throw new IllegalArgumentException("The room name must be a non-empty string.");
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("room", room);
+        parameters.put("room", roomName);
         JSONObject result = makeRequest(Endpoints.CLOSE_ROOM, parameters);
         if (result == null) return;
         
-        User.removeRoom(room);
+        Room room = User.getRoom(roomName);
+        room.closeWindow();
+        User.removeRoom(roomName);
     }
 
     private static JSONObject genericMsg(String recipient, String text) {
