@@ -34,7 +34,10 @@ public class ChatPanel extends JPanel {
         this.chat = friend;
         
         JButton btn = new JButton("Attach file");
-        btn.addActionListener(e -> Json.sendFileRequest(friend.getUsername()));
+        btn.addActionListener(e -> {
+            if (friend == null) return;
+            Json.sendFileRequest(friend.getUsername());
+        });
         addSecondButton(btn);
     }
     
