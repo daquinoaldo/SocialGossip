@@ -77,9 +77,10 @@ public class Json {
                 
                 // aprire dialog di selezione destinazione
                 File destFile = Utils.saveFileDialog(filename);
-                
-                
+    
+                User.getFriend(fromUsername).newMessage( new Message("SYSTEM", "Starting download from " + fromUsername + " completed.") );
                 Connection.receiveFile(destFile, hostname, port);
+                User.getFriend(fromUsername).newMessage( new Message("SYSTEM", "Download from " + fromUsername + " completed.") );
                 break;
                 
             case CHATROOM_MESSAGE:
@@ -296,7 +297,10 @@ public class Json {
         JSONObject result = makeRequest(FILE2FRIEND, payload);
     
         if (result != null) {
-            Connection.startFileSender(serverSocketChannel, file);
+            User.getFriend(toUsername).newMessage( new Message("SYSTEM", "Starting upload to" + toUsername + ".") );
+            Connection.startFileSender(serverSocketChannel, file, () -> {
+                User.getFriend(toUsername).newMessage( new Message("SYSTEM", "Completed upload to" + toUsername + ".") );
+            });
         }
     }
     

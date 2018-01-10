@@ -98,7 +98,6 @@ public class Utils {
             if (!isOpenDialog && selected.exists()) {
                 boolean overwrite = showConfirmationDialog("The file will be overwitten. Are you sure?");
                 aFileIsSelected = overwrite;
-                System.out.println("overwrite = " + overwrite);
             } else if (!isOpenDialog && selected.exists() && !selected.canWrite()) {
                 showErrorDialog("Can't write in the specified path. Please try again.");
             } else if (isOpenDialog && !selected.canRead()) {

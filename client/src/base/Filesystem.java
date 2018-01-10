@@ -19,7 +19,15 @@ public class Filesystem {
         try (
                 FileChannel inChannel = FileChannel.open(file.toPath(), StandardOpenOption.READ)
         ) {
-            transfer(inChannel, outChannel);
+            long size = inChannel.size();
+            ByteBuffer sizeBuffer = ByteBuffer.allocate(8);
+            sizeBuffer.putLong(size);
+            sizeBuffer.flip();
+            while (sizeBuffer.hasRemaining()) outChannel.write(sizeBuffer);
+            
+            long transferred = 0;
+            while (size - transferred > 0)
+                transferred += inChannel.transferTo(transferred, size - transferred, outChannel);
         } catch (FileNotFoundException e) {
             System.err.println("File not found: " + file.getAbsolutePath());
             Utils.showErrorDialog("File not found: " + file.getAbsolutePath());
@@ -37,10 +45,20 @@ public class Filesystem {
      */
     public static void writeFile(SocketChannel inChannel, File file) {
         try (
-                FileChannel outputChannel = FileChannel.open(file.toPath(),
+                FileChannel outChannel = FileChannel.open(file.toPath(),
                         StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)
         ) {
-            transfer(inChannel, outputChannel);
+            ByteBuffer sizeBuffer = ByteBuffer.allocate(8);
+            while (sizeBuffer.hasRemaining())
+                inChannel.read(sizeBuffer);
+            sizeBuffer.flip();
+            
+            long size = sizeBuffer.getLong();
+            long transferred = 0;
+            
+            while (size - transferred > 0)
+                transferred += outChannel.transferFrom(inChannel, transferred, size - transferred);
+
         } catch (FileNotFoundException e) {
             System.err.println("File not found: " + file.getAbsolutePath());
             Utils.showErrorDialog("File not found: " + file.getAbsolutePath());
@@ -48,19 +66,6 @@ public class Filesystem {
             System.err.println("Error while writing file: ");
             e.printStackTrace();
             Utils.showErrorDialog("Error while writing file.");
-        }
-    }
-    
-    private static void transfer(ReadableByteChannel in, WritableByteChannel out) throws IOException {
-        int read = 0;
-        while (read != -1) {
-            // Read into buffer
-            ByteBuffer fileBuffer = ByteBuffer.allocate(BUFFER_SIZE);
-            read = in.read(fileBuffer);
-            fileBuffer.flip();
-    
-            // Send from buffer to output
-            while (fileBuffer.hasRemaining()) out.write(fileBuffer);
         }
     }
 }
