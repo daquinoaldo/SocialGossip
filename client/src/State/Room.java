@@ -22,7 +22,7 @@ public class Room extends Chat {
         chatPanel = new ChatPanel(this);
     }
     
-    public InetAddress getAddress() { return address; }
+    public void leaveMulticastGroup() { Multicast.leaveGroup(this.address); }
     public String getCreator() { return creator; }
     public boolean isSubscribed() { return getFlag(); }
     public void setStatus(boolean subscribed) { setFlag(subscribed); }

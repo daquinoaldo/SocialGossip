@@ -115,6 +115,8 @@ public class Json {
             if (chatname == null) return;
             Utils.showErrorDialog(chatname + " has been closed.");
             Room room = User.getRoom(chatname);
+            if (room == null) return;
+            room.leaveMulticastGroup();
             room.closeWindow();
             User.removeRoom(chatname);
             return;
@@ -273,10 +275,6 @@ public class Json {
         parameters.put("room", roomName);
         JSONObject result = makeRequest(Endpoints.CLOSE_ROOM, parameters);
         if (result == null) return;
-        
-        Room room = User.getRoom(roomName);
-        room.closeWindow();
-        User.removeRoom(roomName);
     }
 
     private static JSONObject genericMsg(String recipient, String text) {
