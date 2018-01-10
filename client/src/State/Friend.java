@@ -1,5 +1,7 @@
 package State;
 
+import gui.panels.ChatPanel;
+
 public class Friend extends Chat {
     public Friend(String username) {
         super(Chat.FRIEND_TYPE, username);
@@ -8,6 +10,7 @@ public class Friend extends Chat {
     public Friend(String username, boolean online) {
         super(Chat.FRIEND_TYPE, username);
         this.setStatus(online);
+        chatPanel = new ChatPanel(this);
     }
     
     public boolean isOnline() { return getFlag(); }

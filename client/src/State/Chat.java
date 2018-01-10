@@ -10,7 +10,7 @@ public abstract class Chat {
     public static final int FRIEND_TYPE = 0;
     public static final int CHATROOM_TYPE = 1;
     
-    private ChatPanel chatPanel;
+    protected ChatPanel chatPanel;
     private JFrame window = null;
     
     private int type;
@@ -22,8 +22,6 @@ public abstract class Chat {
             throw new IllegalArgumentException("Invalid type. Please choose one of FRIEND_TYPE, CHATROOM_TYPE.");
         this.type = type;
         this.name = name;
-        if (type == FRIEND_TYPE) chatPanel = new ChatPanel((Friend) this);
-        if (type == CHATROOM_TYPE) chatPanel = new ChatPanel((Room) this);
     }
     
     public int getType() { return type; }

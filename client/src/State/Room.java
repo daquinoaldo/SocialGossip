@@ -1,6 +1,7 @@
 package State;
 
 import Connections.Multicast;
+import gui.panels.ChatPanel;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -18,6 +19,7 @@ public class Room extends Chat {
         this.address = InetAddress.getByName(mcAddress);
         this.creator = creator;
         Multicast.joinGroup(username, address);
+        chatPanel = new ChatPanel(this);
     }
     
     public InetAddress getAddress() { return address; }

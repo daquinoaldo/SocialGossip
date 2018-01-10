@@ -17,7 +17,8 @@ public class ChatPanel extends JPanel {
     
     public ChatPanel(Room room) {
         this((Chat) room);
-        
+        System.out.println("room.getCreator() = " + room.getCreator());
+        System.out.println("User.username() = " + User.username());
         if (room.getCreator().equals(User.username())) {
             JButton closeButton = new JButton("Close room");
             closeButton.addActionListener(e -> Json.closeRoom(room.getName()));
