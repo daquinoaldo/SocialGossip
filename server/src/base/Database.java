@@ -27,7 +27,7 @@ public class Database {
             config.enforceForeignKeys(true);
             return DriverManager.getConnection("jdbc:sqlite:"+dbName, config.toProperties());
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -39,6 +39,17 @@ public class Database {
         }
         // IMPORTANT NOTE: the use of a try without catch clause may seem dumb,
         // but it has the utility of being able to use try with resources.
+    }
+
+    private boolean execBool(String sql) {
+        try {
+            execute(sql);
+            return true;
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
     
     private String getString(String sql, String columnLabel) throws SQLException {
@@ -90,7 +101,7 @@ public class Database {
              Statement statement = connection.createStatement()) {
             return statement.executeQuery(sql).getInt(1);
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             return -1;
         }
     }
@@ -213,26 +224,14 @@ public class Database {
         if (!user1.equals(user2) && !checkFriendship(user1, user2)) {
             String sql = "INSERT INTO friendships(user1, user2) " +
                     "VALUES('"+user1+"', '"+user2+"')";
-            try {
-                execute(sql);
-                return true;
-            }
-            catch (SQLException e) {
-                return false;
-            }
+            return execBool(sql);
         } else return false;
     }
 
     public boolean addRoom(String name, String creator, String broadcastIP) {
         String sql = "INSERT INTO rooms(name, creator, broadcastIP) " +
                 "VALUES('"+name+"', '"+creator+"', '"+broadcastIP+"')";
-        try {
-            execute(sql);
-            return true;
-        }
-        catch (SQLException e) {
-            return false;
-        }
+        return execBool(sql);
     }
 
     /* Important note: the table admits duplicates like
@@ -244,25 +243,24 @@ public class Database {
     public boolean addSubscription(String username, String room) {
         String sql = "INSERT INTO subscriptions(username, room) " +
                 "VALUES('"+username+"', '"+room+"')";
-        try {
-            execute(sql);
-            return true;
-        }
-        catch (SQLException e) {
-            return false;
-        }
+        return execBool(sql);
     }
 
     /* DELETE */
-    public boolean deleteRoom(String name) {
-        String sql = "DELETE FROM rooms WHERE name = '"+name+"'";
-        try {
-            execute(sql);
-            return true;
-        }
-        catch (SQLException e) {
-            return false;
-        }
+    public boolean deleteSubscription(String username, String room) {
+        String sql = "DELETE FROM subscriptions WHERE username = '"+username+"' AND room = '"+room+"')";
+        return execBool(sql);
+    }
+
+    private boolean deleteAllSubscription(String room) {
+        String sql = "DELETE FROM subscriptions WHERE room = '"+room+"'";
+        return execBool(sql);
+    }
+
+    public boolean deleteRoom(String room) {
+        if (!deleteAllSubscription(room)) return false;
+        String sql = "DELETE FROM rooms WHERE name = '"+room+"'";
+        return execBool(sql);
     }
 
     /* SELECT */
@@ -277,6 +275,7 @@ public class Database {
             return getString(sql, "password");
         }
         catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
     }

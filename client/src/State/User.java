@@ -82,7 +82,9 @@ public class User {
     }
     
     public static boolean removeRoom(String roomName) {
-        return rooms.remove(roomName) != null;
+        boolean toReturn = rooms.remove(roomName) != null;
+        roomsListCallbacks.forEach(c -> c.accept(rooms.values()));
+        return toReturn;
     }
 
     public static void setRoomList(List<Room> rooms) {

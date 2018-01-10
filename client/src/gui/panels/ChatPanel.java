@@ -42,6 +42,7 @@ public class ChatPanel extends JPanel {
         southPanel.add(btn);
         this.remove(southPanel);
         this.add(southPanel, BorderLayout.SOUTH);
+        //msgField.requestFocusInWindow();
     }
     
     private ChatPanel(BiConsumer<String, String> sendMsgAction) {
