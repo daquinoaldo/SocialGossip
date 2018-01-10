@@ -91,7 +91,7 @@ public class Multicast {
             addressToChatname.remove(address);
         }
         catch (IOException e) {
-            System.err.println("Error while leaving multicacst group: " + address);
+            System.err.println("Error while leaving multicast group: " + address.getHostName());
             e.printStackTrace();
         }
     }
