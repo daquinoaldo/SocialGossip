@@ -26,63 +26,89 @@ import static base.Endpoints.*;
 // mettere makeRequest synchronized risolve?
 
 public class Json {
-    public static void parseMessageRequest(String jsonString) {
+    private static JSONObject parse(String s) {
         try {
             JSONParser parser = new JSONParser();
-            JSONObject request = (JSONObject) parser.parse(jsonString);
-            JSONObject payload = (JSONObject) request.get("params");
-    
-            String endpoint = (String) request.get("endpoint");
-            
-            if (endpoint == null) {
-                // not a request
-                return;
-            }
-            
-            switch (endpoint) {
-                case MSG2FRIEND:
-                    // Got a message from friend
-                    String sender = (String) payload.get("sender");
-                    String text = (String) payload.get("text");
-                    Message msg = new Message(sender, text);
-                    User.getFriend(sender).newMessage(msg);
-                    break;
-                    
-                case FILE2FRIEND:
-                    // Got a request to send a file to me
-                    String fromUsername = (String) payload.get("username");
-                    
-                    boolean confirm = Utils.showConfirmationDialog(fromUsername + " wants to send you a file. Save it?");
-                    if (!confirm) break;
-                    
-                    // aprire dialog di selezione destinazione
-                    File destFile = Utils.saveFileDialog();
-                    
-                    String hostname = (String) payload.get("hostname");
-                    int port = (int) payload.get("port");
-                    
-                    Connection.receiveFile(destFile, hostname, port);
-                    break;
-                    
-                case CHATROOM_MESSAGE:
-                    // If a chatroom message is here, it's probably an error
-                    String status = (String) payload.get("status");
-                    String message = (String) payload.get("message");
-                    if (status != null && status.equals("err")) {
-                        String roomName = (String) payload.get("recipient");
-                        Room room = User.getRoom(roomName);
-                        if (room != null) room.newMessage(new Message("SYSTEM", message));
-                        else Utils.showErrorDialog("Chatroom error: " + message);
-                    }
-                    else System.err.println("Invalid chat message request received.");
-                    break;
-            }
+            return (JSONObject) parser.parse(s);
         }
         catch (ParseException e) {
-            System.err.println("Invalid JSON message: ");
-            System.err.println(jsonString);
+            System.err.println("Got an invalid JSON: " + s);
             e.printStackTrace();
+            return null;
         }
+    }
+    
+    public static void parseMessageRequest(String jsonString) {
+        JSONObject request = parse(jsonString);
+        JSONObject payload = (JSONObject) request.get("params");
+
+        String endpoint = (String) request.get("endpoint");
+        
+        if (endpoint == null) {
+            // not a request
+            return;
+        }
+        
+        switch (endpoint) {
+            case MSG2FRIEND:
+                // Got a message from friend
+                String sender = (String) payload.get("sender");
+                String text = (String) payload.get("text");
+                Message msg = new Message(sender, text);
+                User.getFriend(sender).newMessage(msg);
+                break;
+                
+            case FILE2FRIEND:
+                // Got a request to send a file to me
+                String fromUsername = (String) payload.get("username");
+                
+                boolean confirm = Utils.showConfirmationDialog(fromUsername + " wants to send you a file. Save it?");
+                if (!confirm) break;
+                
+                // aprire dialog di selezione destinazione
+                File destFile = Utils.saveFileDialog();
+                
+                String hostname = (String) payload.get("hostname");
+                int port = (int) payload.get("port");
+                
+                Connection.receiveFile(destFile, hostname, port);
+                break;
+                
+            case CHATROOM_MESSAGE:
+                // If a chatroom message is here, it's probably an error
+                String status = (String) payload.get("status");
+                String message = (String) payload.get("message");
+                if (status != null && status.equals("err")) {
+                    String roomName = (String) payload.get("recipient");
+                    Room room = User.getRoom(roomName);
+                    if (room != null) room.newMessage(new Message("SYSTEM", message));
+                    else Utils.showErrorDialog("Chatroom error: " + message);
+                }
+                else System.err.println("Invalid chat message request received.");
+                break;
+        }
+    }
+    
+    public static void parseChatMessage(String data) {
+        JSONObject request = parse(data);
+        
+        String chatname = (String) request.get("recipient");
+        String sender = (String) request.get("sender");
+        String text = (String) request.get("text");
+        
+        if (chatname == null || sender == null || text == null || text.length() == 0)
+            return; // Malformed request
+        
+        if (sender.equals(User.username()))
+            return; // my message
+        
+        Room room = User.getRoom(chatname);
+        if (room == null) {
+            System.err.println("Got a message for a non-subscribed room: " + room);
+            return;
+        }
+        
+        room.newMessage( new Message(sender, text) );
     }
     
     /* Request builders */
@@ -313,28 +339,17 @@ public class Json {
             Utils.showErrorDialog("Impossibile comunicare con il server. Controllare la connessione a internet e riprovare.");
             return null;
         }
-
-        try {
-            JSONParser parser = new JSONParser();
-            JSONObject response = (JSONObject) parser.parse(responseString);
-
-
-            if (isReplyOk(response)) {
-                JSONObject result = (JSONObject) response.get("result");
-                if (result == null) result = new JSONObject();
-                return result;
-            }
-            else {
-                String msg = (String) response.get("message");
-                Utils.showErrorDialog(msg != null && msg.length() > 0 ? msg : "Errore sconosciuto.");
-                return null;
-            }
+    
+        JSONObject response = parse(responseString);
+        if (isReplyOk(response)) {
+            JSONObject result = (JSONObject) response.get("result");
+            if (result == null) result = new JSONObject();
+            return result;
         }
-        catch (ParseException e) {
-            Utils.showErrorDialog("Invalid JSON response from server");
-            System.err.println("Invalid JSON response from server: \n" + responseString);
-            e.printStackTrace();
+        else {
+            String msg = (String) response.get("message");
+            Utils.showErrorDialog(msg != null && msg.length() > 0 ? msg : "Errore sconosciuto.");
+            return null;
         }
-        return null;
     }
 }

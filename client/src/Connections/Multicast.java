@@ -2,12 +2,14 @@ package Connections;
 
 import State.User;
 import base.Configuration;
+import base.Json;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 public class Multicast {
@@ -43,18 +45,12 @@ public class Multicast {
                     continue;
                 }
                 
-                InetAddress from = packet.getAddress();
-                String chatname = addressToChatname.get(from);
-                String data = new String(packet.getData());
-                if (chatname != null) {
-                    // TODO:
-                    // Json.parseChatMessage(chatname, data); <- deve controllare se è messaggio di eliminazione chat oppure messaggio vero
-                }
-                else {
-                    System.err.println("Got message from unknown address:");
-                    System.err.println("From: " + from.getHostName());
-                    System.err.println("Message: " + data);
-                }
+                // Extract data byte from packet and convert them to String
+                int size = packet.getLength();
+                byte[] data = packet.getData();
+                String stringData = new String(data, 0, size);
+                
+                Json.parseChatMessage(stringData);
             }
         });
         t.start();
@@ -62,7 +58,7 @@ public class Multicast {
     
     public static void send(InetAddress address, String request) {
         try {
-            byte[] data = request.getBytes();
+            byte[] data = request.getBytes(StandardCharsets.UTF_8);
             DatagramPacket datagramPacket = new DatagramPacket(data, data.length, address, Configuration.MULTICAST_PORT);
             outputDatagramSocket.send(datagramPacket);
         }
