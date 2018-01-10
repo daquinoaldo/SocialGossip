@@ -30,7 +30,7 @@ class MainClient {
 
                 // Every 1s refresh the room list
                 ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-                //scheduler.scheduleAtFixedRate(Json::chatList, 0, 1, TimeUnit.SECONDS);
+                scheduler.scheduleAtFixedRate(Json::chatList, 0, 1, TimeUnit.SECONDS);
             }
         });
 
