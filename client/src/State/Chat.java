@@ -5,6 +5,8 @@ import gui.Utils;
 import gui.panels.ChatPanel;
 
 import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public abstract class Chat {
     public static final int FRIEND_TYPE = 0;
@@ -32,8 +34,17 @@ public abstract class Chat {
     
     public JFrame getWindow() { return window; }
     public void createWindow() {
-        if (window == null)
+        if (window == null) {
             window = Utils.createWindow(name, chatPanel, Dimensions.CHAT_PANE);
+            Chat self = this;
+            window.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    self.window = null;
+                    e.getWindow().dispose();
+                }
+            });
+        }
         else
             window.requestFocus();
     }
