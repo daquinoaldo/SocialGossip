@@ -370,7 +370,7 @@ public class Json {
         String responseString = Connection.sendRequest(request.toJSONString());
         
         if (responseString == null) {
-            Utils.showErrorDialog("Impossibile comunicare con il server. Controllare la connessione a internet e riprovare.");
+            Utils.showErrorDialog("Can't reach server. Check internet connection and try again.");
             return null;
         }
     
@@ -382,7 +382,7 @@ public class Json {
         }
         else {
             String msg = (String) response.get("message");
-            Utils.showErrorDialog(msg != null && msg.length() > 0 ? msg : "Errore sconosciuto.");
+            Utils.showErrorDialog(msg != null && msg.length() > 0 ? msg : "Unknown error.");
             return null;
         }
     }
