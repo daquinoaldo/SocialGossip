@@ -72,7 +72,7 @@ public class Utils {
     }
     
     private static File fileDialog(boolean isOpenDialog, String filename) {
-        File selected;
+        File selected = null;
         boolean aFileIsSelected = false;
     
         JFileChooser chooser = null;
@@ -93,7 +93,7 @@ public class Utils {
             
             if (returnStatus == JFileChooser.APPROVE_OPTION)
                 selected = chooser.getSelectedFile();
-            else return null;
+            else continue;
     
             if (!isOpenDialog && selected.exists()) {
                 boolean overwrite = showConfirmationDialog("The file will be overwitten. Are you sure?");
