@@ -66,6 +66,7 @@ class Translation {
             e.printStackTrace();
         }
         
-        return null;
+        // if the translation coudln't be done for some reason - return the original text
+        return text;
     }
 }

@@ -51,6 +51,11 @@ public class Json {
         
         if (endpoint == null) {
             // not a request
+            String status = (String) request.get("status");
+            String message = (String) request.get("message");
+            if (!status.equals("ok") && message != null)
+                Utils.showErrorDialog(message);
+            
             return;
         }
         
