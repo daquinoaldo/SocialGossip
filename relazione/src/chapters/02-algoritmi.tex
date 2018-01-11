@@ -1,1 +1,105 @@
-\section{Algoritmi matematici usati per fare cose}
+\section{Protocolli client-server}
+
+\subsection{Connessioni}
+
+Il progetto è realizzato seguendo il paradigma client-server.
+
+Per comunicare tra di loro, un client e il server utilizzano diverse connessioni. Ad eccezioni del collegamento RMI, viene usato JSON come formato per i messaggi.
+
+\paragraph{Lista delle connessioni attive}
+\begin{itemize}
+
+    \item Connessione persistente TCP di controllo, porta 8888. Usata per lo scambio di richieste da parte del client e relative risposte del server, per ulteriori dettagli vedere \hyperref[ssec:operazioni]{le operazioni disponibili}.
+
+    \item Connessione persistente TCP per messaggi, porta 8889. Usata per lo scambio di messaggi privati tra utenti.
+
+    \item Connessione UDP, porta 8886. Usata per l'invio al server di messaggi destinati a una chatroom.
+
+    \item Connessione UDP Multicast, porta 8887. Usata dal server per l'inoltro di un messaggio a tutti i membri di una chatroom.
+
+    \item Registry RMI, porta 5000. Il server crea un registry per permettere la registrazione di callback relative a certi eventi.
+
+\end{itemize}
+    
+Vengono stabilite altre connessioni in occasione di determinati eventi. Ad esempio la comunicazione via RMI per l'attivazione di callback, oppure lo scambio di file peer-to-peer tra utenti.
+    
+\subsection{Operazioni disponibili}
+\label{ssec:operazioni}
+\subsubsection{Login}
+%%% Il login fa questo e questo e il server deve memorizzarsi i socket della gente in modo da sapere dove andarli a contattare e gne gne gne
+Il client stabilisce fin da subito le connessioni TCP con il server. Al momento del login, il client manda il messaggio JSON contenente la richiesta sulla connessione di controllo.
+
+Il server, una volta ricevuta la richiesta, controlla che l'utente non sia già collegato da altre postazioni e che username e password siano validi. In questo caso restituisce un messaggio di successo e memorizza internamente il socket utilizzato da questo utente, altrimenti un messaggio di errore contenente una descrizione del problema.
+
+Il client riceve la risposta della connessione di controllo, in caso di esito positivo manda la stessa richiesta sulla connessione dei messaggi. In questo modo il server può associare anche il socket per i messaggi all'utente.
+
+Infine, il client registra sul server la sua callback via RMI.
+
+Alla fine di questo scambio, il server avrà in memoria una struttura dati in grado di associare all'utente i suoi socket TCP e la sua callback.
+
+\subsubsection{Connessione di controllo}
+%%% lista dei vari endpoint
+Le richieste (e relative risposte) sono caratterizzati da un \textit{endpoint}, una stringa di testo che ne caratterizza il tipo.
+
+I messaggi JSON hanno tutti la stessa struttura di base, per le richieste è:
+\begin{verbatim}
+{
+    "endpoint": "NOME",
+    "params": { eventuale payload della richiesta }
+}
+\end{verbatim}
+
+mentre per le risposte:
+\begin{verbatim}
+{
+    "status": "ok",
+    "code": 200,
+    "result": { eventuale payload della risposta }
+}
+\end{verbatim}
+
+oppure
+\begin{verbatim}
+{
+    "status": "err",
+    "code": 400,
+    "message": "Descrizione dell'errore"
+}
+\end{verbatim}
+
+\medskip
+\paragraph{Lista degli endpoint}
+\begin{itemize}
+    \item LOGIN
+    \begin{tabular}{l | r}
+        a & b
+    \end{tabular}
+    
+    \item REGISTER
+
+    \item LOOKUP
+
+    \item FRIENDSHIP
+
+    \item IS\_ONLINE
+
+    \item LIST\_FRIEND
+
+    \item CREATE\_ROOM
+
+    \item ADD\_ME
+
+    \item CHAT\_LIST
+
+    \item CLOSE\_ROOM
+
+    \item FILE2FRIEND
+\end{itemize}
+
+\subsubsection{Connessione dei messaggi}
+%%% formato dei mesasggi e possibili errori
+
+\subsection{Invio dei file}
+
+
+\subsubsection{Callback RMI}

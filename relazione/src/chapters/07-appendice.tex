@@ -1,2 +1,78 @@
 \newpage
-\section{Appendice}
+\section{Codice sorgente}
+
+\makeatletter
+\DeclareRobustCommand{\filename}[1]{
+    \begingroup
+        \def\textendash{-}
+        \filename@parse{#1}
+        \edef\filename@base{\detokenize\expandafter{\filename@base}}
+        \texttt{\filename@base.\filename@ext}
+    \endgroup
+}
+\makeatother
+
+\newcommand{\addsrcfile}[1]{
+    \filename{#1}
+    \inputminted [
+        linenos=true,
+        numberblanklines=true,
+        showspaces=false,
+        breaklines=true
+    ]{java}
+    {#1}
+    \newpage
+}
+
+\subsection{Client}
+\subsubsection{Base package}
+\addsrcfile{../../client/src/base/MainClient.java}
+\addsrcfile{../../client/src/base/Json.java}
+\addsrcfile{../../client/src/base/Filesystem.java}
+
+\subsubsection{Connections package}
+\addsrcfile{../../client/src/Connections/Connection.java}
+\addsrcfile{../../client/src/Connections/Multicast.java}
+
+\subsubsection{State package}
+\addsrcfile{../../client/src/State/User.java}
+\addsrcfile{../../client/src/State/Message.java}
+\addsrcfile{../../client/src/State/Chat.java}
+\addsrcfile{../../client/src/State/Room.java}
+\addsrcfile{../../client/src/State/Friend.java}
+
+\subsubsection{GUI package}
+\addsrcfile{../../client/src/gui/Utils.java}
+\addsrcfile{../../client/src/gui/Validators.java}
+
+\subsubsection{RMI package}
+\addsrcfile{../../client/src/rmi/ClientCallback.java}
+\addsrcfile{../../client/src/rmi/Manager.java}
+
+\subsubsection{Constants package}
+\addsrcfile{../../client/src/constants/Colors.java}
+\addsrcfile{../../client/src/constants/Dimensions.java}
+\addsrcfile{../../client/src/constants/Icons.java}
+
+\subsection{Server}
+\addsrcfile{../../server/src/MainServer.java}
+
+\subsubsection{Base package}
+\addsrcfile{../../server/src/base/Database.java}
+\addsrcfile{../../server/src/base/RequestsHandler.java}
+\addsrcfile{../../server/src/base/EndpointsHandler.java}
+\addsrcfile{../../server/src/base/OnlineUsers.java}
+\addsrcfile{../../server/src/base/User.java}
+\addsrcfile{../../server/src/base/Translation.java}
+\addsrcfile{../../server/src/base/Utils.java}
+
+\subsubsection{Connections package}
+\addsrcfile{../../server/src/Connections/Helpers.java}
+\addsrcfile{../../server/src/Connections/Reception.java}
+\addsrcfile{../../server/src/Connections/SocketSelector.java}
+\addsrcfile{../../server/src/Connections/Tasks.java}
+\addsrcfile{../../server/src/Connections/Multicast.java}
+
+\subsubsection{RMI package}
+\addsrcfile{../../server/src/rmi/Manager.java}
+\addsrcfile{../../server/src/rmi/ServerImpl.javat
