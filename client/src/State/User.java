@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 // Main State structure - representing the User who is using the client
@@ -23,8 +24,8 @@ import java.util.function.Consumer;
 public class User {
     private static boolean isLoggedIn = false;
     private static String username = null;
-    private static final HashMap<String, Friend> friends = new HashMap<>();
-    private static final HashMap<String, Room> rooms = new HashMap<>();
+    private static final ConcurrentHashMap<String, Friend> friends = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, Room> rooms = new ConcurrentHashMap<>();
     
     // Callbacks store
     private static final ArrayList<Consumer<Boolean>> loginCallbacks = new ArrayList<>();
