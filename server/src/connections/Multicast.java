@@ -8,6 +8,7 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 
 public class Multicast {
+    @SuppressWarnings("CanBeFinal")
     private static DatagramSocket socket;
     
     static {
@@ -54,10 +55,12 @@ public class Multicast {
     }
     
     // Force static initializer
+    @SuppressWarnings("EmptyMethod")
     public static void init() { }
     
     public static void broadcast(String message, String address) {
         try {
+            if(socket == null) throw new IOException("Socket is null");
             InetAddress group = InetAddress.getByName(address);
             byte[] data = message.getBytes(StandardCharsets.UTF_8);
             DatagramPacket datagramPacket = new DatagramPacket(data, data.length, group, Configuration.MULTICAST_PORT);

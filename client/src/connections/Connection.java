@@ -15,10 +15,14 @@ import java.nio.channels.SocketChannel;
 public class Connection {
     private static final String host = Configuration.HOSTNAME;
     
+    @SuppressWarnings("CanBeFinal")
     private static BufferedWriter primaryWriter;
+    @SuppressWarnings("CanBeFinal")
     private static BufferedReader primaryReader;
     
+    @SuppressWarnings("CanBeFinal")
     private static BufferedWriter msgWriter;
+    @SuppressWarnings("CanBeFinal")
     private static BufferedReader msgReader;
     
     static {

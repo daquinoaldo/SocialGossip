@@ -86,8 +86,8 @@ class InputFactory {
         }
     
         class MyEditor extends BasicComboBoxEditor {
-            private JLabel label = new JLabel();
-            private JPanel panel = new JPanel();
+            private final JLabel label = new JLabel();
+            private final JPanel panel = new JPanel();
             private Object selectedItem;
         
             MyEditor() {

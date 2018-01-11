@@ -10,9 +10,9 @@ import java.util.function.BiConsumer;
 
 
 public class ChatPanel extends JPanel {
-    private JPanel southPanel = new JPanel();
-    private JTextArea chatHistory;
-    private JTextField msgField;
+    private final JPanel southPanel = new JPanel();
+    private final JTextArea chatHistory;
+    private final JTextField msgField;
     
     private Chat chat;
 

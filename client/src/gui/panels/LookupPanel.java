@@ -8,8 +8,8 @@ import java.awt.event.ActionEvent;
 
 class LookupPanel extends JPanel {
 
-    private JLabel resultLabel = new JLabel();
-    private JButton addFriendButton = new JButton("Add");
+    private final JLabel resultLabel = new JLabel();
+    private final JButton addFriendButton = new JButton("Add");
     private String foundUser = null;
 
     LookupPanel() {

@@ -21,7 +21,7 @@ import java.util.List;
 class ListPanelFactory {
 
     // Double click listener on online user or joined room start the chat
-    private static MouseListener startChatListener = new MouseAdapter() {
+    private static final MouseListener startChatListener = new MouseAdapter() {
         public void mouseClicked(MouseEvent mouseEvent) {
             JList jlist = (JList) mouseEvent.getSource();
             if (mouseEvent.getClickCount() == 2) {
@@ -42,7 +42,7 @@ class ListPanelFactory {
     };
 
     // Double click listener on other room to join
-    private static MouseListener addRoomListener = new MouseAdapter() {
+    private static final MouseListener addRoomListener = new MouseAdapter() {
         public void mouseClicked(MouseEvent mouseEvent) {
             JList jlist = (JList) mouseEvent.getSource();
             if (mouseEvent.getClickCount() == 2) {

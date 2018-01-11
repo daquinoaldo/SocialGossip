@@ -12,8 +12,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 public class Multicast {
-    private static boolean stop = false;
+    @SuppressWarnings("CanBeFinal")
     private static MulticastSocket ms = null;
+    @SuppressWarnings("CanBeFinal")
     private static DatagramSocket outputDatagramSocket;
     
     private static final HashMap<InetAddress, String> addressToChatname = new HashMap<>();
@@ -32,7 +33,7 @@ public class Multicast {
         }
 
         Thread listener = new Thread(() -> {
-            while (!stop) {
+            while (!Thread.interrupted()) {
                 byte[] buffer = new byte[8192];
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 

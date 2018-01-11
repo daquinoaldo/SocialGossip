@@ -233,6 +233,7 @@ public class Json {
         User.setFriendList(friends);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean createRoom(String roomName) {
         if (roomName == null || roomName.length() == 0)
             throw new IllegalArgumentException("The room name must be a non-empty string.");

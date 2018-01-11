@@ -10,7 +10,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 public class Manager {
-    private static ServerImpl impl;
+    @SuppressWarnings("CanBeFinal")
     private static Registry registry;
     
     static {
@@ -27,7 +27,7 @@ public class Manager {
     
     public static void start() {
         try {
-            impl = new ServerImpl();
+            ServerImpl impl = new ServerImpl();
             ServerInterface stub = (ServerInterface) UnicastRemoteObject.exportObject(impl, 0);
             registry.bind(Configuration.RMI_NAME, stub);
             System.out.println("[RMI] Listening on port " + Configuration.RMI_PORT);

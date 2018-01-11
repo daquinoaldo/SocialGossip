@@ -12,7 +12,8 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 public class Manager {
-    private static ClientCallbackInterface callback = new ClientCallback();
+    private static final ClientCallbackInterface callback = new ClientCallback();
+    @SuppressWarnings("CanBeFinal")
     private static ServerInterface server;
     
     static {
