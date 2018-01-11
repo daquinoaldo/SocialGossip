@@ -33,7 +33,6 @@ public class User {
     private static final ArrayList<Consumer<Collection<Room>>> roomsListCallbacks = new ArrayList<>();
     
     // Getters
-    public static boolean isLoggedIn() { return isLoggedIn; }
     public static String username() { return username; }
     public static Collection<Friend> friends() { return friends.values(); }
     public static Friend getFriend(String username) { return friends.get(username); }
@@ -81,6 +80,7 @@ public class User {
         roomsListCallbacks.forEach(c -> c.accept(rooms.values()));
     }
     
+    @SuppressWarnings("UnusedReturnValue")
     public static boolean removeRoom(String roomName) {
         boolean toReturn = rooms.remove(roomName) != null;
         roomsListCallbacks.forEach(c -> c.accept(rooms.values()));
