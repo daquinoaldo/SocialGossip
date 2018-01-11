@@ -9,7 +9,6 @@ import gui.panels.MainPanel;
 import javax.swing.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 class MainClient {
     private static JFrame mainWindow = null;

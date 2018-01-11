@@ -16,7 +16,6 @@ import java.net.UnknownHostException;
 import java.nio.channels.ServerSocketChannel;
 import java.util.ArrayList;
 import java.io.File;
-import java.net.ServerSocket;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +25,7 @@ import static base.Endpoints.*;
 // TODO: se due thread inviano una richiesta insieme potrebbero incrociarsi e scambiarsi le risposte?
 // mettere makeRequest synchronized risolve?
 
+@SuppressWarnings("unchecked")
 public class Json {
     private static JSONObject parse(String s) {
         if (s == null) return null;
@@ -137,7 +137,7 @@ public class Json {
         
         Room room = User.getRoom(chatname);
         if (room == null) {
-            System.err.println("Got a message for a non-subscribed room: " + room);
+            System.err.println("Got a message for a non-subscribed room: " + chatname);
             return;
         }
         
@@ -321,9 +321,8 @@ public class Json {
     
         if (result != null) {
             User.getFriend(toUsername).newMessage( new Message("SYSTEM", "Starting upload to "+toUsername+".") );
-            Connection.startFileSender(serverSocketChannel, file, () -> {
-                User.getFriend(toUsername).newMessage( new Message("SYSTEM", "Completed upload to "+toUsername+".") );
-            });
+            Connection.startFileSender(serverSocketChannel, file, () -> User.getFriend(toUsername).newMessage(
+                    new Message("SYSTEM", "Completed upload to "+toUsername+".")));
         }
     }
     

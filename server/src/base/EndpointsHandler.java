@@ -15,6 +15,7 @@ import static base.Utils.isDebug;
 import static base.Utils.printDebug;
 import static base.Utils.writeToFile;
 
+@SuppressWarnings("unchecked")
 class EndpointsHandler {
 
     private static final Database db = new Database();
@@ -31,8 +32,7 @@ class EndpointsHandler {
         String actualPasswordHash = Utils.md5(password);
         return realPasswordHash.equals(actualPasswordHash);
     }
-    
-    @SuppressWarnings("unchecked")
+
     private static JSONArray getFriendsStatus(List<String> friends) {
         JSONArray friendsWithStatus = new JSONArray();
         for (String friend : friends) {
@@ -45,7 +45,6 @@ class EndpointsHandler {
         return friendsWithStatus;
     }
 
-    @SuppressWarnings("unchecked")
     private static JSONArray getRoomSubscriptions(List<String> rooms, List<String> subscriptions) {
         JSONArray roomSubscriptions = new JSONArray();
         for (String room : rooms) {
@@ -63,8 +62,7 @@ class EndpointsHandler {
         user.setHeartbeat( System.currentTimeMillis() );
         return new JSONObject();
     }
-    
-    @SuppressWarnings({"unchecked", "unused"})
+
     static JSONObject login(User stubUser, JSONObject params) {
         Socket primarySocket = stubUser.getPrimarySocket();
         Socket messageSocket = stubUser.getMessageSocket();
@@ -110,7 +108,6 @@ class EndpointsHandler {
         return buildSuccessReply();
     }
 
-    @SuppressWarnings("unused")
     static JSONObject register(User stubUser, JSONObject params) {
         String username = (String) params.get("username");
         String password = (String) params.get("password");
@@ -125,7 +122,6 @@ class EndpointsHandler {
         return buildSuccessReply();
     }
 
-    @SuppressWarnings("unused")
     static JSONObject lookup(User user, JSONObject params) {
         if(!db.existUser((String) params.get("username")))
             return buildErrorReply(400, "User not exists.");
@@ -159,7 +155,6 @@ class EndpointsHandler {
         return buildSuccessReply(result);
     }
 
-    @SuppressWarnings({"unchecked", "unused"})
     static JSONObject listFriend(User user, JSONObject params) {
         List<String> friends = db.getFriendships(user.getUsername());
         JSONObject jsonObject = new JSONObject();
@@ -188,7 +183,6 @@ class EndpointsHandler {
         return buildSuccessReply(result);
     }
 
-    @SuppressWarnings("unchecked")
     static JSONObject addMe(User user, JSONObject params) {
         String room = (String) params.get("room");
         String broadcastIp = db.getBroadcastIP(room);
@@ -199,7 +193,6 @@ class EndpointsHandler {
         return buildSuccessReply(jsonObject);
     }
 
-    @SuppressWarnings({"unchecked", "unused"})
     static JSONObject chatList(User user, JSONObject params) {
         List<String> rooms = db.getRooms();
         List<String> subscriptions = db.getUserSubscriptions(user.getUsername());

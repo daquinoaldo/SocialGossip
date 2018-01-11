@@ -6,7 +6,6 @@ import remoteinterfaces.ClientCallbackInterface;
 import java.io.IOException;
 import java.net.Socket;
 import java.rmi.RemoteException;
-import java.util.Date;
 import java.util.concurrent.Future;
 
 import static base.Utils.printDebug;
@@ -24,9 +23,7 @@ public class User implements Comparable<User> {
     private Future<?> ghostbusterFuture;
     public Future<?> getGhostbusterFuture() { return ghostbusterFuture; }
     public void setGhostbusterFuture(Future<?> ghostbusterFuture) { this.ghostbusterFuture = ghostbusterFuture; }
-    
-    
-    @SuppressWarnings("WeakerAccess")
+
     public User(String username) {
         this.username = username;
     }
@@ -68,6 +65,7 @@ public class User implements Comparable<User> {
         }
     }
     
+    @SuppressWarnings("unchecked")
     public void sendMsgRequest(String endpoint, JSONObject params) {
         JSONObject req = new JSONObject();
         req.put("endpoint", endpoint);

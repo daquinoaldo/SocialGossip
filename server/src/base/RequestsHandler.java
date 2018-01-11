@@ -59,11 +59,7 @@ public class RequestsHandler {
             return buildErrorReply(404, "Endpoint not found.").toJSONString();
         }
     }
-    
-    /**
-     * TODO - write this javadoc
-     * @return
-     */
+
     public static void parseChatroomMessage(InetAddress senderAddress, String data) {
         JSONObject parsed = parse(data);
         JSONObject result = new JSONObject();

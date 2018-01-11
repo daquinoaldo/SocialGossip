@@ -81,7 +81,6 @@ public class Connection {
     /**
      * Send a String to the server through the message connection. Wait for a reply and return it as a String.
      * @param request String to be sent.
-     * @return String returned by the server, can be null.
      */
     public synchronized static void sendMsgRequest(String request) {
         send(msgWriter, null, request);

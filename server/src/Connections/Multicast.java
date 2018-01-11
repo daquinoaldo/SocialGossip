@@ -22,7 +22,7 @@ public class Multicast {
         
         Thread listener = new Thread(() -> {
             try (
-                    DatagramSocket listenerSocket = new DatagramSocket(Configuration.UDP_PORT);
+                    DatagramSocket listenerSocket = new DatagramSocket(Configuration.UDP_PORT)
 
             ) {
                 System.out.println("[UDP] Listening on port " + Configuration.UDP_PORT);

@@ -5,10 +5,8 @@ import base.User;
 import remoteinterfaces.ClientCallbackInterface;
 import remoteinterfaces.ServerInterface;
 
-import java.rmi.RemoteException;
-
 public class ServerImpl implements ServerInterface {
-    public boolean registerCallback(String username, ClientCallbackInterface callback) throws RemoteException {
+    public boolean registerCallback(String username, ClientCallbackInterface callback) {
         User user = OnlineUsers.getByUsername(username);
         if (user == null) {
             // user not found

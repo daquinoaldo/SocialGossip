@@ -21,12 +21,12 @@ public class Utils {
         try {
             byte[] digest = MessageDigest.getInstance("MD5").digest(str.getBytes());
     
-            StringBuffer hexString = new StringBuffer();
-            for (int i = 0; i < digest.length; i++) {
-                String hex=Integer.toHexString(0xFF & digest[i]);
-                if(hex.length()==1)
+            StringBuilder hexString = new StringBuilder();
+            for (byte digestByte : digest) {
+                String hex = Integer.toHexString(0xFF & digestByte);
+                if (hex.length() == 1)
                     hexString.append('0');
-        
+
                 hexString.append(hex);
             }
             
