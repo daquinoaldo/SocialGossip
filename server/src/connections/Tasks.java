@@ -51,9 +51,11 @@ public class Tasks {
                 user.setMessageSocket(socket);
             }
             
+            user.setHeartbeat( System.currentTimeMillis() );
             String reply = RequestsHandler.parseMessageRequest(user, req);
             
-            send(socket, reply);
+            if (reply != null)
+                send(socket, reply);
         }
         catch (IOException e) {
             System.err.println("Error while reading request (primary connection):");

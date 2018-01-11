@@ -59,8 +59,7 @@ class EndpointsHandler {
     }
 
     static JSONObject heartbeat(User user, JSONObject params) {
-        user.setHeartbeat( System.currentTimeMillis() );
-        return new JSONObject();
+        return null;
     }
 
     static JSONObject login(User stubUser, JSONObject params) {
