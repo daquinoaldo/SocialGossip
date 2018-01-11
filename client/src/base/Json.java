@@ -46,14 +46,15 @@ public class Json {
         if (request == null) return;
         
         JSONObject payload = (JSONObject) request.get("params");
-
         String endpoint = (String) request.get("endpoint");
         
         if (endpoint == null) {
             // not a request
+            System.err.println("Message connection, got: ");
+            System.err.println(jsonString);
             String status = (String) request.get("status");
             String message = (String) request.get("message");
-            if (!status.equals("ok") && message != null)
+            if (status != null && !status.equals("ok") && message != null)
                 Utils.showErrorDialog(message);
             
             return;
