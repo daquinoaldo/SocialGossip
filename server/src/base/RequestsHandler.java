@@ -13,9 +13,8 @@ import java.util.HashMap;
 import java.util.function.BiFunction;
 
 public class RequestsHandler {
-    private static final HashMap<String, BiFunction<User, JSONObject, JSONObject>> endpoints = new HashMap<String, BiFunction<User, JSONObject, JSONObject>>(){{
+    private static final HashMap<String, BiFunction<User, JSONObject, JSONObject>> primaryEndpoints = new HashMap<String, BiFunction<User, JSONObject, JSONObject>>(){{
         /* Register endpoint methods to the endpoint string */
-        put(HEARTBEAT,          EndpointsHandler::heartbeat);
         put(LOGIN,              EndpointsHandler::login);
         put(REGISTER,           EndpointsHandler::register);
         put(LOOKUP,             EndpointsHandler::lookup);
@@ -27,6 +26,12 @@ public class RequestsHandler {
         put(CHAT_LIST,          EndpointsHandler::chatList);
         put(CLOSE_ROOM,         EndpointsHandler::closeRoom);
         put(FILE2FRIEND,        EndpointsHandler::file2friend);
+    }};
+    
+    private static final HashMap<String, BiFunction<User, JSONObject, JSONObject>> messageEndpoints = new HashMap<String, BiFunction<User, JSONObject, JSONObject>>(){{
+        put(HEARTBEAT,          EndpointsHandler::heartbeat);
+        put(LOGIN,              EndpointsHandler::login);
+        put(FILE2FRIEND,        EndpointsHandler::file2friend);
         put(MSG2FRIEND,         EndpointsHandler::msg2friend);
     }};
     
@@ -35,22 +40,41 @@ public class RequestsHandler {
     /* DISPATCHER */
     /**
      * Parse a JSON String into a JSONObject, then apply the method registered for the endpoint specified in the JSON,
-     * if any.
+     * if any. This is for the primary connection only.
      * Returns the result of the operation as a JSONObject, can be an error.
      * @param input String in valid JSON format.
      * @return A JSON String to be sent as reply containing the result of the operation, can be an error.
      */
     public static String parseRequest(User user, String input) {
+        return parseGenericRequest(user, input, true);
+    }
+    
+    /**
+     * Parse a JSON String into a JSONObject, then apply the method registered for the endpoint specified in the JSON,
+     * if any. This is for the message connection only.
+     * Returns the result of the operation as a JSONObject, can be an error.
+     * @param input String in valid JSON format.
+     * @return A JSON String to be sent as reply containing the result of the operation, can be an error.
+     */
+    public static String parseMessageRequest(User user, String input) {
+        return parseGenericRequest(user, input, false);
+    }
+    
+    private static String parseGenericRequest(User user, String input, boolean isPrimaryRequest) {
         // Parse JSON string into a JSONObject
         JSONObject parsed = parse(input);
         if (parsed == null)
             return buildErrorReply(400, "Invalid JSON request.").toJSONString();
-            
+    
         // Read endpoint and parameters
         String endpoint = (String) parsed.get("endpoint");
         JSONObject params = (JSONObject) parsed.get("params");
-        
+    
         // Call the endpoint method associated if any, else throw exception
+        HashMap<String, BiFunction<User, JSONObject, JSONObject>> endpoints = isPrimaryRequest ?
+                        primaryEndpoints :
+                        messageEndpoints ;
+        
         if (endpoints.containsKey(endpoint)) {
             return endpoints.get(endpoint).apply(user, params).toJSONString();
         }

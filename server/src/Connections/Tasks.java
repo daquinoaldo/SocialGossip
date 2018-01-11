@@ -51,7 +51,7 @@ public class Tasks {
                 user.setMessageSocket(socket);
             }
             
-            String reply = RequestsHandler.parseRequest(user, req);
+            String reply = RequestsHandler.parseMessageRequest(user, req);
             
             send(socket, reply);
         }
