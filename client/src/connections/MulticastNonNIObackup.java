@@ -4,24 +4,26 @@ import base.Configuration;
 import base.Json;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
-@SuppressWarnings("ALL")
-public class Multicast {
+public class MulticastNonNIObackup {
     @SuppressWarnings("CanBeFinal")
     private static MulticastSocket ms = null;
     @SuppressWarnings("CanBeFinal")
     private static DatagramSocket outputDatagramSocket;
-
+    
     private static final HashMap<InetAddress, String> addressToChatname = new HashMap<>();
-
+    
     static {
         try {
             ms = new MulticastSocket(Configuration.MULTICAST_PORT);
             ms.setReuseAddress(true);
-
+            
             outputDatagramSocket = new DatagramSocket();
         }
         catch (IOException e) {
@@ -53,7 +55,7 @@ public class Multicast {
         });
         listener.start();
     }
-
+    
     public static void send(String request) {
         try {
             InetAddress destAddress = InetAddress.getByName(Configuration.HOSTNAME);
@@ -66,15 +68,15 @@ public class Multicast {
             e.printStackTrace();
         }
     }
-
+    
     public static void joinGroup(String chatname, InetAddress address) throws IllegalArgumentException {
         if (!address.isMulticastAddress()) {
             throw new IllegalArgumentException("Not a valid multicast address: " + address.getHostName());
         }
-
+        
         if (addressToChatname.containsValue(chatname))
             return;
-
+        
         try {
             ms.joinGroup(address);
             addressToChatname.put(address, chatname);
@@ -84,7 +86,7 @@ public class Multicast {
             e.printStackTrace();
         }
     }
-
+    
     public static void leaveGroup(InetAddress address) {
         try {
             ms.leaveGroup(address);
