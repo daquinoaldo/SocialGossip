@@ -1,3 +1,13 @@
+\newcommand{\api}[2]{
+    \begin{tabular}{m{2cm} | m{8cm}}
+        \hline
+    	\textbf{Richiesta} & {#1} \\
+    	\hline
+     	\textbf{Risposta} & {#2} \\
+     	\hline
+    \end{tabular}
+}
+
 \section{Protocolli client-server}
 
 \subsection{Connessioni}
@@ -11,7 +21,7 @@ Per comunicare tra di loro, un client e il server utilizzano diverse connessioni
 
     \item Connessione persistente TCP di controllo, porta 8888. Usata per lo scambio di richieste da parte del client e relative risposte del server, per ulteriori dettagli vedere \hyperref[ssec:operazioni]{le operazioni disponibili}.
 
-    \item Connessione persistente TCP per messaggi, porta 8889. Usata per lo scambio di messaggi privati tra utenti.
+    \item Connessione persistente TCP per messaggi, porta 8889. Usata per lo scambio di messaggi privati tra utenti e altre richieste. A differenza della connessione di controllo, il client può ricevere richieste su questa connessione in qualsiasi momento.
 
     \item Connessione UDP, porta 8886. Usata per l'invio al server di messaggi destinati a una chatroom.
 
@@ -26,7 +36,6 @@ Vengono stabilite altre connessioni in occasione di determinati eventi. Ad esemp
 \subsection{Operazioni disponibili}
 \label{ssec:operazioni}
 \subsubsection{Login}
-%%% Il login fa questo e questo e il server deve memorizzarsi i socket della gente in modo da sapere dove andarli a contattare e gne gne gne
 Il client stabilisce fin da subito le connessioni TCP con il server. Al momento del login, il client manda il messaggio JSON contenente la richiesta sulla connessione di controllo.
 
 Il server, una volta ricevuta la richiesta, controlla che l'utente non sia già collegato da altre postazioni e che username e password siano validi. In questo caso restituisce un messaggio di successo e memorizza internamente il socket utilizzato da questo utente, altrimenti un messaggio di errore contenente una descrizione del problema.
@@ -37,8 +46,21 @@ Infine, il client registra sul server la sua callback via RMI.
 
 Alla fine di questo scambio, il server avrà in memoria una struttura dati in grado di associare all'utente i suoi socket TCP e la sua callback.
 
+\subsubsection{Heartbeat}
+Non è prevista una richiesta di logout. Invece il server utilizza un sistema di \textit{hearthbeat} per verificare se un client è effettivamente collegato.
+
+Il funzionamento è piuttosto semplice: ad intervalli regolari il client manda un \textit{beat} al server. In contemporanea il server ha un thread dedicato chiamato \textit{ghostbuster} che per ogni utente collegato controlla quando è stato ricevuto l'ultimo beat - se è troppo vecchio l'utente viene dato per scollegato e i suoi socket rimossi dalla memoria.
+
+\subsubsection{Invio dei file}
+L'invio dei file tra utenti deve essere peer-to-peer, cioè è necessario che il mittente del file stabilisca una connessione TCP diretta con il destinatario.
+
+Per fare questo il mittente apre un socket TCP dove aspetterà la connessione dell'altro utente, e invia una richiesta al server contenente il destinatario e la porta del socket appena aperto. Il server dopo aver verificato la correttezza dei dati ricevuti inoltra la richiesta al destinatario sulla sua porta dei messaggi (notare che occorre anche che il server aggiunga l'indirizzo pubblico del mittente alla richiesta inoltrata per far sì che il destinatario possa collegarsi).
+
+Il destinatario può accettare la richiesta di scambio file semplicemente collegandosi all'indirizzo e alla porta del mittente e salvando i dati ricevuti su disco.
+
 \subsubsection{Connessione di controllo}
-%%% lista dei vari endpoint
+Il client utilizza questa connessione per mandare una richiesta e ricevere una risposta. Il server, come avviene ad esempio in HTTP, non può iniziare scambi di messaggi.
+
 Le richieste (e relative risposte) sono caratterizzati da un \textit{endpoint}, una stringa di testo che ne caratterizza il tipo.
 
 I messaggi JSON hanno tutti la stessa struttura di base, per le richieste è:
@@ -70,36 +92,310 @@ oppure
 \medskip
 \paragraph{Lista degli endpoint}
 \begin{itemize}
-    \item LOGIN
-    \begin{tabular}{l | r}
-        a & b
-    \end{tabular}
+
+%%%
+%%% LOGIN ENDPOINT ----------------------------------------
+%%%
+\item {\Large LOGIN} \\
+\cprotect[mm]\api{
+\begin{verbatim}
+{
+    "endpoint": "LOGIN",
+    "params": {
+        "username": <username>,
+        "password": <password>    
+    }
+}
+\end{verbatim}
+}{
+\begin{verbatim}
+{
+    "status": "ok",
+    "code": 200,
+}
+\end{verbatim}
+}
     
-    \item REGISTER
+%%%
+%%% REGISTER ENDPOINT ---------------------------------------
+%%%
+\item {\Large REGISTER} \\
+\cprotect[mm]\api{
+\begin{verbatim}
+{
+    "endpoint": "REGISTER",
+    "params": {
+        "username": <username>,
+        "password": <password>,
+        "language": <lingua>
+    }
+}
+\end{verbatim}
+}{
+\begin{verbatim}
+{
+    "status": "ok",
+    "code": 200,
+}
+\end{verbatim}
+}
+\medskip
 
-    \item LOOKUP
+%%%
+%%% LOOKUP ENDPOINT ---------------------------------------
+%%%
+\item {\Large LOOKUP} \\
+\cprotect[mm]\api{
+\begin{verbatim}
+{
+    "endpoint": "LOOKUP",
+    "params": {
+        "username": <username>,
+    }
+}
+\end{verbatim}
+}{
+\begin{verbatim}
+se lo username esiste:
+{
+    "status": "ok",
+    "code": 200,
+}
+\end{verbatim}
+}
 
-    \item FRIENDSHIP
+%%%
+%%% FRIENDSHIP ENDPOINT ---------------------------------------
+%%%
+\item {\Large FRIENDSHIP} \\
+\cprotect[mm]\api{
+\begin{verbatim}
+{
+    "endpoint": "FRIENDSHIP",
+    "params": {
+        "username": <username>,
+    }
+}
+\end{verbatim}
+}{
+\begin{verbatim}
+{
+    "status": "ok",
+    "code": 200,
+}
+\end{verbatim}
+}
+        
+%%%
+%%% IS_ONLINE ENDPOINT ---------------------------------------
+%%%
+\item {\Large IS\_ONLINE} \\
+\cprotect[mm]\api{
+\begin{verbatim}
+{
+    "endpoint": "IS_ONLINE",
+    "params": {
+        "username": <username>,
+    }
+}
+\end{verbatim}
+}{
+\begin{verbatim}
+{
+    "status": "ok",
+    "code": 200,
+    "result": {
+        "online": <true/false>    
+    }
+}
+\end{verbatim}
+}
+        
+%%%
+%%% LIST_FRIEND ENDPOINT ---------------------------------------
+%%%
+\item {\Large LIST\_FRIEND} \\
+\cprotect[mm]\api{
+\begin{verbatim}
+{
+    "endpoint": "LIST_FRIEND"
+}
+\end{verbatim}
+}{
+\begin{verbatim}
+{
+    "status": "ok",
+    "code": 200,
+    "result": {
+        "friends": {[
+            {
+                "username": <username>,
+                "online": <true/false>
+            },
+            ...
+        ]}
+    }
+}
+\end{verbatim}
+}
+      
+%%%
+%%% CREATE_ROOM ENDPOINT ---------------------------------------
+%%%  
+\item {\Large CREATE\_ROOM} \\
+\cprotect[mm]\api{
+\begin{verbatim}
+{
+    "endpoint": "CREATE_ROOM",
+    "params": {
+        "room": <nome stanza>
+    }
+}
+\end{verbatim}
+}{
+\begin{verbatim}
+{
+    "status": "ok",
+    "code": 200,
+    "result": {
+        "name": <nome stanza>,
+        "address": <indirizzo multicast>
+    }
+}
+\end{verbatim}
+}
+     
+%%%
+%%% ADD_ME ENDPOINT ---------------------------------------
+%%%   
+\item {\Large ADD\_ME} \\
+\cprotect[mm]\api{
+\begin{verbatim}
+{
+    "endpoint": "ADD_ME",
+    "params": {
+        "room": <nome stanza>
+    }
+}
+\end{verbatim}
+}{
+\begin{verbatim}
+{
+    "status": "ok",
+    "code": 200,
+    "result": {
+        "broadcastIP": <indirizzo multicast>
+    }
+}
+\end{verbatim}
+}
+       
+%%%
+%%% CHAT_LIST ENDPOINT ---------------------------------------
+%%%
+\item {\Large CHAT\_LIST} \\ 
+\cprotect[mm]\api{
+\begin{verbatim}
+{
+    "endpoint": "CHAT_LIST"
+}
+\end{verbatim}
+}{
+\begin{verbatim}
+{
+    "status": "ok",
+    "code": 200,
+    "result": {
+        "rooms": [
+            {
+                "name": <nome stanza>,
+                "address": <indirizzo multicast>,
+                "creator": <username creatore>,
+                "subscribed": <true/false>
+            },
+            ...        
+        ]
+    }
+}
+\end{verbatim}
+}
 
-    \item IS\_ONLINE
+%%%
+%%% CLOSE_ROOM ENDPOINT ---------------------------------------
+%%%
+\item {\Large CLOSE\_ROOM} \\
+\cprotect[mm]\api{
+\begin{verbatim}
+{
+    "endpoint": "CLOSE_ROOM",
+    "params": {
+        "room": <nome stanza>
+    }
+}
+\end{verbatim}
+}{
+\begin{verbatim}
+{
+    "status": "ok",
+    "code": 200
+}
+\end{verbatim}
+}
+    
+%%%
+%%% FILE2FRIEND ENDPOINT ---------------------------------------
+%%%
+\item {\Large FILE2FRIEND} \\
+\cprotect[mm]\api{
+\begin{verbatim}
+{
+    "endpoint": "FILE2FRIEND",
+    "params": {
+        "from": <username mittente>,
+        "to": <username destinatario>,
+        "port": <porta del socket del mittente>,
+        "filename": <nome ed estensione
+                     del file selezionato>
+    }
+}
+\end{verbatim}
+}{
+\begin{verbatim}
+{
+    "status": "ok",
+    "code": 200
+}
+\end{verbatim}
+}
 
-    \item LIST\_FRIEND
-
-    \item CREATE\_ROOM
-
-    \item ADD\_ME
-
-    \item CHAT\_LIST
-
-    \item CLOSE\_ROOM
-
-    \item FILE2FRIEND
 \end{itemize}
 
 \subsubsection{Connessione dei messaggi}
-%%% formato dei mesasggi e possibili errori
+A differenza della connessione di controllo, il client rimane costantemente in ascolto su questa porta. Rendendo possibile per il server mandare richieste e messaggi di altri utenti.
 
-\subsection{Invio dei file}
+Questa connessione viene utilizzata nel caso si voglia mandare un messaggio privato ad un altro, ed il formato JSON utilizzato è il seguente: \\
+\cprotect[mm]\api{
+\begin{verbatim}
+{
+    "endpoint": "MSG2FRIEND",
+    "params": {
+        "from": <username mittente>,
+        "recipient": <username destinatario>,
+        "text": <testo del messaggio>,
+    }
+}
+\end{verbatim}
+}{
+\begin{verbatim}
+{
+    "status": "ok",
+    "code": 200
+}
+\end{verbatim}
+}
 
+\paragraph{Traduzione}
+È attivo anche un servizio di traduzione di testo. Dal momento che ogni utente seleziona la propria lingua al momento della registrazione, il server è in grado di tradurre il testo del messaggio dalla lingua dell'utente mittente alla lingua dell'utente destinatario.
 
 \subsubsection{Callback RMI}
+Il client registra durante il login, alcune callback che vengono usate per notificarlo di cambiamenti che lo coinvolgono: quando è stato aggiunto agli amici da un altro utente, e quando uno dei suoi amici cambia stato (si è collegato oppure si è scollegato).
