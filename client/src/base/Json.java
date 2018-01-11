@@ -50,8 +50,6 @@ public class Json {
         
         if (endpoint == null) {
             // not a request
-            System.err.println("Message connection, got: ");
-            System.err.println(jsonString);
             String status = (String) request.get("status");
             String message = (String) request.get("message");
             if (status != null && !status.equals("ok") && message != null)
@@ -350,11 +348,11 @@ public class Json {
      * @throws IllegalArgumentException if an invalid endpoint is specified
      */
     @SuppressWarnings("unchecked")
-    private static JSONObject makeRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
+    private synchronized static JSONObject makeRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
         return makeGenericRequest(endpoint, keyvalues, false);
     }
 
-    private static void makeMsgRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
+    private synchronized static void makeMsgRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
         makeGenericRequest(endpoint, keyvalues, true);
     }
 
