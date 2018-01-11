@@ -1,6 +1,7 @@
 import base.Database;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -13,7 +14,9 @@ class DatabaseTest {
     
     private void resetDatabase() {
         try { Files.delete(Paths.get("testdatabase.db")); }
-        catch (Exception e) { }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
         database.init();
     }
     

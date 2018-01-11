@@ -58,6 +58,7 @@ class EndpointsHandler {
         return roomSubscriptions;
     }
 
+    @SuppressWarnings("SameReturnValue")
     static JSONObject heartbeat(User user, JSONObject params) {
         return null;
     }

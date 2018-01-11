@@ -55,7 +55,8 @@ public class RegisterForm extends JPanel {
         String username = usernameInput.getText();
         String password = passwordInput.getText();
         String password2 = passwordInput2.getText();
-        String language = languageList.get(languageInput.getSelectedItem());
+        @SuppressWarnings("ConstantConditions")
+        String language = languageList.get(languageInput.getSelectedItem().toString());
         
         if (isValidUsername(username) && isValidPassword(password) && password.equals(password2) && language.length() == 2) {
             registerCallback.accept(username, password, language);

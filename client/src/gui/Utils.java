@@ -81,7 +81,9 @@ public class Utils {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             chooser = new JFileChooser();
             UIManager.setLookAndFeel(previousLF);
-        } catch (IllegalAccessException | UnsupportedLookAndFeelException | InstantiationException | ClassNotFoundException e) {
+        } catch (IllegalAccessException | UnsupportedLookAndFeelException | InstantiationException |
+                ClassNotFoundException e) {
+            e.printStackTrace();
         }
     
         if (chooser == null) chooser = new JFileChooser();

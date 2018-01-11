@@ -59,7 +59,10 @@ public class Connection {
             while (!Thread.interrupted()) {
                 Json.heartbeat();
                 try { Thread.sleep(500); }
-                catch (InterruptedException e) { }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                    break;
+                }
             }
         });
         User.addLoginListener((loggedIn) -> {
@@ -126,7 +129,10 @@ public class Connection {
                         try {
                             failedCount++;
                             Thread.sleep(5000);
-                        } catch (InterruptedException intexc) { }
+                        } catch (InterruptedException intexc) {
+                            e.printStackTrace();
+                            break;
+                        }
                     }
                     else {
                         stop = true;

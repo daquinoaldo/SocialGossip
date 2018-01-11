@@ -257,7 +257,7 @@ public class Json {
         return result != null;
     }
 
-    public static void chatList() {
+    private static void chatList() {
         JSONObject result = makeRequest(Endpoints.CHAT_LIST, null);
         if(result == null) return;
         JSONArray jsonArray = (JSONArray) result.get("rooms");
@@ -285,7 +285,6 @@ public class Json {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("room", roomName);
         JSONObject result = makeRequest(Endpoints.CLOSE_ROOM, parameters);
-        if (result == null) return;
     }
 
     private static JSONObject genericMsg(String recipient, String text) {
