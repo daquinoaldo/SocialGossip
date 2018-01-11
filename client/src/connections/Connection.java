@@ -1,6 +1,6 @@
-package Connections;
+package connections;
 
-import State.User;
+import state.User;
 import base.Configuration;
 import base.Filesystem;
 import base.Json;
@@ -38,7 +38,7 @@ public class Connection {
         }
         
         Thread msgRequestListener = new Thread(() -> {
-            while (true) {
+            while (!Thread.interrupted()) {
                 try {
                     String msgRequest = msgReader.readLine();
                     Json.parseMessageRequest(msgRequest);

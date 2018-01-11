@@ -10,8 +10,8 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 public class Manager {
-    static ServerImpl impl;
-    static Registry registry;
+    private static ServerImpl impl;
+    private static Registry registry;
     
     static {
         try {

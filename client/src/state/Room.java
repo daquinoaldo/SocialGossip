@@ -1,6 +1,6 @@
-package State;
+package state;
 
-import Connections.Multicast;
+import connections.Multicast;
 import gui.panels.ChatPanel;
 
 import java.net.InetAddress;

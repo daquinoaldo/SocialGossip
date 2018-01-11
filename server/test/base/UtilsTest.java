@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UtilsTest {
     
+    @SuppressWarnings("ConstantConditions")
     @Test
     void md5() {
         // length

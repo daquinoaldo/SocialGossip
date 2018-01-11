@@ -1,6 +1,6 @@
 package rmi;
 
-import State.User;
+import state.User;
 import base.Configuration;
 import remoteinterfaces.ClientCallbackInterface;
 import remoteinterfaces.ServerInterface;
@@ -12,13 +12,12 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 public class Manager {
-    static Registry registry;
-    static ClientCallbackInterface callback = new ClientCallback();
-    static ServerInterface server;
+    private static ClientCallbackInterface callback = new ClientCallback();
+    private static ServerInterface server;
     
     static {
         try {
-            registry = LocateRegistry.getRegistry(Configuration.HOSTNAME, Configuration.RMI_PORT);
+            Registry registry = LocateRegistry.getRegistry(Configuration.HOSTNAME, Configuration.RMI_PORT);
             server = (ServerInterface) registry.lookup(Configuration.RMI_NAME);
             
         }

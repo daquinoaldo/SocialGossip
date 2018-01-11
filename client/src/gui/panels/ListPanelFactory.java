@@ -1,9 +1,9 @@
 package gui.panels;
 
-import State.Chat;
-import State.Friend;
-import State.User;
-import State.Room;
+import state.Chat;
+import state.Friend;
+import state.User;
+import state.Room;
 import base.Json;
 import constants.Dimensions;
 import gui.Utils;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ListPanelFactory {
+class ListPanelFactory {
 
     // Double click listener on online user or joined room start the chat
     private static MouseListener startChatListener = new MouseAdapter() {

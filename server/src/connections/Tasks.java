@@ -1,4 +1,4 @@
-package Connections;
+package connections;
 
 import base.OnlineUsers;
 import base.RequestsHandler;
@@ -8,8 +8,8 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import static Connections.Helpers.recv;
-import static Connections.Helpers.send;
+import static connections.Helpers.recv;
+import static connections.Helpers.send;
 
 public class Tasks {
     /**

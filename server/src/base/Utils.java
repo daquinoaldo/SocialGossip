@@ -65,7 +65,7 @@ public class Utils {
         return nextIP;
     }
 
-    public static boolean writeToFile(String text, String filename) {
+    static boolean writeToFile(String text, String filename) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
             bw.write(text+"\n");
             return true;

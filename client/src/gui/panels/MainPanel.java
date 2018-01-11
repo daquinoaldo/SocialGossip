@@ -1,8 +1,8 @@
 package gui.panels;
 
-import State.Friend;
-import State.User;
-import State.Room;
+import state.Friend;
+import state.User;
+import state.Room;
 
 import javax.swing.*;
 import java.util.Collection;

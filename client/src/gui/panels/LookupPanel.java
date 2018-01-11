@@ -1,6 +1,6 @@
 package gui.panels;
 
-import State.User;
+import state.User;
 import base.Json;
 
 import javax.swing.*;

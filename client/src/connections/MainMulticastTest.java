@@ -1,10 +1,10 @@
-package Connections;
+package connections;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
-public class MainMulticastTest {
+class MainMulticastTest {
 
     public static void main (String [ ] args) {
         try {

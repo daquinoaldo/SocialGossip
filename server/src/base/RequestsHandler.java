@@ -2,7 +2,7 @@ package base;
 
 import static base.Endpoints.*;
 
-import Connections.Multicast;
+import connections.Multicast;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -84,6 +84,7 @@ public class RequestsHandler {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void parseChatroomMessage(InetAddress senderAddress, String data) {
         JSONObject parsed = parse(data);
         JSONObject result = new JSONObject();
