@@ -276,8 +276,4 @@ class EndpointsHandler {
         OnlineUsers.getByUsername(to).sendMsgRequest(MSG2FRIEND, params);
         return buildSuccessReply();
     }
-
-    static JSONObject chatroomMessage(User user, JSONObject params) {
-        return buildErrorReply(400, "Not implemented yet.");
-    }
 }

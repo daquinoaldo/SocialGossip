@@ -28,7 +28,6 @@ public class RequestsHandler {
         put(CLOSE_ROOM,         EndpointsHandler::closeRoom);
         put(FILE2FRIEND,        EndpointsHandler::file2friend);
         put(MSG2FRIEND,         EndpointsHandler::msg2friend);
-        put(CHATROOM_MESSAGE,   EndpointsHandler::chatroomMessage);
     }};
     
     private static final Database database = new Database();
