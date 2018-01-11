@@ -9,19 +9,21 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public abstract class Chat {
-    static final int FRIEND_TYPE = 0;
-    static final int CHATROOM_TYPE = 1;
+    static final int TYPE_FRIEND = 0;
+    static final int TYPE_ROOM = 1;
     
     @SuppressWarnings("WeakerAccess")
     protected ChatPanel chatPanel;
     private JFrame window = null;
 
+    private int type;
     private String name;
-    private boolean flag = false; // FRIEND_TYPE -> isOnline, CHATROOM_TYPE -> isSubscribed
+    private boolean flag = false; // TYPE_FRIEND -> isOnline, TYPE_ROOM -> isSubscribed
     
     Chat(int type, String name) {
-        if (type != FRIEND_TYPE && type != CHATROOM_TYPE)
-            throw new IllegalArgumentException("Invalid type. Please choose one of FRIEND_TYPE, CHATROOM_TYPE.");
+        if (type != TYPE_FRIEND && type != TYPE_ROOM)
+            throw new IllegalArgumentException("Invalid type. Please choose one of TYPE_FRIEND, TYPE_ROOM.");
+        this.type = type;
         this.name = name;
     }
 
@@ -35,7 +37,9 @@ public abstract class Chat {
     public JFrame getWindow() { return window; }
     public void createWindow() {
         if (window == null) {
-            window = Utils.createWindow(name, chatPanel, Dimensions.CHAT_PANE);
+            String windowsName = name;
+            if (type == TYPE_ROOM) windowsName += " - "+User.username();
+            window = Utils.createWindow(windowsName, chatPanel, Dimensions.CHAT_PANE);
 
             window.addWindowListener(new WindowAdapter() {
                 @Override
