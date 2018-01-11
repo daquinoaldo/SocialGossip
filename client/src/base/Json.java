@@ -14,22 +14,29 @@ import org.json.simple.parser.ParseException;
 
 import java.net.UnknownHostException;
 import java.nio.channels.ServerSocketChannel;
-import java.util.ArrayList;
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static base.Endpoints.*;
 
-// TODO: se due thread inviano una richiesta insieme potrebbero incrociarsi e scambiarsi le risposte?
-// mettere makeRequest synchronized risolve?
-
+/**
+ * Contains all methods to generate the request Json and sending it to the server.
+ */
 @SuppressWarnings("unchecked")
 public class Json {
+
+    /* ************************* *
+     * REQUEST RECEIVING SECTION *
+     * ************************* */
+
+    /**
+     * Parse a json
+     * @param s the json string to parse
+     * @return the parsed JSONObject
+     */
     private static JSONObject parse(String s) {
         if (s == null) return null;
-        
         try {
             JSONParser parser = new JSONParser();
             return (JSONObject) parser.parse(s);
@@ -40,8 +47,13 @@ public class Json {
             return null;
         }
     }
-    
-    public static void parseMessageRequest(String jsonString) {
+
+    /**
+     * Parse a request received on the message socket: it can be a private message or a request to receive a file.
+     * @param jsonString the request to parse
+     */
+    public static void parsePrivateMessageRequest(String jsonString) {
+        // First parse the json
         JSONObject request = parse(jsonString);
         if (request == null) return;
         
@@ -56,7 +68,6 @@ public class Json {
             String message = (String) request.get("message");
             if (status != null && !status.equals("ok") && message != null)
                 Utils.showErrorDialog(message);
-            
             return;
         }
         
@@ -85,14 +96,15 @@ public class Json {
                 boolean confirm = Utils.showConfirmationDialog(fromUsername + " wants to send you a file. Save it?");
                 if (!confirm) break;
                 
-                // aprire dialog di selezione destinazione
+                // Opens a dialog to select destination file
                 File destFile = Utils.saveFileDialog(filename);
                 if (destFile == null) {
                     User.getFriend(fromUsername).newMessage(
                             new Message("SYSTEM", "Download from " + fromUsername + " aborted."));
                     break;
                 }
-    
+
+                // Receives the file
                 User.getFriend(fromUsername).newMessage(
                         new Message("SYSTEM", "Starting download from "+fromUsername+"."));
                 Connection.receiveFile(destFile, hostname, port);
@@ -101,61 +113,75 @@ public class Json {
                 break;
                 
             case CHATROOM_MESSAGE:
-                // If a chatroom message is here, it's probably an error
+                // If a room message is here, it's probably an error. They should arrive on the UDP multicast socket!
                 String status = (String) payload.get("status");
                 String message = (String) payload.get("message");
                 if (status != null && status.equals("err")) {
                     String roomName = (String) payload.get("recipient");
                     Room room = User.getRoom(roomName);
                     if (room != null) room.newMessage(new Message("SYSTEM", message));
-                    else Utils.showErrorDialog("Chatroom error: " + message);
+                    else Utils.showErrorDialog("Room error: " + message);
                 }
                 else System.err.println("Invalid chat message request received.");
                 break;
         }
     }
+
+    /**
+     * Parse a request received on the UDP multicast socket.
+     * @param jsonString the request to parse
+     */
+    public static void parseChatMessage(String jsonString) {
+        JSONObject request = parse(jsonString);
     
-    public static void parseChatMessage(String data) {
-        JSONObject request = parse(data);
-    
-        String chatname = (String) request.get("recipient");
+        String chatName = (String) request.get("recipient");
         String chatClosed = (String) request.get("chat_closed");
         if (chatClosed != null && chatClosed.length() > 0) {
-            // Chatroom has been closed
-            if (chatname == null) return;
-            Utils.showErrorDialog(chatname + " has been closed.");
-            Room room = User.getRoom(chatname);
+            // Room has been closed
+            if (chatName == null) return;
+            Utils.showErrorDialog(chatName + " has been closed.");
+            Room room = User.getRoom(chatName);
             if (room == null) return;
             room.leaveMulticastGroup();
             room.closeWindow();
-            User.removeRoom(chatname);
+            User.removeRoom(chatName);
             return;
         }
         
         String sender = (String) request.get("sender");
         String text = (String) request.get("text");
         
-        if (chatname == null || sender == null || text == null || text.length() == 0)
+        if (chatName == null || chatName.length() == 0 ||
+                sender == null || sender.length() == 0 ||
+                text == null || text.length() == 0)
             return; // Malformed request
         
         if (sender.equals(User.username()))
             return; // my message
         
-        Room room = User.getRoom(chatname);
+        Room room = User.getRoom(chatName);
         if (room == null) {
-            System.err.println("Got a message for a non-subscribed room: " + chatname);
+            System.err.println("Got a message for a non-subscribed room: " + chatName);
             return;
         }
-        
-        room.newMessage( new Message(sender, text) );
+
+        // sends the parsed message to the room that will handle it
+        room.newMessage(new Message(sender, text));
     }
-    
-    /* Request builders */
+
+
+    /* *********************** *
+     * REQUEST SENDING SECTION *
+     * *********************** */
+
+    /**
+     * Heartbeat: message sent periodically to the server to inform it that we are online.
+     * If the server stop receive the heartbeat close the socket with the client.
+     */
     public static void heartbeat() {
         makeMsgRequest(HEARTBEAT, null);
     }
-    
-    @SuppressWarnings("unchecked")
+
     public static void login(String username, String password) {
         if (username == null || password == null || username.length() == 0 || password.length() == 0)
             throw new IllegalArgumentException("Username and password must be a non-empty string.");
@@ -194,8 +220,10 @@ public class Json {
     public static boolean lookup(String username) {
         if (username == null || username.length() == 0)
             throw new IllegalArgumentException("Username must be a non-empty string.");
+
         Map<String, String> parameters = new HashMap<>();
         parameters.put("username", username);
+
         JSONObject result = makeRequest(Endpoints.LOOKUP, parameters);
         return result != null;
     }
@@ -203,46 +231,69 @@ public class Json {
     public static boolean friendship(String username) {
         if (username == null || username.length() == 0)
             throw new IllegalArgumentException("Username must be a non-empty string.");
+
         Map<String, String> parameters = new HashMap<>();
         parameters.put("username", username);
+
         JSONObject result = makeRequest(Endpoints.FRIENDSHIP, parameters);
         return result != null;
     }
 
+    /**
+     * Check if another user is online.
+     * It was not required, but it is necessary to know if the friend added with friendship is online or not.
+     * @param username of the user we want to check
+     * @return true if online, false othewise
+     */
     public static boolean isOnline(String username) {
         if (username == null || username.length() == 0)
             throw new IllegalArgumentException("Username must be a non-empty string.");
         
         Map<String, String> parameters = new HashMap<>();
         parameters.put("username", username);
-        
+
         JSONObject result = makeRequest(Endpoints.IS_ONLINE, parameters);
         return result != null && (boolean) result.get("online");
     }
-    
+
+    /**
+     * Request the friends list and when it receives it updates the one saved in User
+     */
     private static void listFriends() {
         JSONObject result = makeRequest(Endpoints.LIST_FRIEND, null);
         if(result == null) return;
+
+        // Update the state
         JSONArray jsonArray = (JSONArray) result.get("friends");
         if (jsonArray == null) return; // no friends yet
+
         HashMap<String, Friend> friends = new HashMap<>();
         for (Object jsonObject : jsonArray) {
             String username = (String) ((JSONObject) jsonObject).get("username");
             boolean online = (boolean) ((JSONObject) jsonObject).get("online");
             friends.put(username, new Friend(username, online));
         }
-        User.setFriendList(friends);
+
+        User.updateFriendList(friends);
     }
 
+    /**
+     * Send the request to create a new room and if it receives a positive response, add it to the state
+     * @param roomName the name of the room you want create
+     * @return true if success, false otherwise
+     */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean createRoom(String roomName) {
         if (roomName == null || roomName.length() == 0)
             throw new IllegalArgumentException("The room name must be a non-empty string.");
+
         Map<String, String> parameters = new HashMap<>();
         parameters.put("room", roomName);
+
         JSONObject result = makeRequest(Endpoints.CREATE_ROOM, parameters);
         if (result == null) return false;
-        
+
+        // Update the state
         String address = (String) result.get("address");
         User.addRoom(roomName, address, User.username(), true);
         return true;
@@ -251,17 +302,25 @@ public class Json {
     public static boolean addMe(String room) {
         if (room == null || room.length() == 0)
             throw new IllegalArgumentException("The room name must be a non-empty string.");
+
         Map<String, String> parameters = new HashMap<>();
         parameters.put("room", room);
+
         JSONObject result = makeRequest(Endpoints.ADD_ME, parameters);
         return result != null;
     }
 
+    /**
+     * Request the room list and when it receives it updates the one saved in User
+     */
     public static void chatList() {
         JSONObject result = makeRequest(Endpoints.CHAT_LIST, null);
         if(result == null) return;
+
+        // Update the state
         JSONArray jsonArray = (JSONArray) result.get("rooms");
         if (jsonArray == null) return; // no chats yet
+
         HashMap<String, Room> rooms = new HashMap<>();
         for (Object jsonObject : jsonArray) {
             String name = (String) ((JSONObject) jsonObject).get("name");
@@ -276,18 +335,27 @@ public class Json {
                 e.printStackTrace();
             }
         }
+
         User.updateRoomList(rooms);
     }
 
     public static void closeRoom(String roomName) {
         if (roomName == null || roomName.length() == 0)
             throw new IllegalArgumentException("The room name must be a non-empty string.");
+
         Map<String, String> parameters = new HashMap<>();
         parameters.put("room", roomName);
+
         JSONObject result = makeRequest(Endpoints.CLOSE_ROOM, parameters);
         if(result == null) System.err.println("Json: Error in closing room "+roomName+".");
     }
 
+    /**
+     * Helper: creates the payload for a message request
+     * @param recipient of the message, can be an username or a room name
+     * @param text the message content
+     * @return the JSONObject to send as payload
+     */
     private static JSONObject genericMsg(String recipient, String text) {
         JSONObject req = new JSONObject();
         req.put("sender", User.username());
@@ -295,44 +363,60 @@ public class Json {
         req.put("text", text);
         return req;
     }
-    
-    public static void sendMsg(String to, String recipient) {
-        JSONObject req = genericMsg(to, recipient);
+
+    /**
+     * Sends a message to another user
+     * @param recipient the username of the recipient of the message
+     * @param text the message content
+     */
+    public static void sendMsg(String recipient, String text) {
+        JSONObject req = genericMsg(recipient, text);
         makeMsgRequest(Endpoints.MSG2FRIEND, req);
     }
-    
-    public static void sendChatMsg(String to, String recipient) {
-        JSONObject req = genericMsg(to, recipient);
+
+    /**
+     * Sends a message to a chat room
+     * @param room the room name
+     * @param text the message content
+     */
+    public static void sendChatMsg(String room, String text) {
+        JSONObject req = genericMsg(room, text);
         Multicast.send(req.toJSONString());
     }
-    
-    public static void sendFileRequest(String toUsername) {
+
+    /**
+     * Sends a file request
+     * @param recipient the recipient username
+     */
+    public static void sendFileRequest(String recipient) {
+        // Select the file to send, if the user press cancel this method returns
         File file = Utils.openFileDialog();
         if (file == null) return;
-        
-        JSONObject payload = new JSONObject();
+
         ServerSocketChannel serverSocketChannel = Connection.openFileSocket();
-        
         if (serverSocketChannel == null) {
             Utils.showErrorDialog("Error while opening server socket.");
             return;
         }
-    
+
+        JSONObject payload = new JSONObject();
         payload.put("filename", file.getName());
         payload.put("from", User.username());
-        payload.put("to", toUsername);
+        payload.put("to", recipient);
         payload.put("port", Integer.toString(serverSocketChannel.socket().getLocalPort()));
     
         JSONObject result = makeRequest(FILE2FRIEND, payload);
     
         if (result != null) {
-            User.getFriend(toUsername).newMessage( new Message("SYSTEM", "Starting upload to "+toUsername+".") );
-            Connection.startFileSender(serverSocketChannel, file, () -> User.getFriend(toUsername).newMessage(
-                    new Message("SYSTEM", "Completed upload to "+toUsername+".")));
+            User.getFriend(recipient).newMessage( new Message("SYSTEM", "Starting upload to "+recipient+".") );
+            Connection.startFileSender(serverSocketChannel, file, () -> User.getFriend(recipient).newMessage(
+                    new Message("SYSTEM", "Completed upload to "+recipient+".")));
         }
     }
-    
-    /* Private helpers */
+
+    /* *********************** *
+     * REQUEST SENDING HELPERS *
+     * *********************** */
     
     /**
      * @return true if server reply doesn't contain errors, false otherwise
@@ -340,34 +424,33 @@ public class Json {
     private static boolean isReplyOk(JSONObject reply) {
         return reply != null && reply.get("status").equals("ok");
     }
-    
+
+    private static JSONObject makeRequest(String endpoint, Map params) throws IllegalArgumentException {
+        return makeGenericRequest(endpoint, params, false);
+    }
+
+    private static void makeMsgRequest(String endpoint, Map params) throws IllegalArgumentException {
+        makeGenericRequest(endpoint, params, true);
+    }
+
     /**
-     * Build a JSON to be sent to the server. Parameters (payload) can be included.
-     *
-     * @param endpoint, String representing the type of the request, must be specified
-     * @param keyvalues, Map with key-value pairs to be included in the request, can be null
-     * @return JSONObject with response, or null if an error occured
+     * Build a JSON to be sent to the server.
+     * @param endpoint String representing the type of the request, must be specified
+     * @param params payload: Map with key-value pairs to be included in the request, can be null
+     * @return JSONObject with response, or null if an error occurred
      * @throws IllegalArgumentException if an invalid endpoint is specified
      */
-    @SuppressWarnings("unchecked")
-    private static JSONObject makeRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
-        return makeGenericRequest(endpoint, keyvalues, false);
-    }
-
-    private static void makeMsgRequest(String endpoint, Map keyvalues) throws IllegalArgumentException {
-        makeGenericRequest(endpoint, keyvalues, true);
-    }
-
-    private static JSONObject makeGenericRequest(String endpoint, Map keyvalues, boolean isMsgRequest) throws IllegalArgumentException {
+    private static JSONObject makeGenericRequest(String endpoint, Map params, boolean isMsgRequest)
+            throws IllegalArgumentException {
         if (endpoint == null || endpoint.length() == 0)
             throw new IllegalArgumentException("Invalid endpoint specified.");
 
-        JSONObject params = new JSONObject();
-        if(keyvalues != null) params.putAll(keyvalues); // it can be null if the request has no parameters
+        JSONObject jsonParams = new JSONObject();
+        if(params != null) jsonParams.putAll(params); // it can be null if the request has no parameters
 
         JSONObject request = new JSONObject();
         request.put("endpoint", endpoint);
-        request.put("params", params);
+        request.put("params", jsonParams);
 
 
         // send request to the server using the right socket

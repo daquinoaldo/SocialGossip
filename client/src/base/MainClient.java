@@ -11,6 +11,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * The Client Main. Starts things.
+ */
 class MainClient {
     private static JFrame mainWindow = null;
     

@@ -45,7 +45,7 @@ public class Connection {
             while (!Thread.interrupted()) {
                 try {
                     String msgRequest = msgReader.readLine();
-                    Json.parseMessageRequest(msgRequest);
+                    Json.parsePrivateMessageRequest(msgRequest);
                 }
                 catch (IOException e) {
                     System.err.println("Error while reading message socket");

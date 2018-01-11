@@ -2,11 +2,16 @@ package base;
 
 import gui.Utils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
 import java.nio.file.StandardOpenOption;
 
+/**
+ * Contains method to send a File into a Socket and receive from a Socket and save to File
+ */
 public class Filesystem {
 
     /**

@@ -56,7 +56,7 @@ public class User {
         friendsListCallbacks.forEach(c -> c.accept(friends()));
     }
 
-    public static void setFriendList(HashMap<String, Friend> newFriends) {
+    public static void updateFriendList(HashMap<String, Friend> newFriends) {
         for (Friend friend : newFriends.values())
             if(!User.rooms.containsKey(friend.getName()))
                 friends.put(friend.getName(), friend);
