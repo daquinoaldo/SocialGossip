@@ -76,7 +76,10 @@ public class RequestsHandler {
                         messageEndpoints ;
         
         if (endpoints.containsKey(endpoint)) {
-            return endpoints.get(endpoint).apply(user, params).toJSONString();
+            JSONObject response = endpoints.get(endpoint).apply(user, params);
+            if (response != null)
+                return response.toJSONString();
+            else return null;
         }
         else {
             System.err.println("Got an invalid request endpoint: " + endpoint);

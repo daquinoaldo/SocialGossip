@@ -1,5 +1,6 @@
 package base;
 
+import connections.Helpers;
 import org.json.simple.JSONObject;
 import remoteinterfaces.ClientCallbackInterface;
 
@@ -72,7 +73,7 @@ public class User implements Comparable<User> {
         req.put("params", params);
     
         try {
-            connections.Helpers.send(this.messageSocket, req.toJSONString());
+            Helpers.send(this.messageSocket, req.toJSONString());
         }
         catch (IOException e) {
             System.err.println("Error while sending message request to " + this.username);
