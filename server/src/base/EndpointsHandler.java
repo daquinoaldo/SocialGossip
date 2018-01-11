@@ -1,6 +1,6 @@
 package base;
 
-import Connections.Multicast;
+import connections.Multicast;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 

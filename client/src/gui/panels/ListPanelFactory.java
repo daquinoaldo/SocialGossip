@@ -1,9 +1,9 @@
 package gui.panels;
 
-import State.Chat;
-import State.Friend;
-import State.User;
-import State.Room;
+import state.Chat;
+import state.Friend;
+import state.User;
+import state.Room;
 import base.Json;
 import constants.Dimensions;
 import gui.Utils;

@@ -1,4 +1,4 @@
-package State;
+package state;
 
 import constants.Dimensions;
 import gui.Utils;

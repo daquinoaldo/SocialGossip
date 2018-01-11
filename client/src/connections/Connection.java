@@ -1,6 +1,6 @@
-package Connections;
+package connections;
 
-import State.User;
+import state.User;
 import base.Configuration;
 import base.Filesystem;
 import base.Json;

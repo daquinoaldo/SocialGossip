@@ -1,6 +1,6 @@
 package rmi;
 
-import State.User;
+import state.User;
 import base.Configuration;
 import remoteinterfaces.ClientCallbackInterface;
 import remoteinterfaces.ServerInterface;

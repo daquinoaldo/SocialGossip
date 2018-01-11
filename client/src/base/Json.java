@@ -1,11 +1,11 @@
 package base;
 
-import Connections.Connection;
-import Connections.Multicast;
-import State.Friend;
-import State.User;
-import State.Message;
-import State.Room;
+import connections.Connection;
+import connections.Multicast;
+import state.Friend;
+import state.User;
+import state.Message;
+import state.Room;
 import gui.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

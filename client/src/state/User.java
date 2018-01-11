@@ -1,5 +1,5 @@
 
-package State;
+package state;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -8,15 +8,15 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-// Main State structure - representing the User who is using the client
+// Main state structure - representing the User who is using the client
 // if a state change is triggered, previously registered callbacks will be called passing the new state as a parameter
 
 /*
- *   1. State change request      ->      2. internal data structure change        ->      3. callbacks are called with new state
+ *   1. state change request      ->      2. internal data structure change        ->      3. callbacks are called with new state
  * (ex. user adds a new friend)        (this class private fields gets updated)          (GUI components can self-update themselves)
  *
  *  This strategy allows easier debugging and testing (it's possible to programmatically request a state change and log
- *  the resulted changes). But also simpler GUI components who just need to access this single central State container
+ *  the resulted changes). But also simpler GUI components who just need to access this single central state container
  *  and can update their informations accordingly registering callbacks.
  */
 

@@ -1,4 +1,4 @@
-package Connections;
+package connections;
 
 import base.Configuration;
 import base.RequestsHandler;

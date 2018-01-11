@@ -72,7 +72,7 @@ public class User implements Comparable<User> {
         req.put("params", params);
     
         try {
-            Connections.Helpers.send(this.messageSocket, req.toJSONString());
+            connections.Helpers.send(this.messageSocket, req.toJSONString());
         }
         catch (IOException e) {
             System.err.println("Error while sending message request to " + this.username);

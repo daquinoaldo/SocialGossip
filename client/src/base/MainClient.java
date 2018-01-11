@@ -1,7 +1,7 @@
 package base;
 
-import Connections.Connection;
-import State.User;
+import connections.Connection;
+import state.User;
 import gui.Utils;
 import gui.panels.LoginPanel;
 import gui.panels.MainPanel;

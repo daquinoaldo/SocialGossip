@@ -1,8 +1,8 @@
 package rmi;
 
-import State.Friend;
-import State.Message;
-import State.User;
+import state.Friend;
+import state.Message;
+import state.User;
 import remoteinterfaces.ClientCallbackInterface;
 
 public class ClientCallback implements ClientCallbackInterface {
