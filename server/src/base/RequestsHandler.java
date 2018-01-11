@@ -84,6 +84,7 @@ public class RequestsHandler {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void parseChatroomMessage(InetAddress senderAddress, String data) {
         JSONObject parsed = parse(data);
         JSONObject result = new JSONObject();

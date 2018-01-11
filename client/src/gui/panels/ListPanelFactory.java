@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ListPanelFactory {
+class ListPanelFactory {
 
     // Double click listener on online user or joined room start the chat
     private static MouseListener startChatListener = new MouseAdapter() {

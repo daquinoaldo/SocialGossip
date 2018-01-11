@@ -9,9 +9,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public abstract class Chat {
-    public static final int FRIEND_TYPE = 0;
-    public static final int CHATROOM_TYPE = 1;
+    static final int FRIEND_TYPE = 0;
+    static final int CHATROOM_TYPE = 1;
     
+    @SuppressWarnings("WeakerAccess")
     protected ChatPanel chatPanel;
     private JFrame window = null;
     
@@ -19,7 +20,7 @@ public abstract class Chat {
     private String name;
     private boolean flag = false; // FRIEND_TYPE -> isOnline, CHATROOM_TYPE -> isSubscribed
     
-    public Chat(int type, String name) {
+    Chat(int type, String name) {
         if (type != FRIEND_TYPE && type != CHATROOM_TYPE)
             throw new IllegalArgumentException("Invalid type. Please choose one of FRIEND_TYPE, CHATROOM_TYPE.");
         this.type = type;
@@ -29,7 +30,9 @@ public abstract class Chat {
     public int getType() { return type; }
     public String getName() { return name; }
     
+    @SuppressWarnings("WeakerAccess")
     protected boolean getFlag() { return flag; }
+    @SuppressWarnings("WeakerAccess")
     protected void setFlag(boolean newValue) { flag = newValue; }
     
     public JFrame getWindow() { return window; }

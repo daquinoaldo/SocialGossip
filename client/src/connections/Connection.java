@@ -38,7 +38,7 @@ public class Connection {
         }
         
         Thread msgRequestListener = new Thread(() -> {
-            while (true) {
+            while (!Thread.interrupted()) {
                 try {
                     String msgRequest = msgReader.readLine();
                     Json.parseMessageRequest(msgRequest);

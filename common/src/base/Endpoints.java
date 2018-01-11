@@ -1,6 +1,6 @@
 package base;// Register endpoints name here, for REST-like API
 
-public interface Endpoints {
+interface Endpoints {
     String HEARTBEAT = "HEARTBEAT";
     String LOGIN = "LOGIN";
     String REGISTER = "REGISTER";

@@ -240,6 +240,7 @@ public class Database {
      * The check can be done in SQL with a WHERE clause or calling the function tha check if there is already a
      * friendship. We have chosen to do it with the checkFriendship(user1, user2) function.
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean addSubscription(String username, String room) {
         String sql = "INSERT INTO subscriptions(username, room) " +
                 "VALUES('"+username+"', '"+room+"')";

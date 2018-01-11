@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
-public class MainMulticastTest2 {
+class MainMulticastTest2 {
 
     public static void main (String [ ] args) {
         try {

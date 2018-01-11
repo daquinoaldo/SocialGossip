@@ -3,6 +3,7 @@ package base;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("unchecked")
 class EndpointsHandlerTest {
     
     @Test

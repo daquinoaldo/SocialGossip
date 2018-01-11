@@ -175,7 +175,8 @@ class EndpointsHandler {
             return buildErrorReply(400, "Database error.");
         
         lastBroadcastIP = nextBroadcastIP;  // only if success
-        writeToFile(nextBroadcastIP, LASTIP_PATH);
+        if(!writeToFile(nextBroadcastIP, LASTIP_PATH))
+            System.err.println("ERROR: can't write last lastBroadcastIP in "+LASTIP_PATH+".");
         JSONObject result = new JSONObject();
         result.put("name", roomName);
         result.put("address", nextBroadcastIP);

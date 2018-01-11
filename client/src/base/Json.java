@@ -214,7 +214,7 @@ public class Json {
         return result != null && (boolean) result.get("online");
     }
     
-    public static void listFriends() {
+    private static void listFriends() {
         JSONObject result = makeRequest(Endpoints.LIST_FRIEND, null);
         if(result == null) return;
         JSONArray jsonArray = (JSONArray) result.get("friends");
