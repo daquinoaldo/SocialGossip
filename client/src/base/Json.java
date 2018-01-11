@@ -289,10 +289,9 @@ public class Json {
         return req;
     }
     
-    public static boolean sendMsg(String to, String recipient) {
+    public static void sendMsg(String to, String recipient) {
         JSONObject req = genericMsg(to, recipient);
-        JSONObject result = makeRequest(Endpoints.MSG2FRIEND, req);
-        return result != null;
+        makeMsgRequest(Endpoints.MSG2FRIEND, req);
     }
     
     public static void sendChatMsg(String to, String recipient) {
