@@ -1,6 +1,5 @@
 package base;
 
-import connections.Helpers;
 import org.json.simple.JSONObject;
 import remoteinterfaces.ClientCallbackInterface;
 
@@ -8,14 +7,18 @@ import java.io.IOException;
 import java.net.Socket;
 import java.rmi.RemoteException;
 import java.util.concurrent.Future;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static base.Utils.printDebug;
+import static connections.Helpers.send;
 
 public class User implements Comparable<User> {
     private final String username;
     private Socket primarySocket;
     private Socket messageSocket;
     private ClientCallbackInterface callback; // RMI interface
+    private Lock lock = new ReentrantLock();
     
     // This will be used in a ScheduledThreadpoolExecutor to check if the user is still connected
     private long lastHeartbeat;
@@ -50,7 +53,6 @@ public class User implements Comparable<User> {
         catch (RemoteException e) {
             System.err.println("Can't notify user " + this.username + " about:");
             System.err.println("-- New friend: " + username);
-            e.printStackTrace();
         }
     }
     
@@ -62,8 +64,16 @@ public class User implements Comparable<User> {
         catch (RemoteException e) {
             System.err.println("Can't notify user " + this.username + " about:");
             System.err.println("-- Friend: " + username + " is gone " + (isOnline ? "online" : "offline"));
-            e.printStackTrace();
+            System.err.println("Is username gone offline too?");
         }
+    }
+    
+    public void getLock() {
+        lock.lock();
+    }
+    
+    public void releaseLock() {
+        lock.unlock();
     }
     
     @SuppressWarnings("unchecked")
@@ -73,7 +83,9 @@ public class User implements Comparable<User> {
         req.put("params", params);
     
         try {
-            Helpers.send(this.messageSocket, req.toJSONString());
+            getLock();
+            send(this.messageSocket, req.toJSONString());
+            releaseLock();
         }
         catch (IOException e) {
             System.err.println("Error while sending message request to " + this.username);

@@ -268,6 +268,6 @@ class EndpointsHandler {
             params.put("text", Translation.translate(text, fromLang, toLang));
             
         OnlineUsers.getByUsername(to).sendMsgRequest(MSG2FRIEND, params);
-        return buildSuccessReply();
+        return null;
     }
 }

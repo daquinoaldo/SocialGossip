@@ -19,17 +19,23 @@ public class Tasks {
      */
     public static void primaryConnectionTask(Socket socket) {
         try {
-            String req = recv(socket);
-            
             User user = OnlineUsers.getBySocket(socket);
             if (user == null) {
                 user = new User("stub");
                 user.setPrimarySocket(socket);
             }
     
-            String reply = RequestsHandler.parseRequest(user, req);
+            user.getLock();
+            ArrayList<String> requests = recv(socket);
+            user.releaseLock();
     
-            send(socket, reply);
+            for (String req : requests) {
+                String reply = RequestsHandler.parseRequest(user, req);
+    
+                user.getLock();
+                send(socket, reply);
+                user.releaseLock();
+            }
         }
         catch (IOException e) {
             System.err.println("Error while reading request (primary connection):");
@@ -38,24 +44,32 @@ public class Tasks {
     }
     
     /**
-     * Returns the task used when receiving a new message connection.
+     * Task used when receiving a new message connection.
+     * Send the read string to the JSON layer, and update the user heartbeat information.
      * @param socket The socket of the incoming connection.
      */
     public static void messageConnectionTask(Socket socket) {
         try {
-            String req = recv(socket);
-            
             User user = OnlineUsers.getBySocket(socket);
             if (user == null) {
                 user = new User("stub");
                 user.setMessageSocket(socket);
             }
-            
-            user.setHeartbeat( System.currentTimeMillis() );
-            String reply = RequestsHandler.parseMessageRequest(user, req);
-            
-            if (reply != null)
-                send(socket, reply);
+    
+            user.getLock();
+            ArrayList<String> requests = recv(socket);
+            user.releaseLock();
+    
+            for (String req : requests) {
+                user.setHeartbeat( System.currentTimeMillis() );
+                String reply = RequestsHandler.parseMessageRequest(user, req);
+    
+                if (reply != null) {
+                    user.getLock();
+                    send(socket, reply);
+                    user.releaseLock();
+                }
+            }
         }
         catch (IOException e) {
             System.err.println("Error while reading request (primary connection):");
