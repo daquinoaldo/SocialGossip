@@ -9,6 +9,7 @@ import gui.panels.MainPanel;
 import javax.swing.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 class MainClient {
     private static JFrame mainWindow = null;
@@ -29,7 +30,7 @@ class MainClient {
 
                 // Every 1s refresh the room list
                 ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-                //scheduler.scheduleAtFixedRate(Json::chatList, 0, 5, TimeUnit.SECONDS);
+                scheduler.scheduleAtFixedRate(Json::chatList, 0, 5, TimeUnit.SECONDS);
             }
         });
 

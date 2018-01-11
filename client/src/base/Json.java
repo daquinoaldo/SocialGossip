@@ -225,11 +225,11 @@ public class Json {
         if(result == null) return;
         JSONArray jsonArray = (JSONArray) result.get("friends");
         if (jsonArray == null) return; // no friends yet
-        List<Friend> friends = new ArrayList<>();
+        HashMap<String, Friend> friends = new HashMap<>();
         for (Object jsonObject : jsonArray) {
             String username = (String) ((JSONObject) jsonObject).get("username");
             boolean online = (boolean) ((JSONObject) jsonObject).get("online");
-            friends.add(new Friend(username, online));
+            friends.put(username, new Friend(username, online));
         }
         User.setFriendList(friends);
     }
@@ -257,26 +257,26 @@ public class Json {
         return result != null;
     }
 
-    private static void chatList() {
+    public static void chatList() {
         JSONObject result = makeRequest(Endpoints.CHAT_LIST, null);
         if(result == null) return;
         JSONArray jsonArray = (JSONArray) result.get("rooms");
         if (jsonArray == null) return; // no chats yet
-        List<Room> rooms = new ArrayList<>();
+        HashMap<String, Room> rooms = new HashMap<>();
         for (Object jsonObject : jsonArray) {
             String name = (String) ((JSONObject) jsonObject).get("name");
             String address = (String) ((JSONObject) jsonObject).get("address");
             String creator = (String) ((JSONObject) jsonObject).get("creator");
             boolean subscribed = (boolean) ((JSONObject) jsonObject).get("subscribed");
             try {
-                rooms.add(new Room(name, address, creator, subscribed));
+                rooms.put(name, new Room(name, address, creator, subscribed));
             }
             catch (UnknownHostException e) {
                 System.err.println("Unable to join the room " + name);
                 e.printStackTrace();
             }
         }
-        User.setRoomList(rooms);
+        User.updateRoomList(rooms);
     }
 
     public static void closeRoom(String roomName) {

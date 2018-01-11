@@ -5,7 +5,7 @@ import gui.panels.ChatPanel;
 public class Friend extends Chat {
 
     public Friend(String username, boolean online) {
-        super(Chat.FRIEND_TYPE, username);
+        super(Chat.TYPE_FRIEND, username);
         this.setStatus(online);
         chatPanel = new ChatPanel(this);
     }

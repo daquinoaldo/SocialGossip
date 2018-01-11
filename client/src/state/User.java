@@ -4,6 +4,7 @@ package state;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -47,25 +48,24 @@ public class User {
     
     public static void setUsername(String username) {
         User.username = username;
-        usernameCallbacks.forEach(c -> c.accept(username));
+        usernameCallbacks.forEach(c -> c.accept(username()));
     }
     
     public static void addFriend(String friendUsername, boolean isOnline) {
         friends.put(friendUsername, new Friend(friendUsername, isOnline));
-        friendsListCallbacks.forEach(c -> c.accept(friends.values()));
+        friendsListCallbacks.forEach(c -> c.accept(friends()));
     }
 
-    public static void setFriendList(List<Friend> friends) {
-        User.friends.clear();
-        for (Friend friend : friends)
-            User.friends.put(friend.getUsername(), friend);
-    
-        friendsListCallbacks.forEach(c -> c.accept(friends));
+    public static void setFriendList(HashMap<String, Friend> newFriends) {
+        for (Friend friend : newFriends.values())
+            if(!User.rooms.containsKey(friend.getName()))
+                friends.put(friend.getName(), friend);
+        friendsListCallbacks.forEach(c -> c.accept(friends()));
     }
 
     public static void setFriendStatus(String username, boolean isOnline) {
         friends.get(username).setStatus(isOnline);
-        friendsListCallbacks.forEach(c -> c.accept(friends.values()));
+        friendsListCallbacks.forEach(c -> c.accept(friends()));
     }
     
     public static void addRoom(String roomName, String address, String creator, boolean subscribed) {
@@ -77,26 +77,33 @@ public class User {
             e.printStackTrace();
             return;
         }
-        roomsListCallbacks.forEach(c -> c.accept(rooms.values()));
+        roomsListCallbacks.forEach(c -> c.accept(rooms()));
     }
     
     @SuppressWarnings("UnusedReturnValue")
     public static boolean removeRoom(String roomName) {
         boolean toReturn = rooms.remove(roomName) != null;
-        roomsListCallbacks.forEach(c -> c.accept(rooms.values()));
+        roomsListCallbacks.forEach(c -> c.accept(rooms()));
         return toReturn;
     }
 
-    public static void setRoomList(List<Room> rooms) {
-        User.rooms.clear();
-        for (Room room : rooms)
-            User.rooms.put(room.getName(), room);
-        roomsListCallbacks.forEach(c -> c.accept(rooms));
+    public static void updateRoomList(HashMap<String, Room> newRooms) {
+        // I remove each room in rooms that is not in newRooms
+        /*for (Room room : rooms())
+            if (!newRooms.containsKey(room.getName())) {
+                System.err.println("Removed room " + room.getName());
+                User.rooms.remove(room);
+            }*/
+        // I add to rooms each room in newRooms that is not yet in rooms
+        for (Room room : newRooms.values())
+            if(!User.rooms.containsKey(room.getName()))
+                rooms.put(room.getName(), room);
+        roomsListCallbacks.forEach(c -> c.accept(rooms()));
     }
 
     public static void setRoomStatus(String name, boolean subscribed) {
         rooms.get(name).setStatus(subscribed);
-        roomsListCallbacks.forEach(c -> c.accept(rooms.values()));
+        roomsListCallbacks.forEach(c -> c.accept(rooms()));
     }
     
     

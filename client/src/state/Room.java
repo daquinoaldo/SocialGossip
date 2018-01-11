@@ -11,7 +11,7 @@ public class Room extends Chat {
     private String creator;
     
     public Room(String username, String mcAddress, String creator, boolean subscribed) throws UnknownHostException {
-        super(Chat.CHATROOM_TYPE, username);
+        super(Chat.TYPE_ROOM, username);
         if (mcAddress == null || creator == null)
             throw new IllegalArgumentException("Invalid chat parameters: <" + mcAddress + "," + creator + ">");
         
