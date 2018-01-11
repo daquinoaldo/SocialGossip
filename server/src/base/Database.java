@@ -63,25 +63,6 @@ public class Database {
         }
     }
 
-    private ArrayList<String[]> getList(String sql) {
-        try (Connection connection = connect();
-             Statement statement = connection.createStatement()) {
-            ArrayList<String[]> result = new ArrayList<>();
-            ResultSet resultSet = statement.executeQuery(sql);
-            int columnCount = resultSet.getMetaData().getColumnCount();
-            while(resultSet.next()) {
-                String[] row = new String[columnCount];
-                for (int i=0; i <columnCount ; i++)
-                    row[i] = resultSet.getString(i + 1);
-                result.add(row);
-            }
-            return result;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     private ArrayList<String> getList(String sql, String columnLabel) {
         try (Connection connection = connect();
              Statement statement = connection.createStatement()) {
@@ -244,12 +225,6 @@ public class Database {
     public boolean addSubscription(String username, String room) {
         String sql = "INSERT INTO subscriptions(username, room) " +
                 "VALUES('"+username+"', '"+room+"')";
-        return execBool(sql);
-    }
-
-    /* DELETE */
-    public boolean deleteSubscription(String username, String room) {
-        String sql = "DELETE FROM subscriptions WHERE username = '"+username+"' AND room = '"+room+"')";
         return execBool(sql);
     }
 

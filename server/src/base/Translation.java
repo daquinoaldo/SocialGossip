@@ -10,8 +10,7 @@ import java.io.InputStreamReader;
 import java.net.*;
 
 class Translation {
-    private static final String baseUrl = "https://api.mymemory.translated.net/get";
-    
+
     public static String translate(String text, String sourceLang, String destLang) {
         if (
                 text == null ||
@@ -22,8 +21,7 @@ class Translation {
                 destLang.length() != 2
                 )
             throw new IllegalArgumentException("Invalid text or language codes.");
-    
-        HttpURLConnection connection = null;
+
         try {
             // Build URL
             URI buildUrl = new URI(

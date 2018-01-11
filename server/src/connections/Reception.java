@@ -8,7 +8,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 
 public class Reception {
-    private boolean stop = false;
     private ServerSocket serverSocket = null;
     
     /**
@@ -33,14 +32,13 @@ public class Reception {
                 System.exit(1);
             }
 
-            while (!stop) {
+            while (!Thread.interrupted()) {
                 try {
                     Socket socket = serverSocket.accept();
                     socket.setSoTimeout(500);
                     System.out.println("Accepted connection (port " + port + ")");
                     selector.addSocket(socket);
                 } catch (SocketTimeoutException e) { /* socket accept timed out, not really an exception */ } catch (IOException e) {
-                    if (stop) return; // exited normally after a stop request
                     System.err.println("Error occured while accepting connection");
                     e.printStackTrace();
                 }
@@ -48,18 +46,5 @@ public class Reception {
         });
         listener.start();
     }
-    
-    /**
-     * Stop accepting connection. The effect is not immediate.
-     */
-    public void stop() {
-        stop = true;
-        try {
-            serverSocket.close();
-        }
-        catch (IOException e) {
-            System.err.println("Error while closing ServerSocket");
-            e.printStackTrace();
-        }
-    }
+
 }

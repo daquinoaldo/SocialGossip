@@ -285,6 +285,7 @@ public class Json {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("room", roomName);
         JSONObject result = makeRequest(Endpoints.CLOSE_ROOM, parameters);
+        if(result == null) System.err.println("Json: Error in closing room "+roomName+".");
     }
 
     private static JSONObject genericMsg(String recipient, String text) {

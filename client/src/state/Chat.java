@@ -15,19 +15,16 @@ public abstract class Chat {
     @SuppressWarnings("WeakerAccess")
     protected ChatPanel chatPanel;
     private JFrame window = null;
-    
-    private int type;
+
     private String name;
     private boolean flag = false; // FRIEND_TYPE -> isOnline, CHATROOM_TYPE -> isSubscribed
     
     Chat(int type, String name) {
         if (type != FRIEND_TYPE && type != CHATROOM_TYPE)
             throw new IllegalArgumentException("Invalid type. Please choose one of FRIEND_TYPE, CHATROOM_TYPE.");
-        this.type = type;
         this.name = name;
     }
-    
-    public int getType() { return type; }
+
     public String getName() { return name; }
     
     @SuppressWarnings("WeakerAccess")

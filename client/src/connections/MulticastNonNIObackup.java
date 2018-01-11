@@ -11,7 +11,7 @@ import java.net.MulticastSocket;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
-@SuppressWarnings("Duplicates")
+@SuppressWarnings({"Duplicates", "unused"})
 class MulticastNonNIObackup {
     @SuppressWarnings("CanBeFinal")
     private static MulticastSocket ms = null;

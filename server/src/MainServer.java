@@ -17,12 +17,8 @@ class MainServer {
         
         ScheduledExecutorService threadpool = Executors.newScheduledThreadPool(4);
     
-        Reception primaryConnectionsListener = new Reception(
-                threadpool, Configuration.PRIMARY_PORT, Tasks::primaryConnectionTask, Tasks::socketClosed
-        );
-        Reception messageConnectionsListener = new Reception(
-                threadpool, Configuration.MSG_PORT, Tasks::messageConnectionTask, Tasks::socketClosed
-        );
+        new Reception(threadpool, Configuration.PRIMARY_PORT, Tasks::primaryConnectionTask, Tasks::socketClosed);
+        new Reception(threadpool, Configuration.MSG_PORT, Tasks::messageConnectionTask, Tasks::socketClosed);
     }
 
 }

@@ -3,10 +3,7 @@ package state;
 import gui.panels.ChatPanel;
 
 public class Friend extends Chat {
-    public Friend(String username) {
-        super(Chat.FRIEND_TYPE, username);
-    }
-    
+
     public Friend(String username, boolean online) {
         super(Chat.FRIEND_TYPE, username);
         this.setStatus(online);

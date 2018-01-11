@@ -8,8 +8,7 @@ import java.nio.channels.*;
 import java.nio.file.StandardOpenOption;
 
 public class Filesystem {
-    private static final int BUFFER_SIZE = 1024 * 10;
-    
+
     /**
      * Read the specified File using NIO channels. Send the file to the specified socket.
      * @param file File object, the file to be read

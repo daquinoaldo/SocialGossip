@@ -15,7 +15,7 @@ import static base.Utils.isDebug;
 import static base.Utils.printDebug;
 import static base.Utils.writeToFile;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "unused"})
 class EndpointsHandler {
 
     private static final Database db = new Database();

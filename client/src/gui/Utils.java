@@ -8,8 +8,6 @@ import java.io.File;
 
 public class Utils {
 
-    public static final boolean isDebug = true;
-
     public static void showErrorDialog(String msg) {
         JOptionPane.showMessageDialog(null, msg,"Attenzione!", JOptionPane.WARNING_MESSAGE);
     }
@@ -29,12 +27,6 @@ public class Utils {
         return window;
     }
 
-    public static JFrame createWindow(String title, JPanel panel, Dimension dimension, boolean exitOnClose) {
-        JFrame window = createWindow(title, panel, dimension);
-        if (exitOnClose) window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        return window;
-    }
-    
     // crea una finestra centrata, non ridimensionabile, con il panel specificato
     public static JFrame createFixedWindow(String title, JPanel panel, boolean exitOnClose, boolean alwaysOnTop) {
         JFrame window = new JFrame(title);                                  // create a window
@@ -49,11 +41,7 @@ public class Utils {
         window.setVisible(true);                                            // show it
         return window;
     }
-    
-    public static JFrame createFixedWindow(String title, JPanel panel) {
-        return createFixedWindow(title, panel, false, false);
-    }
-    
+
     public static void enableComponents(Container container, boolean enable) {
         Component[] components = container.getComponents();
         for (Component component : components) {
