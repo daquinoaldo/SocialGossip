@@ -58,7 +58,7 @@ public class Connection {
         Thread heart = new Thread(() -> {
             while (!Thread.interrupted()) {
                 Json.heartbeat();
-                try { Thread.sleep(500); }
+                try { Thread.sleep(2000); }
                 catch (InterruptedException e) {
                     e.printStackTrace();
                     break;

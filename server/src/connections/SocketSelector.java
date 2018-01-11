@@ -18,11 +18,13 @@ class SocketSelector {
         SelectorTask(ScheduledExecutorService pool, Socket socket, Consumer<Socket> realTask, Consumer<Socket> onSocketClose) {
             this.pool = pool;
             this.socket = socket;
+            
             try {
+                socket.setSoTimeout(100);
                 this.reader = new InputStreamReader(socket.getInputStream());
             }
             catch (IOException e) {
-                System.err.println("Can't read from socket.");
+                System.err.println("Error while setting socket.");
                 e.printStackTrace();
             }
             this.realTask = realTask;

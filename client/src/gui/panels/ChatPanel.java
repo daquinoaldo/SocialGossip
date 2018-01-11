@@ -13,6 +13,7 @@ public class ChatPanel extends JPanel {
     private final JPanel southPanel = new JPanel();
     private final JTextArea chatHistory;
     private final JTextField msgField;
+    private JScrollPane scrollableChatMessages;
     
     private Chat chat;
 
@@ -64,8 +65,8 @@ public class ChatPanel extends JPanel {
         chatHistory.setEditable(false);
         chatHistory.setLineWrap(true);
         
-        JScrollPane scrollableChatMessages = new JScrollPane(chatHistory);
-        scrollableChatMessages.getViewport().setViewPosition(new Point(0, chatHistory.getDocument().getLength()));
+        scrollableChatMessages = new JScrollPane(chatHistory);
+        scrollBottom();
     
         this.add(scrollableChatMessages, BorderLayout.CENTER);
         this.add(southPanel, BorderLayout.SOUTH);
@@ -83,8 +84,13 @@ public class ChatPanel extends JPanel {
         sendButton.addActionListener(eventHandler);
     }
     
+    private void scrollBottom() {
+        scrollableChatMessages.getViewport().setViewPosition(new Point(0, chatHistory.getDocument().getLength()));
+    }
+    
     public void newMessage(Message msg) {
         chatHistory.append(msg.toString() + "\n");
+        scrollBottom();
     }
     
     public void focusGained() {

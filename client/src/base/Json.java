@@ -62,8 +62,6 @@ public class Json {
         
         if (endpoint == null) {
             // not a request
-            System.err.println("Message connection, got: ");
-            System.err.println(jsonString);
             String status = (String) request.get("status");
             String message = (String) request.get("message");
             if (status != null && !status.equals("ok") && message != null)
@@ -440,7 +438,7 @@ public class Json {
      * @return JSONObject with response, or null if an error occurred
      * @throws IllegalArgumentException if an invalid endpoint is specified
      */
-    private static JSONObject makeGenericRequest(String endpoint, Map params, boolean isMsgRequest)
+    private static synchronized JSONObject makeGenericRequest(String endpoint, Map params, boolean isMsgRequest)
             throws IllegalArgumentException {
         if (endpoint == null || endpoint.length() == 0)
             throw new IllegalArgumentException("Invalid endpoint specified.");

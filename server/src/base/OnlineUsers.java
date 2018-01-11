@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class OnlineUsers {
-    private static final long TWO_SECONDS = 2000;
+    private static final long FIVE_SECONDS = 5000;
     private static final Database db = new Database();
     private static final ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
     
@@ -22,11 +22,11 @@ public class OnlineUsers {
             ScheduledFuture<?> future = ghostbuster.scheduleAtFixedRate(() -> {
                 long lastHeartbeat = user.getLastHeartbeat();
                 long now = System.currentTimeMillis();
-                
-                if (lastHeartbeat != 0 && now - lastHeartbeat > TWO_SECONDS) {
+
+                if (lastHeartbeat != 0 && now - lastHeartbeat > FIVE_SECONDS) {
                     // If last heartbeat was 5 or more seconds ago
                     printDebug("[GHOSTBUSTER] Ghost found! Username: " + user.getUsername());
-    
+
                     user.getGhostbusterFuture().cancel(true);
                     try {
                         user.getPrimarySocket().close();
@@ -36,7 +36,7 @@ public class OnlineUsers {
                         e.printStackTrace();
                     }
                 }
-            }, 0, 1, TimeUnit.SECONDS);
+            }, 0, 5, TimeUnit.SECONDS);
             user.setGhostbusterFuture(future);
         }
         
