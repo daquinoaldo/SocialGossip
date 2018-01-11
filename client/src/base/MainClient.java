@@ -27,6 +27,10 @@ class MainClient {
                 loginWindow.dispose();
                 JPanel mainPanel = new MainPanel();
                 mainWindow = Utils.createFixedWindow("Social Gossip", mainPanel, true, false);
+
+                // Every 1s refresh the room list
+                ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+                //scheduler.scheduleAtFixedRate(Json::chatList, 0, 5, TimeUnit.SECONDS);
             }
         });
 

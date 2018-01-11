@@ -2,6 +2,7 @@ import Connections.Multicast;
 import Connections.Reception;
 import Connections.Tasks;
 import base.Configuration;
+import base.Utils;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -10,6 +11,8 @@ import java.util.concurrent.ScheduledExecutorService;
 class MainServer {
 
     public static void main(String[] args) {
+        Utils.printDebug("DEBUG is active");
+
         rmi.Manager.start();
         Multicast.init();
         

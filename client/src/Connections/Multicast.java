@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 public class Multicast {
-    private Thread listener;
+    private static Thread listener;
     private static boolean stop = false;
     private static MulticastSocket ms = null;
     private static DatagramSocket outputDatagramSocket;
@@ -31,8 +31,8 @@ public class Multicast {
             e.printStackTrace();
             System.exit(1);
         }
-        
-        Thread t = new Thread(() -> {
+
+        listener = new Thread(() -> {
             while (!stop) {
                 byte[] buffer = new byte[8192];
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
@@ -54,7 +54,7 @@ public class Multicast {
                 Json.parseChatMessage(stringData);
             }
         });
-        t.start();
+        listener.start();
     }
     
     public static void send(String request) {

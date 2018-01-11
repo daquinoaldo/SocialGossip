@@ -214,14 +214,12 @@ class EndpointsHandler {
         if(creator == null) return buildErrorReply(400, "Room not exists.");
         if(!creator.equals(user.getUsername()))
             return buildErrorReply(403, "Only the creator can close the room.");
-        if(!db.deleteRoom(room)) return buildErrorReply(400, "Database error.");
-        
         String broadcastIp = db.getBroadcastIP(room);
+        if(!db.deleteRoom(room)) return buildErrorReply(400, "Database error.");
         JSONObject closedMsg = new JSONObject();
         closedMsg.put("recipient", room);
         closedMsg.put("chat_closed", user.getUsername() + " closed this chatroom.");
         Multicast.broadcast(closedMsg.toJSONString(), broadcastIp);
-        
         return buildSuccessReply();
     }
 
