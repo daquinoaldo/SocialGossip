@@ -38,7 +38,7 @@ Vengono stabilite altre connessioni in occasione di determinati eventi. Ad esemp
 \subsubsection{Login}
 Il client stabilisce fin da subito le connessioni TCP con il server. Al momento del login, il client manda il messaggio JSON contenente la richiesta sulla connessione di controllo.
 
-Il server, una volta ricevuta la richiesta, controlla che l'utente non sia già collegato da altre postazioni e che username e password siano validi. In questo caso restituisce un messaggio di successo e memorizza internamente il socket utilizzato da questo utente, altrimenti un messaggio di errore contenente una descrizione del problema.
+Il server, una volta ricevuta la richiesta, controlla che l'utente non sia già collegato da altre postazioni e che username e password siano validi. In questo caso restituisce un messaggio di successo e memorizza internamente il socket utilizzato da questo utente, altrimenti manda un messaggio di errore contenente una descrizione del problema.
 
 Il client riceve la risposta della connessione di controllo, in caso di esito positivo manda la stessa richiesta sulla connessione dei messaggi. In questo modo il server può associare anche il socket per i messaggi all'utente.
 
@@ -49,7 +49,7 @@ Alla fine di questo scambio, il server avrà in memoria una struttura dati in gr
 \subsubsection{Heartbeat}
 Non è prevista una richiesta di logout. Invece il server utilizza un sistema di \textit{hearthbeat} per verificare se un client è effettivamente collegato.
 
-Il funzionamento è piuttosto semplice: ad intervalli regolari il client manda un \textit{beat} al server. In contemporanea il server ha un thread dedicato chiamato \textit{ghostbuster} che per ogni utente collegato controlla quando è stato ricevuto l'ultimo beat - se è troppo vecchio l'utente viene dato per scollegato e i suoi socket rimossi dalla memoria.
+Il funzionamento è piuttosto semplice: ad intervalli regolari il client manda un \textit{beat} al server sulla connessione dei messaggi. In contemporanea il server ha un thread dedicato chiamato \textit{ghostbuster} che per ogni utente collegato controlla quando è stato ricevuto l'ultimo beat - se è troppo vecchio l'utente viene dato per scollegato e i suoi socket rimossi dalla memoria.
 
 \subsubsection{Invio dei file}
 L'invio dei file tra utenti deve essere peer-to-peer, cioè è necessario che il mittente del file stabilisca una connessione TCP diretta con il destinatario.
