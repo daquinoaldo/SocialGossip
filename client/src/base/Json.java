@@ -27,7 +27,7 @@ import static base.Endpoints.*;
 // mettere makeRequest synchronized risolve?
 
 public class Json {
-    private synchronized static JSONObject parse(String s) {
+    private static JSONObject parse(String s) {
         if (s == null) return null;
         
         try {
@@ -41,7 +41,7 @@ public class Json {
         }
     }
     
-    public synchronized static void parseMessageRequest(String jsonString) {
+    public static void parseMessageRequest(String jsonString) {
         JSONObject request = parse(jsonString);
         if (request == null) return;
         
@@ -109,7 +109,7 @@ public class Json {
         }
     }
     
-    public synchronized static void parseChatMessage(String data) {
+    public static void parseChatMessage(String data) {
         JSONObject request = parse(data);
     
         String chatname = (String) request.get("recipient");
@@ -145,12 +145,12 @@ public class Json {
     }
     
     /* Request builders */
-    public synchronized static void heartbeat() {
+    public static void heartbeat() {
         makeMsgRequest(HEARTBEAT, null);
     }
     
     @SuppressWarnings("unchecked")
-    public synchronized static void login(String username, String password) {
+    public static void login(String username, String password) {
         if (username == null || password == null || username.length() == 0 || password.length() == 0)
             throw new IllegalArgumentException("Username and password must be a non-empty string.");
 
@@ -171,7 +171,7 @@ public class Json {
         chatList();
     }
     
-    public synchronized static boolean register(String username, String password, String language) {
+    public static boolean register(String username, String password, String language) {
         if (username == null || password == null || language == null ||
                 username.length() == 0 || password.length() == 0 || language.length() == 0)
             throw new IllegalArgumentException("Username, password and language must be a non-empty string.");
@@ -185,7 +185,7 @@ public class Json {
         return result != null;
     }
     
-    public synchronized static boolean lookup(String username) {
+    public static boolean lookup(String username) {
         if (username == null || username.length() == 0)
             throw new IllegalArgumentException("Username must be a non-empty string.");
         Map<String, String> parameters = new HashMap<>();
@@ -194,7 +194,7 @@ public class Json {
         return result != null;
     }
     
-    public synchronized static boolean friendship(String username) {
+    public static boolean friendship(String username) {
         if (username == null || username.length() == 0)
             throw new IllegalArgumentException("Username must be a non-empty string.");
         Map<String, String> parameters = new HashMap<>();
@@ -203,7 +203,7 @@ public class Json {
         return result != null;
     }
 
-    public synchronized static boolean isOnline(String username) {
+    public static boolean isOnline(String username) {
         if (username == null || username.length() == 0)
             throw new IllegalArgumentException("Username must be a non-empty string.");
         
@@ -214,7 +214,7 @@ public class Json {
         return result != null && (boolean) result.get("online");
     }
     
-    public synchronized static void listFriends() {
+    public static void listFriends() {
         JSONObject result = makeRequest(Endpoints.LIST_FRIEND, null);
         if(result == null) return;
         JSONArray jsonArray = (JSONArray) result.get("friends");
@@ -228,7 +228,7 @@ public class Json {
         User.setFriendList(friends);
     }
 
-    public synchronized static boolean createRoom(String roomName) {
+    public static boolean createRoom(String roomName) {
         if (roomName == null || roomName.length() == 0)
             throw new IllegalArgumentException("The room name must be a non-empty string.");
         Map<String, String> parameters = new HashMap<>();
@@ -241,7 +241,7 @@ public class Json {
         return true;
     }
 
-    public synchronized static boolean addMe(String room) {
+    public static boolean addMe(String room) {
         if (room == null || room.length() == 0)
             throw new IllegalArgumentException("The room name must be a non-empty string.");
         Map<String, String> parameters = new HashMap<>();
@@ -250,7 +250,7 @@ public class Json {
         return result != null;
     }
 
-    public synchronized static void chatList() {
+    public static void chatList() {
         JSONObject result = makeRequest(Endpoints.CHAT_LIST, null);
         if(result == null) return;
         JSONArray jsonArray = (JSONArray) result.get("rooms");
@@ -272,7 +272,7 @@ public class Json {
         User.setRoomList(rooms);
     }
 
-    public synchronized static void closeRoom(String roomName) {
+    public static void closeRoom(String roomName) {
         if (roomName == null || roomName.length() == 0)
             throw new IllegalArgumentException("The room name must be a non-empty string.");
         Map<String, String> parameters = new HashMap<>();
@@ -281,7 +281,7 @@ public class Json {
         if (result == null) return;
     }
 
-    private synchronized static JSONObject genericMsg(String recipient, String text) {
+    private static JSONObject genericMsg(String recipient, String text) {
         JSONObject req = new JSONObject();
         req.put("sender", User.username());
         req.put("recipient", recipient);
@@ -289,18 +289,18 @@ public class Json {
         return req;
     }
     
-    public synchronized static boolean sendMsg(String to, String recipient) {
+    public static boolean sendMsg(String to, String recipient) {
         JSONObject req = genericMsg(to, recipient);
         JSONObject result = makeRequest(Endpoints.MSG2FRIEND, req);
         return result != null;
     }
     
-    public synchronized static void sendChatMsg(String to, String recipient) {
+    public static void sendChatMsg(String to, String recipient) {
         JSONObject req = genericMsg(to, recipient);
         Multicast.send(req.toJSONString());
     }
     
-    public synchronized static void sendFileRequest(String toUsername) {
+    public static void sendFileRequest(String toUsername) {
         File file = Utils.openFileDialog();
         if (file == null) return;
         
