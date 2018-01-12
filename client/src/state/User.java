@@ -20,7 +20,7 @@ import java.util.function.Consumer;
  *  and can update their informations accordingly registering callbacks.
  */
 public class User {
-    private static boolean isLoggedIn = false;
+    private static boolean loggedIn = false;
     private static String username = null;
     private static final ConcurrentHashMap<String, Friend> friends = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, Room> rooms = new ConcurrentHashMap<>();
@@ -40,8 +40,8 @@ public class User {
     
     // User changes, will trigger a callback if any was set
     public static void setLoggedIn(boolean loggedIn) {
-        isLoggedIn = loggedIn;
-        loginCallbacks.forEach(c -> c.accept(isLoggedIn));
+        User.loggedIn = loggedIn;
+        loginCallbacks.forEach(c -> c.accept(User.loggedIn));
     }
     
     public static void setUsername(String username) {
