@@ -1,5 +1,6 @@
 package connections;
 
+import gui.Utils;
 import state.Friend;
 import state.Message;
 import state.User;
@@ -23,6 +24,7 @@ public class RMIManager {
      */
     public static class ClientCallbackImplementation implements ClientCallbackInterface {
         public void newFriend(String username) {
+            Utils.showInfoDialog(username + " added you as a friend!");
             User.addFriend(username, true);
         }
 

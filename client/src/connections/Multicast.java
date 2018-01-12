@@ -102,6 +102,9 @@ public class Multicast {
      * @param address InetAddress of the group to leave
      */
     public static void leaveGroup(InetAddress address) {
+        if (!addressToRoomName.containsKey(address))
+            return; // no group to leave from
+        
         try {
             ms.leaveGroup(address);
             addressToRoomName.remove(address);
