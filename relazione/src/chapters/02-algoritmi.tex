@@ -49,7 +49,7 @@ Alla fine di questo scambio, il server avrà in memoria una struttura dati in gr
 \subsubsection{Heartbeat}
 Non è prevista una richiesta di logout. Invece il server utilizza un sistema di \textit{hearthbeat} per verificare se un client è effettivamente collegato.
 
-Il funzionamento è piuttosto semplice: ad intervalli regolari il client manda un \textit{beat} al server sulla connessione dei messaggi. In contemporanea il server ha un thread dedicato chiamato \textit{ghostbuster} che per ogni utente collegato controlla quando è stato ricevuto l'ultimo beat - se è troppo vecchio l'utente viene dato per scollegato e i suoi socket rimossi dalla memoria.
+Il funzionamento è piuttosto semplice: ad intervalli regolari il client manda un \textit{beat} al server sulla connessione dei messaggi. In contemporanea il server controlla quando è stato ricevuto l'ultimo messaggio (sia richieste che beat) per ogni utente collegato - se è troppo vecchio l'utente viene dato per scollegato.
 
 \subsubsection{Invio dei file}
 L'invio dei file tra utenti deve essere peer-to-peer, cioè è necessario che il mittente del file stabilisca una connessione TCP diretta con il destinatario.
@@ -63,7 +63,7 @@ Il client utilizza questa connessione per mandare una richiesta e ricevere una r
 
 Le richieste (e relative risposte) sono caratterizzati da un \textit{endpoint}, una stringa di testo che ne caratterizza il tipo.
 
-I messaggi JSON hanno tutti la stessa struttura di misc, per le richieste è:
+I messaggi JSON hanno tutti la stessa struttura di base, per le richieste è:
 \begin{verbatim}
 {
     "endpoint": "NOME",

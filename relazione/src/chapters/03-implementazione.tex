@@ -6,7 +6,7 @@ In questa fase viene anche avviato un thread \textit{listener} allo scopo di ric
 
 Una volta collegato, l'interfaccia grafica viene fatta partire mostrando la schermata di \textit{login}. Da qui l'utente può utilizzare un account già registrato oppure registrarne uno nuovo.
 
-Dopo aver effettuato l'accesso correttamente viene fatto partire un altro thread secondario, che si occupa di mandare ad intervalli regolari l'\textit{heartbeat} al server.
+Dopo aver effettuato l'accesso correttamente viene fatto partire un altro thread secondario, che si occupa di mandare ad intervalli regolari l'\textit{heartbeat} al server, ed un thread di aggiornamento per controllare se sono state create nuove chatroom.
 
 Viene effettuata la registraione della callback RMI e vengono effettuate le richieste per ricevere la lista di amici e la lista delle stanze disponibili.
 Se una o più stanze sono state sottoscritte dall'utente, viene inizializzata la classe che gestisce il protocollo UDP - facendo sì che un secondo thread listener rimanga in ascolto per messaggi multicast mandati ai gruppi relativi delle stanze.
@@ -49,17 +49,63 @@ Tutte le classi utilizzate per la creazione delle finestre sono contenuto all'in
     \item \textbf{panels}, le classi contenute qui vanno a costruire le finestre vere e proprie.
 \end{itemize}
 
+
+\begin{wrapfigure}[7]{l}{0.35\textwidth}
+\caption*{{\scriptsize Messaggio di errore}}
+\centering
+\includegraphics[width=0.3\textwidth]{screenshots/alert}
+\end{wrapfigure}
+
+Se una richiesta non va a buon fine e viene ricevuto un messaggio di errore dal server, questo messaggio viene mostrato attraverso un alert di errore. Se si viene aggiunti come amico da un altro utente viene invece mostrato un messaggio informativo.
+
+\paragraph{Schermata principale}
+Dopo aver effettuato l'accesso o essersi registrati viene aperta la schermata principale dell'applicazione. Da qui si può visualizzare la lista di amici offline, la lista di amici online (con un doppio click sullo username si apre la finestra di chat con quel determinato utente), la lista di stanze disponibili e non sottoscritte (con un doppio click ci si sottoscrive e si inizieranno a ricevere messaggi per quella chatroom), e la lista delle stanze sottoscritte (con un doppio click si apre la finestra di chat di quella determinata chatroom).
+
+\paragraph{Chat}
+Notare che una finestra di chat può essere aperta dalla finestra principale come descritto nel paragrafo precedente, ma viene anche aperta automaticamente alla ricezione di un nuovo messaggio.
+
+Nella finestra di una chat possono anche comparire messaggi di sistema, riconoscibili perché inviati dall'username \textbf{SYSTEM}. Possono essere messaggi che informano se un utente è andato offline, è tornato online, se sta ricevendo un file che stiamo mandando oppure se stiamo ricevendo il file mandato dall'altro utente.
+
+Per mandare file ad un amico basta premere il tasto \textit{Attach file} dalla sua finestra di chat, verrà aperta un finestra di dialogo per la selezione del file da mandare. Al destinatario si aprirà un finestra di dialogo dove poter accettare o rifiutare la richiesta di invio file, nel caso venga accettata si apre una finestra di salvataggio del file per scegliere dove memorizzarlo e con che nome.
+
+\begin{figure}[h]
+    \centering
+    \subfloat[Finestra principale]{{\includegraphics[width=7cm]{screenshots/main} }}%
+    \qquad
+    \subfloat[Chat]{{\includegraphics[width=7cm]{screenshots/chat} }}%
+\end{figure}
+
 \paragraph{Factory}
 Per fornire un effetto visivo omogeneo, alcuni componenti vengono creati attraverso \textit{factory}: classi statiche il cui unico compito è quello di inizializzare un componente (per esempio una casella di testo), impostarlo seguendo lo stile del programma (per esempio il testo di colore blu) e restituirlo.
 
 \subsection{Server}
 
-Per quanto riguarda il server, una volta mandato in esecuzione inizia ad ascoltare per nuovi connessioni TCP sulle porte 8888 e 8888, sulla porta UDP 8886, e avvia il registry RMI sulla porta 5000 - esportando l'oggetto utilizzato dai client per registrare le callback.
+Per quanto riguarda il server, una volta mandato in esecuzione inizia ad ascoltare per nuovi connessioni TCP sulle porte 8888 e 8888 (\textit{classe connestions.Reception}), sulla porta UDP 8886, e avvia il registry RMI sulla porta 5000 - esportando l'oggetto utilizzato dai client per registrare le callback.
 
 Ognuno di questi è un thread a sé stante in grado di ricevere connessioni indipendentemente dagli altri.
 
-% threadpool
-%% "selector" non NIO
-%% altri thread
-% database
-% traduzione con api rest
+All'interno nel main viene creato anche un \textit{thread pool} da 8 thread, che si occuperanno di eseguire i task per ogni socket connesso.
+
+Infine è presente anche un thread \textit{ghostbuster} che si occupa di segnare utenti inattivi come inattivi in modo da poter liberare memoria e notificare gli amici, vedere sezione 2.2.2 per maggiori dettagli.
+
+\subsubsection{Selector}
+Ogni utente ha almeno due socket collegati che potrebbero inviare richieste in qualsiasi momento. Per poter gestirli tutti senza eseguire un thread distinto per ogni socket, e senza utilizzare i \textit{Selector} di Java NIO, viene creato un task per ogni socket da mandare al thread pool (\textit{classe connections.SocketSelector}).
+
+Il task controlla se il socket ha byte disponibili per essere letti, se sì viene eseguito uno dei metodi presenti in \textit{connections.Tasks} che si occuperanno di leggere effettivamente dal socket e processare la richiesta. In ogni caso il task viene programmato per essere rieseguito almeno dopo 500 millisecondi.
+
+Se un socket viene trovato chiuso, allora viene eseguito il metodo \textit{connections.Tasks.onSocketClosed} che si occupa di rimuovere effettivamente l'utente associato dalla memoria e notificare i suoi amici del cambiamento di stato.
+
+\subsubsection{Richieste}
+Quando viene ricevuta una richiesta da un client, deve venire convertita a String e successivamente in un JSONObject. Per farlo vengono chiamati i metodi contenuti nella classe \textit{connections.RequestsHandler} - che una volta ottenuto il JSONObject chiamerà il gestore dell'endpoint appropriato (classe \textit{connections.EndpointsHandler}) e invierà la relativa risposta, se necessario.
+
+\subsubsection{Persistenza}
+Alcuni dei dati utilizzati dal server hanno bisogno di persistenza, ovvero continuare a essere disponibili anche in seguito ad un riavvio per esempio.
+
+Viene utilizzato un database SQLite3 che permette di creare un database SQL con le operazioni di base su un semplice file. In questo modo non è necessario avviare nessun altro servizio se non il server stesso.
+
+All'interno del database sono memorizzati gli utenti registrati, le stanze create, le relazioni di amicizia tra utenti e le sottoscrizioni degli utenti alle stanze.
+
+\subsubsection{Traduzione con API Rest}
+Al fine di offrire il servizio il traduzione, il server utilizza delle API REST messe a disposizione in modo gratuito da http://mymemory.translated.net/.
+
+Viene effettuata in modo sincrono una richiesta HTTP con l'URL ottenuto combinando opportunamente i parametri, se la risposta è andata a buon fine viene restituito il testo tradotto, altrimenti per qualsiasi altro motivo il testo originale.
