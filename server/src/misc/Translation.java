@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.*;
 
-class Translation {
+public class Translation {
 
     public static String translate(String text, String sourceLang, String destLang) {
         if (

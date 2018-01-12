@@ -5,7 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class Utils {
-    static final boolean isDebug = System.getenv().getOrDefault("DEBUG", "false").equals("TRUE");
+    public static final boolean isDebug = System.getenv().getOrDefault("DEBUG", "false").equals("TRUE");
     
     public static void printDebug(String s) {
         if (isDebug) System.out.println(s);
@@ -66,7 +66,7 @@ public class Utils {
     }
 
     @SuppressWarnings("SameParameterValue")
-    static boolean writeToFile(String text, String filename) {
+    public static boolean writeToFile(String text, String filename) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
             bw.write(text+"\n");
             return true;

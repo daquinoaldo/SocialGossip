@@ -1,5 +1,6 @@
 package base;
 
+import connections.EndpointsHandler;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.Test;
 import state.User;
