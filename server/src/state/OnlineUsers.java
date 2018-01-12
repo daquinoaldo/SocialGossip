@@ -9,13 +9,24 @@ import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.*;
 
+/**
+ * This class contains the current state of the server:
+ * - online users, with getter, setter, etc.
+ * - database instance
+ * - the ghostbuster thread that put offline users who do not hear from a while
+ */
 public class OnlineUsers {
     private static final long GHOST_THRESHOLD_TIME = 10000;
     private static final Database db = new Database();
     private static final ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
     
     private static final ScheduledExecutorService ghostbuster = Executors.newScheduledThreadPool(1);
-    
+
+    /**
+     * Add an User to the online user collection and set up a ghostbuster for it
+     * @param user that is now online
+     * @return false if the user is already online, true otherwise
+     */
     public static boolean add(User user) {
         boolean result = users.putIfAbsent(user.getUsername(), user) == null;
         
