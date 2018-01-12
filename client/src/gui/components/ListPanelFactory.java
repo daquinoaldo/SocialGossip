@@ -33,10 +33,6 @@ public class ListPanelFactory {
                 int index = jlist.locationToIndex(mouseEvent.getPoint());
                 if (index >= 0) {
                     String name = jlist.getModel().getElementAt(index).toString();
-                    
-                    // TODO: cercare un modo di capire se è stata cliccata la lista amici o la lista chat
-                    
-                    // nel frattempo prima cerco nella lista di amici poi nelle chat --> errore in caso di anonimie
                     Chat chat = User.getFriend(name);
                     if (chat == null) chat = User.getRoom(name);
                     if (chat == null) return;

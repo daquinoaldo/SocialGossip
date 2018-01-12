@@ -42,7 +42,7 @@ public class LoginForm extends JPanel {
     private void submit() {
         // Submit button or Enter key pressed
         String username = usernameInput.getText().trim();
-        String password = passwordInput.getText(); //TODO: deprecated, use Char[] passwordInput.getPassword() in production
+        String password = passwordInput.getText(); // deprecated, use Char[] passwordInput.getPassword() in production
         
         if (Utils.isValidUsername(username) && password.length() > 0)
             this.loginCallback.accept(username, password);
