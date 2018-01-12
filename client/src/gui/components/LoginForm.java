@@ -22,7 +22,7 @@ public class LoginForm extends JPanel {
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     
         JButton sendBtn = InputFactory.getMainButton("Login", e -> submit());
-        JButton registerBtn = InputFactory.getSecondaryButton("RegisterPanel", e -> registerCallback.run());
+        JButton registerBtn = InputFactory.getSecondaryButton("Register", e -> registerCallback.run());
         
         JPanel buttonsPanel = new JPanel();
         buttonsPanel.setBackground(Colors.background);
