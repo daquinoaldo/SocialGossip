@@ -1,11 +1,63 @@
 \section{Implementazione}
 \subsection{Client}
-% thread
-% state
-% interfaccia grafica
-%% screenshots
+Come definito nella sezione precedente, il client ha bisogno di stabilire diverse connessioni verso il server. Le connessioni TCP vengono aperte all'avvio in modo da assicurarsi prima di tutto che il server sia online e pronto a ricevere le richieste.
+
+In questa fase viene anche avviato un thread \textit{listener} allo scopo di ricevere messaggi sulla connessione dei messaggi.
+
+Una volta collegato, l'interfaccia grafica viene fatta partire mostrando la schermata di \textit{login}. Da qui l'utente può utilizzare un account già registrato oppure registrarne uno nuovo.
+
+Dopo aver effettuato l'accesso correttamente viene fatto partire un altro thread secondario, che si occupa di mandare ad intervalli regolari l'\textit{heartbeat} al server.
+
+Viene effettuata la registraione della callback RMI e vengono effettuate le richieste per ricevere la lista di amici e la lista delle stanze disponibili.
+Se una o più stanze sono state sottoscritte dall'utente, viene inizializzata la classe che gestisce il protocollo UDP - facendo sì che un secondo thread listener rimanga in ascolto per messaggi multicast mandati ai gruppi relativi delle stanze.
+
+\subsubsection{State}
+Per gestire i dati della sessione corrente vengono utilizzate le classi del package \textbf{state}. In particolare la classe \textit{User} fornisce un'interfaccia per accedere a tutte le altre.
+
+\paragraph{User}
+User è una classe completamente statica, in quanto un client in esecuzione può tenere in memoria al più un solo utente connesso per volta. Tutti i dati che fanno parte della sessione vengono salvati in questa struttura dati:
+\begin{itemize}
+    \item \textbf{isLoggedIn}: \textit{boolean}. Valore booleano che rappresenta se l'utente ha già effettuato l'accesso.
+    \item \textbf{username}: \textit{String}. Stringa che rappresenta lo username dell'utente collegato.
+    \item \textbf{friends}: \textit{ConcurrentHashMap<String, Friend>}. HashMap che usa gli username degli amici come chiavi per accedere alle strutture dati dei singoli utenti.
+    \item \textbf{rooms} = \textit{ConcurrentHashMap<String, Room>}. HashMap che usa i nomi delle stanze come chiavi per accedere alle strutture dati delle singole stanze.
+\end{itemize}
+
+Vengono offerti anche i relativi metodi \textit{getter} e \textit{setter}, ma anche metodi di sottoscrizione ai cambiamenti di stato: è possibile da qualunque altra parte del programma registrare una callback che verrà chiamata quando lo stato interno viene modificato, passando per comodità come argomento lo stato aggiornato.
+
+Ad esempio viene registrata una callback su \textit{isLoggedIn} che fa sì che venga chiusa la finestra di Login dell'interfaccia grafica e venga aperta la nuova finestra con l'elenco delle chat.
+
+\noindent L'aver scelto questo approccio ispirato al \textit{Model View Controller} permette ai singoli componenti dell'interfaccia grafica di registrarsi agli aggiornamenti di stato, per poter a loro volta mostrare l'informazione aggiornata che rappresentano in modo indipendente. In questo modo ogni componente è usabile e riusabile in qualsiasi altro punto del programma in caso di necessità.
+
+Anche i thread che ricevono richieste che aggiorneranno lo stato dovranno preoccuparsi solo di chiamare il relativo setter della classe User. Non dovranno preoccuparsi di chi poi andrà ad utilizzare l'informazione contenuta.
+
+Tutto questo rende il progetto estremamente modulare e tollerante ai cambiamenti di specifiche.
+
+\subsubsection{GUI - Interfaccia grafica}
+\begin{wrapfigure}[10]{r}{0.4\textwidth}
+\caption*{{\scriptsize Schermata di Login}}
+\centering
+\includegraphics[width=0.2\textwidth]{screenshots/login}
+\end{wrapfigure}
+
+L'interfaccia grafica è stata realizzata utilizzando il framework \textbf{Swing} per Java.
+
+Tutte le classi utilizzate per la creazione delle finestre sono contenuto all'interno del package \textbf{gui}. A sua volta è diviso in sotto-pacchetti:
+\begin{itemize}
+    \item \textbf{constants}, contiene alcune costanti che sono state utilizzate all'interno dei vari elementi. Come ad esempio colori o margini.
+    \item \textbf{components}, contiene singoli \textit{pezzi} di interfaccia, riusabili all'interno delle finestre.
+    \item \textbf{panels}, le classi contenute qui vanno a costruire le finestre vere e proprie.
+\end{itemize}
+
+\paragraph{Factory}
+Per fornire un effetto visivo omogeneo, alcuni componenti vengono creati attraverso \textit{factory}: classi statiche il cui unico compito è quello di inizializzare un componente (per esempio una casella di testo), impostarlo seguendo lo stile del programma (per esempio il testo di colore blu) e restituirlo.
 
 \subsection{Server}
+
+Per quanto riguarda il server, una volta mandato in esecuzione inizia ad ascoltare per nuovi connessioni TCP sulle porte 8888 e 8888, sulla porta UDP 8886, e avvia il registry RMI sulla porta 5000 - esportando l'oggetto utilizzato dai client per registrare le callback.
+
+Ognuno di questi è un thread a sé stante in grado di ricevere connessioni indipendentemente dagli altri.
+
 % threadpool
 %% "selector" non NIO
 %% altri thread

@@ -8,8 +8,8 @@
     \begingroup
         \def\textendash{-}
         \filename@parse{#1}
-        \edef\filename@misc{\detokenize\expandafter{\filename@misc}}
-        \texttt{\filename@misc.\filename@ext}
+        \edef\filename@base{\detokenize\expandafter{\filename@base}}
+        \texttt{\filename@base.\filename@ext}
     \endgroup
 }
 \makeatother
@@ -35,6 +35,7 @@
 \addsrcfile{../../client/src/connections/Multicast.java}
 \addsrcfile{../../client/src/connections/Json.java}
 \addsrcfile{../../client/src/connections/Filesystem.java}
+\addsrcfile{../../client/src/connections/RMIManager.java}
 
 \subsubsection{State package}
 \addsrcfile{../../client/src/state/User.java}
@@ -68,32 +69,38 @@
 \addsrcfile{../../client/src/gui/components/Logo.java}
 \addsrcfile{../../client/src/gui/components/RegisterForm.java}
 
-\subsubsection{RMI package}
-\addsrcfile{../../client/src/rmi/ClientCallback.java}
-\addsrcfile{../../client/src/rmi/Manager.java}
-
-
+\newpage
 \subsection{Server}
 \addsrcfile{../../server/src/MainServer.java}
 
-\subsubsection{Base package}
-\addsrcfile{../../server/src/misc/Database.java}
-\addsrcfile{../../server/src/misc/RequestsHandler.java}
-\addsrcfile{../../server/src/misc/EndpointsHandler.java}
-\addsrcfile{../../server/src/misc/OnlineUsers.java}
-\addsrcfile{../../server/src/misc/User.java}
-\addsrcfile{../../server/src/misc/Translation.java}
-\addsrcfile{../../server/src/misc/Utils.java}
-
-\subsubsection{connections package}
+\subsubsection{Connections package}
 \addsrcfile{../../server/src/connections/Helpers.java}
 \addsrcfile{../../server/src/connections/Reception.java}
 \addsrcfile{../../server/src/connections/SocketSelector.java}
 \addsrcfile{../../server/src/connections/Tasks.java}
+\addsrcfile{../../server/src/connections/RequestsHandler.java}
+\addsrcfile{../../server/src/connections/EndpointsHandler.java}
 \addsrcfile{../../server/src/connections/Multicast.java}
+\addsrcfile{../../server/src/connections/RMIManager.java}
 
-\subsubsection{RMI package}
-\addsrcfile{../../server/src/rmi/Manager.java}
-\addsrcfile{../../server/src/rmi/ServerImpl.java}
+\subsubsection{State package}
+\addsrcfile{../../server/src/state/OnlineUsers.java}
+\addsrcfile{../../server/src/state/User.java}
+
+\subsubsection{Misc package}
+\addsrcfile{../../server/src/misc/Database.java}
+\addsrcfile{../../server/src/misc/Translation.java}
+\addsrcfile{../../server/src/misc/Utils.java}
 
 \restoregeometry
+
+\newpage
+\subsection{Common (condivisi tra Client e Server)}
+\subsubsection{Remote Interfaces package}
+\addsrcfile{../../common/src/remoteinterfaces/ServerInterface.java}
+\addsrcfile{../../common/src/remoteinterfaces/ClientCallbackInterface.java}
+
+\subsubsection{Misc package}
+\addsrcfile{../../common/src/misc/Configuration.java}
+\addsrcfile{../../common/src/misc/Endpoints.java}
+\addsrcfile{../../common/src/misc/TriConsumer.java}
