@@ -5,6 +5,8 @@ import gui.constants.Icons;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
 
@@ -98,5 +100,16 @@ public class Utils {
         } while (!aFileIsSelected);
         
         return selected;
+    }
+
+    /**
+     * Validate the username for the Login and Register Forms
+     * @param username to validate
+     * @return true if is valid, false if not
+     */
+    public static boolean isValidUsername(String username) {
+        Pattern p = Pattern.compile("[^a-z0-9]", Pattern.CASE_INSENSITIVE);
+        Matcher m = p.matcher(username);
+        return username.length() > 0 && !m.find();
     }
 }

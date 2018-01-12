@@ -7,8 +7,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.function.*;
 
-import static gui.Validators.isValidUsername;
-
 /**
  * Login Form under the Logo in the Login Panel
  */
@@ -46,7 +44,7 @@ public class LoginForm extends JPanel {
         String username = usernameInput.getText().trim();
         String password = passwordInput.getText(); //TODO: deprecated, use Char[] passwordInput.getPassword() in production
         
-        if (isValidUsername(username) && password.length() > 0)
+        if (Utils.isValidUsername(username) && password.length() > 0)
             this.loginCallback.accept(username, password);
         else {
             Utils.showErrorDialog("Check the values entered in the fields.");

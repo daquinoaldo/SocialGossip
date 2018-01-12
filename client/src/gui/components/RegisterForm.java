@@ -8,9 +8,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
 
-import static gui.Validators.isValidPassword;
-import static gui.Validators.isValidUsername;
-
 /**
  * Register Form under the Logo in the Register Panel.
  * Note: there are only a few languages, the translation service supports many others,
@@ -64,7 +61,7 @@ public class RegisterForm extends JPanel {
         String language = languageList.get(languageInput.getSelectedItem().toString());
 
         // validate username and password
-        if (isValidUsername(username) && isValidPassword(password) && password.equals(password2)
+        if (Utils.isValidUsername(username) && password.length() > 0 && password.equals(password2)
                 && language.length() == 2)
             registerCallback.accept(username, password, language);
         else Utils.showErrorDialog("Entered data are not correct.");
