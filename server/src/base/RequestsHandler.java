@@ -117,7 +117,7 @@ public class RequestsHandler {
             // chatroom not found
             result.put("status", "err");
             result.put("message", "Chatroom not found");
-            sender.sendMsgRequest(CHATROOM_MESSAGE, result);
+            sender.sendMsgRequest(ROOM_MESSAGE, result);
             return;
         }
         
@@ -132,7 +132,7 @@ public class RequestsHandler {
             result.put("status", "err");
             result.put("recipient", chatroomName);
             result.put("message", "No user online at this time");
-            sender.sendMsgRequest(CHATROOM_MESSAGE, result);
+            sender.sendMsgRequest(ROOM_MESSAGE, result);
             return;
         }
     

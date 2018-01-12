@@ -14,5 +14,5 @@ interface Endpoints {
     String CLOSE_ROOM = "CLOSE_ROOM";
     String FILE2FRIEND = "FILE2FRIEND";
     String MSG2FRIEND = "MSG2FRIEND";
-    String CHATROOM_MESSAGE = "CHATROOM_MESSAGE";
+    String ROOM_MESSAGE = "ROOM_MESSAGE";
 }
