@@ -1,4 +1,6 @@
 \newpage
+
+\newgeometry{left=2cm,right=2cm,top=1.5cm,bottom=1.5cm}
 \section{Codice sorgente}
 
 \makeatletter
@@ -18,23 +20,23 @@
         linenos=true,
         numberblanklines=true,
         showspaces=false,
-        breaklines=true
+        breaklines=true,
+        fontsize=\footnotesize
     ]{java}
     {#1}
-    \newpage
+    \bigskip \bigskip
 }
 
 \subsection{Client}
-\subsubsection{Base package}
-\addsrcfile{../../client/src/base/MainClient.java}
-\addsrcfile{../../client/src/base/Json.java}
-\addsrcfile{../../client/src/base/Filesystem.java}
+\addsrcfile{../../client/src/MainClient.java}
 
-\subsubsection{connections package}
+\subsubsection{Connections package}
 \addsrcfile{../../client/src/connections/Connection.java}
 \addsrcfile{../../client/src/connections/Multicast.java}
+\addsrcfile{../../client/src/connections/Json.java}
+\addsrcfile{../../client/src/connections/Filesystem.java}
 
-\subsubsection{state package}
+\subsubsection{State package}
 \addsrcfile{../../client/src/state/User.java}
 \addsrcfile{../../client/src/state/Message.java}
 \addsrcfile{../../client/src/state/Chat.java}
@@ -43,16 +45,33 @@
 
 \subsubsection{GUI package}
 \addsrcfile{../../client/src/gui/Utils.java}
-\addsrcfile{../../client/src/gui/Validators.java}
+
+\subsubsection{GUI.Constants package}
+\addsrcfile{../../client/src/gui/constants/Colors.java}
+\addsrcfile{../../client/src/gui/constants/Dimensions.java}
+\addsrcfile{../../client/src/gui/constants/Icons.java}
+
+\subsubsection{GUI.Panels package}
+\addsrcfile{../../client/src/gui/panels/LoginPanel.java}
+\addsrcfile{../../client/src/gui/panels/RegisterPanel.java}
+\addsrcfile{../../client/src/gui/panels/MainPanel.java}
+\addsrcfile{../../client/src/gui/panels/ChatPanel.java}
+\addsrcfile{../../client/src/gui/panels/CreateRoomPanel.java}
+\addsrcfile{../../client/src/gui/panels/LookupPanel.java}
+
+\subsubsection{GUI.Components package}
+\addsrcfile{../../client/src/gui/components/ColorArrowUI.java}
+\addsrcfile{../../client/src/gui/components/InputFactory.java}
+\addsrcfile{../../client/src/gui/components/ListPanel.java}
+\addsrcfile{../../client/src/gui/components/ListPanelFactory.java}
+\addsrcfile{../../client/src/gui/components/LoginForm.java}
+\addsrcfile{../../client/src/gui/components/Logo.java}
+\addsrcfile{../../client/src/gui/components/RegisterForm.java}
 
 \subsubsection{RMI package}
 \addsrcfile{../../client/src/rmi/ClientCallback.java}
 \addsrcfile{../../client/src/rmi/Manager.java}
 
-\subsubsection{Constants package}
-\addsrcfile{../../client/src/gui.constants/Colors.java}
-\addsrcfile{../../client/src/gui.constants/Dimensions.java}
-\addsrcfile{../../client/src/gui.constants/Icons.java}
 
 \subsection{Server}
 \addsrcfile{../../server/src/MainServer.java}
@@ -76,3 +95,5 @@
 \subsubsection{RMI package}
 \addsrcfile{../../server/src/rmi/Manager.java}
 \addsrcfile{../../server/src/rmi/ServerImpl.java}
+
+\restoregeometry
