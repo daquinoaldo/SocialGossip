@@ -89,8 +89,13 @@ class RequestsHandler {
         }
     }
 
+    /**
+     * Parse a JSON String into a JSONObject, then send it in the room multicast address
+     * @param senderAddress InetAddress of the sender
+     * @param data the stringified json message
+     */
     @SuppressWarnings("unchecked")
-    public static void parseChatroomMessage(InetAddress senderAddress, String data) {
+    public static void parseRoomMessage(InetAddress senderAddress, String data) {
         JSONObject parsed = parse(data);
         JSONObject result = new JSONObject();
         
@@ -100,9 +105,9 @@ class RequestsHandler {
         }
     
         String senderUsername = (String) parsed.get("sender");
-        String chatroomName = (String) parsed.get("recipient");
+        String roomName = (String) parsed.get("recipient");
         String text = (String) parsed.get("text");
-        if (senderUsername == null || chatroomName == null || text == null || text.length() == 0)
+        if (senderUsername == null || roomName == null || text == null || text.length() == 0)
             // Invalid request
             return;
         
@@ -114,16 +119,16 @@ class RequestsHandler {
             return;
         }
     
-        String broadcastIP = database.getBroadcastIP(chatroomName);
+        String broadcastIP = database.getBroadcastIP(roomName);
         if (broadcastIP == null) {
-            // chatroom not found
+            // room not found
             result.put("status", "err");
-            result.put("message", "Chatroom not found");
+            result.put("message", "Room not found");
             sender.sendMsgRequest(ROOM_MESSAGE, result);
             return;
         }
         
-        ArrayList<String> subscribers = database.getChatSubscribers(chatroomName);
+        ArrayList<String> subscribers = database.getChatSubscribers(roomName);
         int online = 0;
         for (String username : subscribers) {
             if (!username.equals(senderUsername) && OnlineUsers.isOnline(username))
@@ -132,7 +137,7 @@ class RequestsHandler {
         if (online == 0) {
             // nobody is online
             result.put("status", "err");
-            result.put("recipient", chatroomName);
+            result.put("recipient", roomName);
             result.put("message", "No user online at this time");
             sender.sendMsgRequest(ROOM_MESSAGE, result);
             return;
@@ -142,9 +147,14 @@ class RequestsHandler {
     }
     
     /* Helpers */
+
+    /**
+     * Parse a json string into a JSONObject
+     * @param s the json String to be parsed
+     * @return the parsed JSONObject
+     */
     private static JSONObject parse(String s) {
         try {
-            // Parse JSON string into a JSONObject
             JSONParser parser = new JSONParser();
             return (JSONObject) parser.parse(s);
         }
@@ -154,7 +164,12 @@ class RequestsHandler {
         }
         return null;
     }
-    
+
+    /**
+     * Builds default replies
+     * @return JSONObject
+     */
+
     @SuppressWarnings("unchecked")
     static JSONObject buildSuccessReply() {
         JSONObject reply = new JSONObject();

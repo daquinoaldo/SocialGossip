@@ -45,7 +45,7 @@ public class Multicast {
                     InetAddress sender = packet.getAddress();
                     byte[] data = packet.getData();
                     String dataString = new String(data, 0, packet.getLength(), StandardCharsets.UTF_8);
-                    RequestsHandler.parseChatroomMessage(sender, dataString);
+                    RequestsHandler.parseRoomMessage(sender, dataString);
                 }
             }
             catch (SocketException e) {
