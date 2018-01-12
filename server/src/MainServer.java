@@ -1,3 +1,4 @@
+import connections.RMIManager;
 import connections.Multicast;
 import connections.Reception;
 import connections.Tasks;
@@ -16,7 +17,7 @@ class MainServer {
     public static void main(String[] args) {
         Utils.printDebug("DEBUG is active");
 
-        rmi.Manager.start();
+        RMIManager.start();
         Multicast.init();
         
         ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(4);

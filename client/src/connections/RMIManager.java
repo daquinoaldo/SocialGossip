@@ -19,9 +19,9 @@ import java.rmi.server.UnicastRemoteObject;
 public class RMIManager {
 
     /**
-     * Inner class for Server callbacks
+     * Inner class for Server callbacks, implementation of ClientCallbackInterface
      */
-    public static class ClientCallback implements ClientCallbackInterface {
+    public static class ClientCallbackImplementation implements ClientCallbackInterface {
         public void newFriend(String username) {
             User.addFriend(username, true);
         }
@@ -39,7 +39,7 @@ public class RMIManager {
         }
     }
 
-    private static final ClientCallbackInterface callback = new ClientCallback();
+    private static final ClientCallbackInterface callback = new ClientCallbackImplementation();
     @SuppressWarnings("CanBeFinal")
     private static ServerInterface server;
     
