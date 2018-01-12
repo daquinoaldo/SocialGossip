@@ -3,6 +3,8 @@ package base;
 import connections.Multicast;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import state.OnlineUsers;
+import state.User;
 
 import java.net.Socket;
 import java.util.List;

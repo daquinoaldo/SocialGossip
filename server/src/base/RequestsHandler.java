@@ -6,6 +6,8 @@ import connections.Multicast;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import state.OnlineUsers;
+import state.User;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
