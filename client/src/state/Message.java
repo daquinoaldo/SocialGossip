@@ -1,6 +1,6 @@
 package state;
 
-public  class Message {
+public class Message {
     private final String sender;
     private final String text;
     public Message(String sender, String text) {

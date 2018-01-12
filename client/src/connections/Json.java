@@ -133,24 +133,25 @@ public class Json {
     public static void parseChatMessage(String jsonString) {
         JSONObject request = parse(jsonString);
     
-        String chatName = (String) request.get("recipient");
+        String roomName = (String) request.get("recipient");
         String chatClosed = (String) request.get("chat_closed");
         if (chatClosed != null && chatClosed.length() > 0) {
             // Room has been closed
-            if (chatName == null) return;
-            Utils.showErrorDialog(chatName + " has been closed.");
-            Room room = User.getRoom(chatName);
+            if (roomName == null) return;
+            Utils.showErrorDialog(roomName + " has been closed.");
+            Room room = User.getRoom(roomName);
             if (room == null) return;
             room.leaveMulticastGroup();
             room.closeWindow();
-            User.removeRoom(chatName);
+            if (!User.removeRoom(roomName))
+                System.err.println("Can't remove room "+roomName+" from User.");
             return;
         }
         
         String sender = (String) request.get("sender");
         String text = (String) request.get("text");
         
-        if (chatName == null || chatName.length() == 0 ||
+        if (roomName == null || roomName.length() == 0 ||
                 sender == null || sender.length() == 0 ||
                 text == null || text.length() == 0)
             return; // Malformed request
@@ -158,9 +159,9 @@ public class Json {
         if (sender.equals(User.username()))
             return; // my message
         
-        Room room = User.getRoom(chatName);
+        Room room = User.getRoom(roomName);
         if (room == null) {
-            System.err.println("Got a message for a non-subscribed room: " + chatName);
+            System.err.println("Got a message for a non-subscribed room: " + roomName);
             return;
         }
 
@@ -294,8 +295,7 @@ public class Json {
 
         // Update the state
         String address = (String) result.get("address");
-        User.addRoom(roomName, address, User.username(), true);
-        return true;
+        return User.addRoom(roomName, address, User.username(), true);
     }
 
     public static boolean addMe(String room) {

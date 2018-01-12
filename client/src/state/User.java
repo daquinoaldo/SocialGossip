@@ -8,18 +8,17 @@ import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-// Main state structure - representing the User who is using the client
-// if a state change is triggered, previously registered callbacks will be called passing the new state as a parameter
-
-/*
- *   1. state change request      ->      2. internal data structure change        ->      3. callbacks are called with new state
- * (ex. user adds a new friend)        (this class private fields gets updated)          (GUI components can self-update themselves)
+/**
+ * Main state structure - representing the User who is using the client
+ * if a state change is triggered, previously registered callbacks will be called passing the new state as a parameter
+ *
+ *   1. state change request   ->   2. internal data structure change   ->   3. callbacks are called with new state
+ *(ex. user adds a new friend)   (this class private fields gets updated)  (GUI components can self-update themselves)
  *
  *  This strategy allows easier debugging and testing (it's possible to programmatically request a state change and log
  *  the resulted changes). But also simpler GUI components who just need to access this single central state container
  *  and can update their informations accordingly registering callbacks.
  */
-
 public class User {
     private static boolean isLoggedIn = false;
     private static String username = null;
@@ -67,19 +66,19 @@ public class User {
         friendsListCallbacks.forEach(c -> c.accept(friends()));
     }
     
-    public static void addRoom(String roomName, String address, String creator, boolean subscribed) {
+    public static boolean addRoom(String roomName, String address, String creator, boolean subscribed) {
         try {
             rooms.put(roomName, new Room(roomName, address, creator, subscribed));
         }
         catch (UnknownHostException e) {
-            System.err.println("Can't join the chatroom: " + roomName);
+            System.err.println("Can't join the room: " + roomName);
             e.printStackTrace();
-            return;
+            return false;
         }
         roomsListCallbacks.forEach(c -> c.accept(rooms()));
+        return true;
     }
-    
-    @SuppressWarnings("UnusedReturnValue")
+
     public static boolean removeRoom(String roomName) {
         boolean toReturn = rooms.remove(roomName) != null;
         roomsListCallbacks.forEach(c -> c.accept(rooms()));

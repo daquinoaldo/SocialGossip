@@ -8,6 +8,11 @@ import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * Abstract Chat class with 2 implementations:
+ * @see Friend
+ * @see Room
+ */
 public abstract class Chat {
     static final int TYPE_FRIEND = 0;
     static final int TYPE_ROOM = 1;
@@ -27,14 +32,27 @@ public abstract class Chat {
         this.name = name;
     }
 
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
     
     @SuppressWarnings("WeakerAccess")
-    protected boolean getFlag() { return flag; }
+    protected boolean getFlag() {
+        return flag;
+    }
+
     @SuppressWarnings("WeakerAccess")
-    protected void setFlag(boolean newValue) { flag = newValue; }
+    protected void setFlag(boolean newValue) {
+        flag = newValue;
+    }
     
-    public JFrame getWindow() { return window; }
+    public JFrame getWindow() {
+        return window;
+    }
+
+    /**
+     * Create and show a Window for the chat
+     */
     public void createWindow() {
         if (window == null) {
             String windowsName = name;
@@ -62,16 +80,26 @@ public abstract class Chat {
         else
             window.requestFocus();
     }
+
+    /**
+     * Close the Window but not the panel:
+     * @see this.newMessage
+     */
     public void closeWindow() {
         if (window == null)
             return;
         window.dispose();
     }
-    
+
+    /**
+     * Add a message (incoming or sent) to the chat. If the chat Window is close open it.
+     * The message is saved in the chatPanel that is created with the Room:
+     * the messages exchanged earlier in this session are already present when the chat is reopened
+     * @param message the new Message
+     */
     public void newMessage(Message message) {
         if (window == null)
             createWindow();
-        
         chatPanel.newMessage(message);
     }
 }

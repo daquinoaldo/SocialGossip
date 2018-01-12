@@ -6,6 +6,12 @@ import gui.panels.ChatPanel;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+/**
+ * Implementation of the abstract class Chat,
+ * a bit more complex than Friend because it includes methods for handling UDP sockets
+ * @see Chat the abstract class
+ * @see Friend the other implementation
+ */
 public class Room extends Chat {
     private InetAddress address;
     private String creator;

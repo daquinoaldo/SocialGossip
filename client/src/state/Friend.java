@@ -2,6 +2,11 @@ package state;
 
 import gui.panels.ChatPanel;
 
+/**
+ * Implementation of the abstract class Chat
+ * @see Chat the abstract class
+ * @see Room the other implementation
+ */
 public class Friend extends Chat {
 
     public Friend(String username, boolean online) {
