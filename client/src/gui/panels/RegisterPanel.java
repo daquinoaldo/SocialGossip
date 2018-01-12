@@ -10,12 +10,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.function.BiConsumer;
 
-class Register extends JPanel {
+class RegisterPanel extends JPanel {
     private static final Dimension padding = new Dimension(65, 35);
     private static final int maxWidth = 200;
     private final BiConsumer<String, String> onUserRegistered;
     
-    public Register(BiConsumer<String, String> onUserRegistered) {
+    public RegisterPanel(BiConsumer<String, String> onUserRegistered) {
         this.onUserRegistered = onUserRegistered;
         
         // Init components

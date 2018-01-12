@@ -38,7 +38,7 @@ public class LoginPanel extends JPanel {
     
     private void registerCallback() {
         // create a register window and set a callback for a succesful registration
-        JPanel registerPanel = new Register(this::loginCallback);
+        JPanel registerPanel = new RegisterPanel(this::loginCallback);
         this.registerWindow = Utils.createFixedWindow("Registrazione", registerPanel, false, false);
         
         // set listener for window closing (without registration)
