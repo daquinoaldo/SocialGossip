@@ -1,8 +1,8 @@
 {
   "endpoint": "REGISTER",
   "params": {
-    "username": "pinco",
-    "password": "supersicurezza",
+    "username": "me",
+    "password": "password123",
     "language": "en"
   }
 }

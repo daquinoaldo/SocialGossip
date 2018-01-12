@@ -3,8 +3,8 @@
   "code": 200,
   "result": {
     "friends": [
-      { "username": "pippo", "online": false },
-      { "username": "pluto", "online": true }
+      { "username": "my_best_friend", "online": false },
+      { "username": "another_friend", "online": true }
     ]
   }
 }

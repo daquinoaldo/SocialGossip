@@ -139,7 +139,7 @@ public class EndpointsHandler {
         if(db.checkFriendship(user.getUsername(), username))
             return buildErrorReply(400, "You are already friend of this user!");
         if(!db.addFriendship(user.getUsername(), username))
-            return buildErrorReply(400, "A database error occured.");
+            return buildErrorReply(400, "A database error occurred.");
         if (OnlineUsers.isOnline(username))
             OnlineUsers.getByUsername(username).notifyNewFriend(user.getUsername());
         return buildSuccessReply();
@@ -214,7 +214,7 @@ public class EndpointsHandler {
         if(!db.deleteRoom(room)) return buildErrorReply(400, "Database error.");
         JSONObject closedMsg = new JSONObject();
         closedMsg.put("recipient", room);
-        closedMsg.put("chat_closed", user.getUsername() + " closed this chatroom.");
+        closedMsg.put("chat_closed", user.getUsername() + " closed this room.");
         Multicast.broadcast(closedMsg.toJSONString(), broadcastIp);
         return buildSuccessReply();
     }

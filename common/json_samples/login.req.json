@@ -1,7 +1,7 @@
 {
   "endpoint": "LOGIN",
   "params": {
-    "username": "pinco",
-    "password": "supersicurezza"
+    "username": "me",
+    "password": "password123"
   }
 }

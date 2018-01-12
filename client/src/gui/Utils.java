@@ -127,7 +127,7 @@ public class Utils {
             else continue;
     
             if (!isOpenDialog && selected.exists()) {
-                aFileIsSelected = showConfirmationDialog("The file will be overwitten. Are you sure?");
+                aFileIsSelected = showConfirmationDialog("The file will be overwritten. Are you sure?");
             } else if (!isOpenDialog && selected.exists() && !selected.canWrite()) {
                 showErrorDialog("Can't write in the specified path. Please try again.");
             } else if (isOpenDialog && !selected.canRead()) {

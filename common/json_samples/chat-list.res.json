@@ -3,8 +3,8 @@
   "code": 200,
   "result": {
     "rooms": [
-      { "name": "Serie A", "added": true },
-      { "name": "Serie B", "added": false }
+      { "name": "A room", "added": true },
+      { "name": "Another room", "added": false }
     ]
   }
 }

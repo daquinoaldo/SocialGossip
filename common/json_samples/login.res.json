@@ -3,12 +3,12 @@
   "code": 200,
   "result": {
     "rooms": [
-      { "name": "Serie A", "added": true },
-      { "name": "Serie B", "added": false }
+      { "name": "A room", "added": true },
+      { "name": "Another room", "added": false }
     ],
     "friends": [
-      { "username": "pippo", "online": false },
-      { "username": "pluto", "online": true }
+      { "username": "my_best_friend", "online": false },
+      { "username": "another_friend", "online": true }
     ]
   }
 }
