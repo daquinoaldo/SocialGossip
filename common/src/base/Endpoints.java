@@ -1,4 +1,4 @@
-package base;// Register endpoints name here, for REST-like API
+package base;
 
 public interface Endpoints {
     String HEARTBEAT = "HEARTBEAT";

@@ -45,7 +45,7 @@ public class RMIManager {
     
     static {
         try {
-            Registry registry = LocateRegistry.getRegistry(Configuration.HOSTNAME, Configuration.RMI_PORT);
+            Registry registry = LocateRegistry.getRegistry(Configuration.SERVE_HOSTNAME, Configuration.RMI_PORT);
             server = (ServerInterface) registry.lookup(Configuration.RMI_NAME);
             
         }

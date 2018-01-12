@@ -1,7 +1,7 @@
 package base;
 
 public interface Configuration {
-    String HOSTNAME = "localhost";
+    String SERVE_HOSTNAME = "localhost";
     int UDP_PORT = 8886;
     int MULTICAST_PORT = 8887;
     int PRIMARY_PORT = 8888;

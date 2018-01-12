@@ -21,7 +21,7 @@ import java.nio.channels.SocketChannel;
  * notify the server that we are still online.
  */
 public class Connection {
-    private static final String host = Configuration.HOSTNAME;
+    private static final String host = Configuration.SERVE_HOSTNAME;
 
     @SuppressWarnings("CanBeFinal")
     private static BufferedWriter primaryWriter;

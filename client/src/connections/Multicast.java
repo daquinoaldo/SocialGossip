@@ -62,7 +62,7 @@ public class Multicast {
      */
     public static void send(String request) {
         try {
-            InetAddress destAddress = InetAddress.getByName(Configuration.HOSTNAME);
+            InetAddress destAddress = InetAddress.getByName(Configuration.SERVE_HOSTNAME);
             byte[] data = request.getBytes(StandardCharsets.UTF_8);
             DatagramPacket datagramPacket = new DatagramPacket(data, data.length, destAddress, Configuration.UDP_PORT);
             outputDatagramSocket.send(datagramPacket);
