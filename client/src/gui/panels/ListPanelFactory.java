@@ -5,7 +5,7 @@ import state.Friend;
 import state.User;
 import state.Room;
 import base.Json;
-import constants.Dimensions;
+import gui.constants.Dimensions;
 import gui.Utils;
 
 import javax.swing.*;

@@ -1,7 +1,7 @@
 package gui.components;
 
-import constants.Colors;
-import constants.Icons;
+import gui.constants.Colors;
+import gui.constants.Icons;
 
 import javax.swing.*;
 import java.awt.*;

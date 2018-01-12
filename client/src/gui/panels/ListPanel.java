@@ -3,7 +3,7 @@ package gui.panels;
 import javax.swing.*;
 import java.awt.event.MouseListener;
 
-import constants.Dimensions;
+import gui.constants.Dimensions;
 
 class ListPanel extends JPanel {
 

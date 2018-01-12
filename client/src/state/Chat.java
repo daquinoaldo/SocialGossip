@@ -1,6 +1,6 @@
 package state;
 
-import constants.Dimensions;
+import gui.constants.Dimensions;
 import gui.Utils;
 import gui.panels.ChatPanel;
 

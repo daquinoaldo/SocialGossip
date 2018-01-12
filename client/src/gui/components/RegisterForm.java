@@ -1,7 +1,7 @@
 package gui.components;
 
 import base.TriConsumer;
-import constants.Colors;
+import gui.constants.Colors;
 import gui.Utils;
 
 import javax.swing.*;

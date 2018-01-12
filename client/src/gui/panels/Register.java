@@ -1,7 +1,7 @@
 package gui.panels;
 
 import base.Json;
-import constants.Colors;
+import gui.constants.Colors;
 import gui.Utils;
 import gui.components.Logo;
 import gui.components.RegisterForm;

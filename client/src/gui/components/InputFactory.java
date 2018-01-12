@@ -1,6 +1,6 @@
 package gui.components;
 
-import constants.Colors;
+import gui.constants.Colors;
 
 import javax.swing.*;
 import javax.swing.border.Border;

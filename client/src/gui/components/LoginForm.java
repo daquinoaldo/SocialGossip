@@ -1,6 +1,6 @@
 package gui.components;
 
-import constants.Colors;
+import gui.constants.Colors;
 import gui.Utils;
 
 import javax.swing.*;

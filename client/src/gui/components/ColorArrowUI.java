@@ -1,7 +1,7 @@
 package gui.components;
 
-import static constants.Colors.background;
-import static constants.Colors.accent;
+import static gui.constants.Colors.background;
+import static gui.constants.Colors.accent;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicArrowButton;

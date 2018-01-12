@@ -1,11 +1,11 @@
-package constants;
+package gui.constants;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 
 public class Dimensions {
-    // Panels dimentions
+    // Panels dimensions
     public static final Dimension CHAT_PANE = new Dimension(600, 400);
 
     // Inner-panel measures

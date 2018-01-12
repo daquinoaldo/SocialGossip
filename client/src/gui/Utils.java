@@ -1,6 +1,6 @@
 package gui;
 
-import constants.Icons;
+import gui.constants.Icons;
 
 import javax.swing.*;
 import java.awt.*;
