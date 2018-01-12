@@ -56,8 +56,7 @@ public class User {
 
     public static void updateFriendList(HashMap<String, Friend> newFriends) {
         for (Friend friend : newFriends.values())
-            if(!User.rooms.containsKey(friend.getName()))
-                friends.put(friend.getName(), friend);
+            friends.putIfAbsent(friend.getName(), friend);
         friendsListCallbacks.forEach(c -> c.accept(friends()));
     }
 
@@ -86,16 +85,9 @@ public class User {
     }
 
     public static void updateRoomList(HashMap<String, Room> newRooms) {
-        // I remove each room in rooms that is not in newRooms
-        /*for (Room room : rooms())
-            if (!newRooms.containsKey(room.getName())) {
-                System.err.println("Removed room " + room.getName());
-                User.rooms.remove(room);
-            }*/
         // I add to rooms each room in newRooms that is not yet in rooms
         for (Room room : newRooms.values())
-            if(!User.rooms.containsKey(room.getName()))
-                rooms.put(room.getName(), room);
+            rooms.putIfAbsent(room.getName(), room);
         roomsListCallbacks.forEach(c -> c.accept(rooms()));
     }
 
