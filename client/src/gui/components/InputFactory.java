@@ -90,7 +90,7 @@ class InputFactory {
             private final JPanel panel = new JPanel();
             private Object selectedItem;
         
-            MyEditor() {
+            private MyEditor() {
                 label.setOpaque(false);
                 label.setFont(new Font("Arial", Font.BOLD, 14));
                 label.setForeground(secondaryButtonText);

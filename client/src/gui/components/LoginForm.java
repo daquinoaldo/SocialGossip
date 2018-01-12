@@ -21,18 +21,18 @@ public class LoginForm extends JPanel {
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     
         JButton sendBtn = InputFactory.getMainButton("Login", e -> submit());
-        JButton registerBtn = InputFactory.getSecondaryButton("Registrati", e -> registerCallback.run());
+        JButton registerBtn = InputFactory.getSecondaryButton("Register", e -> registerCallback.run());
         
-        JPanel btnsPanel = new JPanel();
-        btnsPanel.setBackground(Colors.background);
-        btnsPanel.add(sendBtn);
-        btnsPanel.add(registerBtn);
+        JPanel buttonsPanel = new JPanel();
+        buttonsPanel.setBackground(Colors.background);
+        buttonsPanel.add(sendBtn);
+        buttonsPanel.add(registerBtn);
     
         this.add(usernameInput);
         this.add(Box.createRigidArea(new Dimension(0, 5)));
         this.add(passwordInput);
         this.add(Box.createRigidArea(new Dimension(0, 15)));
-        this.add(btnsPanel);
+        this.add(buttonsPanel);
     }
     
     private void submit() {
@@ -43,7 +43,7 @@ public class LoginForm extends JPanel {
         if (isValidUsername(username) && password.length() > 0)
             this.loginCallback.accept(username, password);
         else {
-            Utils.showErrorDialog("Controllare i valori dei campi inseriti.");
+            Utils.showErrorDialog("Check the values entered in the fields.");
         }
     }
 }
