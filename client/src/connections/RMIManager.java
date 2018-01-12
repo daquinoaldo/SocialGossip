@@ -1,5 +1,7 @@
-package rmi;
+package connections;
 
+import state.Friend;
+import state.Message;
 import state.User;
 import base.Configuration;
 import remoteinterfaces.ClientCallbackInterface;
@@ -11,7 +13,32 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
-public class Manager {
+/**
+ * RMI RMIManager: register the RMI Callbacks at Login
+ */
+public class RMIManager {
+
+    /**
+     * Inner class for Server callbacks
+     */
+    public static class ClientCallback implements ClientCallbackInterface {
+        public void newFriend(String username) {
+            User.addFriend(username, true);
+        }
+
+        public void changedStatus(String username, boolean isOnline) {
+            User.setFriendStatus(username, isOnline);
+
+            // Show a System message if there is a chat window open
+            Friend friend = User.getFriend(username);
+            if (friend == null) return;
+            if (friend.getWindow() == null) return;
+            Message systemInfo = new Message("SYSTEM",
+                    friend.getUsername() + " is now " + (isOnline ? "online" : "offline") + ".");
+            friend.newMessage(systemInfo);
+        }
+    }
+
     private static final ClientCallbackInterface callback = new ClientCallback();
     @SuppressWarnings("CanBeFinal")
     private static ServerInterface server;

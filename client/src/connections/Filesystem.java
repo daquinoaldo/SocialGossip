@@ -12,7 +12,7 @@ import java.nio.file.StandardOpenOption;
 /**
  * Contains method to send a File into a Socket and receive from a Socket and save to File
  */
-public class Filesystem {
+class Filesystem {
 
     /**
      * Read the specified File using NIO channels. Send the file to the specified socket.

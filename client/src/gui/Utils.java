@@ -8,17 +8,26 @@ import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Utilities for the gui
+ */
 public class Utils {
 
     public static void showErrorDialog(String msg) {
-        JOptionPane.showMessageDialog(null, msg,"Attenzione!", JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(null, msg,"Attention!", JOptionPane.WARNING_MESSAGE);
     }
     
     public static boolean showConfirmationDialog(String msg) {
         return JOptionPane.showConfirmDialog(null, msg,"Warning", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
     }
-    
-    @SuppressWarnings("UnusedReturnValue")
+
+    /**
+     * Create and show a new Window
+     * @param title of the Window
+     * @param panel to show in the Window body
+     * @param dimension of the Window
+     * @return the generated JFrame
+     */
     public static JFrame createWindow(String title, JPanel panel, Dimension dimension) {
         JFrame window = new JFrame(title);                                  // create a window
         window.setIconImage(Icons.logo.getImage());                         // set logo as application icon
@@ -29,7 +38,14 @@ public class Utils {
         return window;
     }
 
-    // crea una finestra centrata, non ridimensionabile, con il panel specificato
+    /**
+     * Create and show a new centered Window with fixed dimensions and not resizable.
+     * @param title of the Window
+     * @param panel to show in the Window body
+     * @param exitOnClose if true exit the Client when the Window is close
+     * @param alwaysOnTop if true the Window is showed always on top
+     * @return the generated JFrame
+     */
     public static JFrame createFixedWindow(String title, JPanel panel, boolean exitOnClose, boolean alwaysOnTop) {
         JFrame window = new JFrame(title);                                  // create a window
         window.setIconImage(Icons.logo.getImage());                         // set logo as application icon
@@ -44,6 +60,11 @@ public class Utils {
         return window;
     }
 
+    /**
+     * Call the setEnabled function for each component in a container. Used by the Login and Register Panels
+     * @param container for which components are to be enabled
+     * @param enable true to enable, false to disable
+     */
     public static void enableComponents(Container container, boolean enable) {
         Component[] components = container.getComponents();
         for (Component component : components) {
@@ -60,7 +81,13 @@ public class Utils {
     public static File saveFileDialog(String defaultName) {
         return fileDialog(false, defaultName);
     }
-    
+
+    /**
+     * Show the file selection dialog for file choosing and saving
+     * @param isOpenDialog if true pick a file, if false choose where to save the incoming file
+     * @param filename should be null if isOpenDialog, otherwise specify the original filename of the incoming file
+     * @return a File
+     */
     private static File fileDialog(boolean isOpenDialog, String filename) {
         File selected = null;
         boolean aFileIsSelected = false;

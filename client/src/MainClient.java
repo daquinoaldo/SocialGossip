@@ -1,5 +1,6 @@
 import connections.Connection;
 import connections.Json;
+import connections.RMIManager;
 import state.User;
 import gui.Utils;
 import gui.panels.LoginPanel;
@@ -40,7 +41,7 @@ class MainClient {
             System.out.println("Logged in as " + username);
             if (mainWindow != null)
                 mainWindow.setTitle(username + " - Social Gossip");
-            rmi.Manager.registerCallback();
+            RMIManager.registerCallback();
         });
     }
 }
