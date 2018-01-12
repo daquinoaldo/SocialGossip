@@ -1,8 +1,8 @@
-package base;
+package connections;
 
-import static base.Endpoints.*;
+import static misc.Endpoints.*;
 
-import connections.Multicast;
+import misc.Database;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.BiFunction;
 
-public class RequestsHandler {
+class RequestsHandler {
     private static final HashMap<String, BiFunction<User, JSONObject, JSONObject>> primaryEndpoints = new HashMap<String, BiFunction<User, JSONObject, JSONObject>>(){{
         /* Register endpoint methods to the endpoint string */
         put(LOGIN,              EndpointsHandler::login);

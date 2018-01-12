@@ -1,6 +1,6 @@
 package connections;
 
-import base.Configuration;
+import misc.Configuration;
 
 import java.io.IOException;
 import java.net.*;

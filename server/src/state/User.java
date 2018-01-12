@@ -10,11 +10,18 @@ import java.util.concurrent.Future;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static base.Utils.printDebug;
+import static misc.Utils.printDebug;
 import static connections.Helpers.send;
 
 /**
- * Server-side user modeling
+ * Server-side user modeling. Contains:
+ * - the username
+ * - the primary (operational) socket and the message socket and methods to manage it
+ * - the RMI interface object and methods to manage it
+ * - a lock that prevents 2 threads from working on the same socket
+ * - the heartbeat management: every time the server receive a heartbeat from the user updates the lastHeartbeat
+ *   variable, if for some time it has no heartbeats from the client it considers it disconnected
+ * - the sendMsgRequest method to send a message to the user's client
  */
 public class User implements Comparable<User> {
     private final String username;
@@ -34,20 +41,25 @@ public class User implements Comparable<User> {
     public User(String username) {
         this.username = username;
     }
-    
+
+    // Getter
     public String getUsername() { return username; }
     public Socket getPrimarySocket() { return primarySocket; }
     public Socket getMessageSocket() { return messageSocket; }
-    
+
+    // Setter
     public void setPrimarySocket(Socket s) { this.primarySocket = s; }
     public void setMessageSocket(Socket s) { this.messageSocket = s; }
-    
-    public int compareTo(User u) { return this.username.compareTo(u.getUsername()); }
-    
     public void setCallback(ClientCallbackInterface callback) {
         this.callback = callback;
     }
-    
+
+    public int compareTo(User u) { return this.username.compareTo(u.getUsername()); }
+
+    /**
+     * Notify the user (if is online) that another user username request a friendship
+     * @param username of the user that request the friendship
+     */
     public void notifyNewFriend(String username) {
         try {
             this.callback.newFriend(username);
@@ -58,7 +70,12 @@ public class User implements Comparable<User> {
             System.err.println("-- New friend: " + username);
         }
     }
-    
+
+    /**
+     * Notify the user that a friend change status
+     * @param username of the friend that change status
+     * @param isOnline the new status
+     */
     public void notifyFriendStatus(String username, boolean isOnline) {
         try {
             this.callback.changedStatus(username, isOnline);
@@ -70,7 +87,8 @@ public class User implements Comparable<User> {
             System.err.println("Is username gone offline too?");
         }
     }
-    
+
+    // User lock used in Tasks to make sure that only one thread at times operates on the user socket
     public void getLock() {
         lock.lock();
     }
@@ -78,7 +96,12 @@ public class User implements Comparable<User> {
     public void releaseLock() {
         lock.unlock();
     }
-    
+
+    /**
+     * Send a message to this user's client using the socket memorized in this object
+     * @param endpoint FILE2FRIEND or MSG2FRIEND
+     * @param params payload: the message
+     */
     @SuppressWarnings("unchecked")
     public void sendMsgRequest(String endpoint, JSONObject params) {
         JSONObject req = new JSONObject();

@@ -1,7 +1,6 @@
 package connections;
 
 import state.OnlineUsers;
-import base.RequestsHandler;
 import state.User;
 
 import java.io.*;

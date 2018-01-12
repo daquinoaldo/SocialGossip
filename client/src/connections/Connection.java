@@ -1,7 +1,7 @@
 package connections;
 
 import state.User;
-import base.Configuration;
+import misc.Configuration;
 import gui.Utils;
 
 import java.io.*;

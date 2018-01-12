@@ -1,4 +1,4 @@
-package base;
+package misc;
 
 public interface Configuration {
     String SERVE_HOSTNAME = "localhost";

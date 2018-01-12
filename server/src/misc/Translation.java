@@ -1,4 +1,4 @@
-package base;
+package misc;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

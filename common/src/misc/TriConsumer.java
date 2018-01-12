@@ -1,4 +1,4 @@
-package base;
+package misc;
 
 @FunctionalInterface
 public interface TriConsumer<T, U, S> {

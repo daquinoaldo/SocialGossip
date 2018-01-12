@@ -8,8 +8,8 @@
     \begingroup
         \def\textendash{-}
         \filename@parse{#1}
-        \edef\filename@base{\detokenize\expandafter{\filename@base}}
-        \texttt{\filename@base.\filename@ext}
+        \edef\filename@misc{\detokenize\expandafter{\filename@misc}}
+        \texttt{\filename@misc.\filename@ext}
     \endgroup
 }
 \makeatother
@@ -77,13 +77,13 @@
 \addsrcfile{../../server/src/MainServer.java}
 
 \subsubsection{Base package}
-\addsrcfile{../../server/src/base/Database.java}
-\addsrcfile{../../server/src/base/RequestsHandler.java}
-\addsrcfile{../../server/src/base/EndpointsHandler.java}
-\addsrcfile{../../server/src/base/OnlineUsers.java}
-\addsrcfile{../../server/src/base/User.java}
-\addsrcfile{../../server/src/base/Translation.java}
-\addsrcfile{../../server/src/base/Utils.java}
+\addsrcfile{../../server/src/misc/Database.java}
+\addsrcfile{../../server/src/misc/RequestsHandler.java}
+\addsrcfile{../../server/src/misc/EndpointsHandler.java}
+\addsrcfile{../../server/src/misc/OnlineUsers.java}
+\addsrcfile{../../server/src/misc/User.java}
+\addsrcfile{../../server/src/misc/Translation.java}
+\addsrcfile{../../server/src/misc/Utils.java}
 
 \subsubsection{connections package}
 \addsrcfile{../../server/src/connections/Helpers.java}

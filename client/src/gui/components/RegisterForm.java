@@ -1,6 +1,6 @@
 package gui.components;
 
-import base.TriConsumer;
+import misc.TriConsumer;
 import gui.constants.Colors;
 import gui.Utils;
 

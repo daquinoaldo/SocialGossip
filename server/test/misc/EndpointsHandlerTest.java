@@ -1,4 +1,4 @@
-package base;
+package misc;
 
 import connections.EndpointsHandler;
 import org.json.simple.JSONObject;

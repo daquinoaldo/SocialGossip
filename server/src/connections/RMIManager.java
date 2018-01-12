@@ -1,6 +1,6 @@
 package connections;
 
-import base.Configuration;
+import misc.Configuration;
 import state.OnlineUsers;
 import state.User;
 import remoteinterfaces.ClientCallbackInterface;

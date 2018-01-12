@@ -1,6 +1,8 @@
-package base;
+package connections;
 
-import connections.Multicast;
+import misc.Database;
+import misc.Translation;
+import misc.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import state.OnlineUsers;
@@ -9,20 +11,18 @@ import state.User;
 import java.net.Socket;
 import java.util.List;
 
-import static base.Endpoints.FILE2FRIEND;
-import static base.Endpoints.MSG2FRIEND;
-import static base.RequestsHandler.buildErrorReply;
-import static base.RequestsHandler.buildSuccessReply;
-import static base.Utils.isDebug;
-import static base.Utils.printDebug;
-import static base.Utils.writeToFile;
+import static misc.Endpoints.FILE2FRIEND;
+import static misc.Endpoints.MSG2FRIEND;
+import static connections.RequestsHandler.buildErrorReply;
+import static connections.RequestsHandler.buildSuccessReply;
+import static misc.Utils.*;
 
 @SuppressWarnings({"unchecked", "unused"})
-class EndpointsHandler {
+public class EndpointsHandler {
 
     private static final Database db = new Database();
     private static String lastBroadcastIP = null;
-    private static final String LASTIP_PATH = "last-broadcast-ip.txt";
+    private static final String LAST_IP_PATH = "last-broadcast-ip.txt";
     
     static {
         db.init();
@@ -65,7 +65,7 @@ class EndpointsHandler {
         return null;
     }
 
-    static JSONObject login(User stubUser, JSONObject params) {
+    public static JSONObject login(User stubUser, JSONObject params) {
         Socket primarySocket = stubUser.getPrimarySocket();
         Socket messageSocket = stubUser.getMessageSocket();
         String username = (String) params.get("username");
@@ -110,12 +110,12 @@ class EndpointsHandler {
         return buildSuccessReply();
     }
 
-    static JSONObject register(User stubUser, JSONObject params) {
+    public static JSONObject register(User stubUser, JSONObject params) {
         String username = (String) params.get("username");
         String password = (String) params.get("password");
         String language = (String) params.get("language");
     
-        if (isDebug) System.out.println("Register request: <" + username + "," + password + "," + language + ">");
+        if (Utils.isDebug) System.out.println("Register request: <" + username + "," + password + "," + language + ">");
     
         if(db.existUser(username))
             return buildErrorReply(400, "User already exists.");
@@ -165,7 +165,7 @@ class EndpointsHandler {
     }
 
     static JSONObject createRoom(User user, JSONObject params) {
-        if (lastBroadcastIP == null) lastBroadcastIP = Utils.readFromFile(LASTIP_PATH);
+        if (lastBroadcastIP == null) lastBroadcastIP = Utils.readFromFile(LAST_IP_PATH);
         String nextBroadcastIP = Utils.nextBroadcastIP(lastBroadcastIP);
         if (nextBroadcastIP == null) {
             System.err.println("No more multicast address left!");
@@ -177,8 +177,8 @@ class EndpointsHandler {
             return buildErrorReply(400, "Database error.");
         
         lastBroadcastIP = nextBroadcastIP;  // only if success
-        if(!writeToFile(nextBroadcastIP, LASTIP_PATH))
-            System.err.println("ERROR: can't write last lastBroadcastIP in "+LASTIP_PATH+".");
+        if(!Utils.writeToFile(nextBroadcastIP, LAST_IP_PATH))
+            System.err.println("ERROR: can't write last lastBroadcastIP in "+ LAST_IP_PATH +".");
         JSONObject result = new JSONObject();
         result.put("name", roomName);
         result.put("address", nextBroadcastIP);

@@ -1,8 +1,8 @@
 package state;
 
-import base.Database;
+import misc.Database;
 
-import static base.Utils.printDebug;
+import static misc.Utils.printDebug;
 
 import java.io.IOException;
 import java.net.Socket;

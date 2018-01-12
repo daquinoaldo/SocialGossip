@@ -1,4 +1,4 @@
-package base;
+package misc;
 
 public interface Endpoints {
     String HEARTBEAT = "HEARTBEAT";

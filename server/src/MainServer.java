@@ -2,8 +2,8 @@ import connections.RMIManager;
 import connections.Multicast;
 import connections.Reception;
 import connections.Tasks;
-import base.Configuration;
-import base.Utils;
+import misc.Configuration;
+import misc.Utils;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

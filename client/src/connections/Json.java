@@ -1,8 +1,6 @@
 package connections;
 
-import base.Endpoints;
-import connections.Connection;
-import connections.Multicast;
+import misc.Endpoints;
 import state.Friend;
 import state.User;
 import state.Message;
@@ -19,7 +17,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import static base.Endpoints.*;
+import static misc.Endpoints.*;
 
 /**
  * Contains all methods to generate the request Json and sending it to the server.

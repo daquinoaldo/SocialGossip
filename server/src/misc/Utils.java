@@ -1,4 +1,4 @@
-package base;
+package misc;
 
 import java.io.*;
 import java.security.MessageDigest;

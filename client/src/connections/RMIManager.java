@@ -3,7 +3,7 @@ package connections;
 import state.Friend;
 import state.Message;
 import state.User;
-import base.Configuration;
+import misc.Configuration;
 import remoteinterfaces.ClientCallbackInterface;
 import remoteinterfaces.ServerInterface;
 
