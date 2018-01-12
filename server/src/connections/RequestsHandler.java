@@ -128,7 +128,7 @@ class RequestsHandler {
             return;
         }
         
-        ArrayList<String> subscribers = database.getChatSubscribers(roomName);
+        ArrayList<String> subscribers = database.getRoomSubscribers(roomName);
         int online = 0;
         for (String username : subscribers) {
             if (!username.equals(senderUsername) && OnlineUsers.isOnline(username))
