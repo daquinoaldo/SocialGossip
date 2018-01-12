@@ -8,10 +8,14 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import static connections.Helpers.recv;
+import static connections.Helpers.receive;
 import static connections.Helpers.send;
 
+/**
+ * Contains Tasks for for the connections (primary and secondary) and contains the onSocketClosed callback
+ */
 public class Tasks {
+
     /**
      * Returns the task used when receiving a new primary connection:
      * Read a line from the socket, then parse it as a JSON executing. (See RequestsHandler for further details).
@@ -26,7 +30,7 @@ public class Tasks {
             }
     
             user.getLock();
-            ArrayList<String> requests = recv(socket);
+            ArrayList<String> requests = receive(socket);
             user.releaseLock();
     
             for (String req : requests) {
@@ -57,7 +61,7 @@ public class Tasks {
             }
     
             user.getLock();
-            ArrayList<String> requests = recv(socket);
+            ArrayList<String> requests = receive(socket);
             user.setHeartbeat( System.currentTimeMillis() );
             user.releaseLock();
     
@@ -76,7 +80,11 @@ public class Tasks {
             e.printStackTrace();
         }
     }
-    
+
+    /**
+     * onSocketClosed callback for Reception: set the user offline and notify his friends
+     * @param socket the socket that is closed
+     */
     public static void socketClosed(Socket socket) {
         User user = OnlineUsers.getBySocket(socket);
         if (user == null) return;

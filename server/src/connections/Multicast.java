@@ -7,6 +7,10 @@ import java.io.IOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * UDP connections class.
+ * Contains methods to send the UDP multicast messages (the rooms broadcast)
+ */
 public class Multicast {
     @SuppressWarnings("CanBeFinal")
     private static DatagramSocket socket;
@@ -53,11 +57,18 @@ public class Multicast {
         });
         listener.start();
     }
-    
-    // Force static initializer
+
+    /**
+     * Force static initializer
+     */
     @SuppressWarnings("EmptyMethod")
     public static void init() { }
-    
+
+    /**
+     * Message broadcast on the multicast socket
+     * @param message to be sent
+     * @param address of the multicast
+     */
     public static void broadcast(String message, String address) {
         try {
             if(socket == null) throw new IOException("Socket is null");

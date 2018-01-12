@@ -7,7 +7,15 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+/**
+ * A sort of selector for non-rmi sockets
+ * @see this constructor for more details
+ */
 class SocketSelector {
+
+    /**
+     * Inner class: Task to check if a socket is ready to be read
+     */
     private class SelectorTask implements Runnable {
         private final Consumer<Socket> realTask;
         private final Consumer<Socket> onSocketClose;
@@ -56,16 +64,13 @@ class SocketSelector {
     private final ScheduledExecutorService pool;
     
     /**
-     * Use a thredpool to read socket and execute a task. If the thread was able to read it, realTask will be executed.
-     * In any case, the socket will be re-added to the end of the queue of the threadpool.
-     *
-     * If a socket gets closed it will be removed from the threadpool queue, and onSocketClosed is executed.
-     *
-     * @param pool, threadpool that will execute tasks.
+     * Use a thread pool to read socket and execute a task. If the thread was able to read it, realTask will be executed.
+     * In any case, the socket will be re-added to the end of the queue of the thread pool.
+     * If a socket gets closed it will be removed from the thread pool queue, and onSocketClosed is executed.
+     * @param pool, thread pool that will execute tasks.
      * @param realTask, function that accept a socket as parameter, executed when the socket is ready.
      */
-    @SuppressWarnings("WeakerAccess")
-    public SocketSelector(ScheduledExecutorService pool, Consumer<Socket> realTask, Consumer<Socket> onSocketClose) {
+    SocketSelector(ScheduledExecutorService pool, Consumer<Socket> realTask, Consumer<Socket> onSocketClose) {
         this.pool = pool;
         this.realTask = realTask;
         this.onSocketClose = onSocketClose;

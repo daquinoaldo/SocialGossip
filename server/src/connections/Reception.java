@@ -12,10 +12,10 @@ public class Reception {
     
     /**
      * Start a thread accepting connection on the specified port, create a SocketSelector which will handle the opened
-     * sockets and will run task in the threadpool.
-     * @param pool Threadpool that will run for the SocketSelector
+     * sockets and will run task in the thread pool.
+     * @param pool Thread pool that will run for the SocketSelector
      * @param port TCP port that will listen for new connections
-     * @param socketTask Task to be executed when receiving messaes from a socket - see SocketSelector for details
+     * @param socketTask Task to be executed when receiving messages from a socket - see SocketSelector for details
      * @param onSocketClose Task to be executed when a socket gets closed - see SocketSelector for details
      */
     public Reception(ScheduledExecutorService pool, int port, Consumer<Socket> socketTask, Consumer<Socket> onSocketClose) {
