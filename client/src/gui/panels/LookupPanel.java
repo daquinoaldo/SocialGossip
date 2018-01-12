@@ -6,13 +6,13 @@ import base.Json;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-class LookupPanel extends JPanel {
+public class LookupPanel extends JPanel {
 
     private final JLabel resultLabel = new JLabel();
     private final JButton addFriendButton = new JButton("Add");
     private String foundUser = null;
 
-    LookupPanel() {
+    public LookupPanel() {
         // Search panel
         JPanel searchPanel = new JPanel();
         searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.X_AXIS));

@@ -5,9 +5,9 @@ import base.Json;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-class CreateRoomPanel extends JPanel {
+public class CreateRoomPanel extends JPanel {
 
-    CreateRoomPanel() {
+    public CreateRoomPanel() {
         // Search panel
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 

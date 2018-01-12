@@ -1,5 +1,6 @@
 package gui.panels;
 
+import gui.components.ListPanelFactory;
 import state.Friend;
 import state.User;
 import state.Room;
