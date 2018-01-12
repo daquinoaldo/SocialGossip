@@ -8,13 +8,24 @@ import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
+import static javax.swing.JOptionPane.WARNING_MESSAGE;
+
 /**
  * Utilities for the gui
  */
 public class Utils {
-
+    
     public static void showErrorDialog(String msg) {
-        Thread t = new Thread(() -> JOptionPane.showMessageDialog(null, msg,"Error", JOptionPane.WARNING_MESSAGE));
+        showDialog("Error", msg, WARNING_MESSAGE);
+    }
+    
+    public static void showInfoDialog(String msg) {
+        showDialog("Info", msg, INFORMATION_MESSAGE);
+    }
+    
+    private static void showDialog(String title, String msg, int type) {
+        Thread t = new Thread(() -> JOptionPane.showMessageDialog(null, msg,title, type));
         t.start();
     }
     

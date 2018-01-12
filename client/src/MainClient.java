@@ -28,6 +28,13 @@ class MainClient {
         User.addLoginListener(isLoggedIn -> {
             if (isLoggedIn) {
                 loginWindow.dispose();
+    
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                } catch (IllegalAccessException | UnsupportedLookAndFeelException | InstantiationException |
+                        ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
                 JPanel mainPanel = new MainPanel();
                 mainWindow = Utils.createFixedWindow("Social Gossip", mainPanel, true, false);
 
