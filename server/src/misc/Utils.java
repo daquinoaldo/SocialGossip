@@ -57,6 +57,12 @@ public class Utils {
         // NOTE: nextIP("255.255.255.255") == "0.0.0.0"
     }
 
+    /**
+     * Given a broadcast IP, returns the next IP to be used
+     * @param actualIP in the quad-dotted decimal notation (239.x.x.x)
+     * @return the next IP in the quad-dotted decimal notation (239.x.x.x)
+     *         or null if the addresses available are finished
+     */
     public static String nextBroadcastIP(String actualIP) {
         String nextIP = nextIP(actualIP);
         String[] tokens = nextIP.split("\\.");
@@ -65,6 +71,12 @@ public class Utils {
         return nextIP;
     }
 
+    /**
+     * Write a String in a file, used to save permanently the lastUsed
+     * @param text of the string
+     * @param filename path of the file
+     * @return false in case of errors, true otherwise
+     */
     @SuppressWarnings("SameParameterValue")
     public static boolean writeToFile(String text, String filename) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
@@ -76,6 +88,12 @@ public class Utils {
         }
     }
 
+    /**
+     * Read a String from a file, used to read the permanently saved copy of lastUsed
+     * @param filename path of the file
+     * @return the read String or 239.0.0.0 in case of error
+     *         (the file not exist because is the first time the server start)
+     */
     public static String readFromFile(String filename) {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             return br.readLine();

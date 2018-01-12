@@ -11,6 +11,7 @@ class TranslationTest {
         assertEquals("Hi", Translation.translate("Ciao", "it", "EN"));
     
         assertThrows(IllegalArgumentException.class, () -> Translation.translate("", "it", "en"));
-        assertThrows(IllegalArgumentException.class, () -> Translation.translate("sdf", "it", "aaaa"));
+        assertThrows(IllegalArgumentException.class, () ->
+                Translation.translate("sdf", "it", "notALanguage"));
     }
 }

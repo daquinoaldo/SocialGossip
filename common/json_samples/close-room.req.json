@@ -1,6 +1,6 @@
 {
   "endpoint": "CLOSE_CHAT",
   "params": {
-    "room": "Serie A"
+    "room": "Room name"
   }
 }

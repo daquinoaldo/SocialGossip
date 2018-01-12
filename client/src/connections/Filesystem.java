@@ -45,7 +45,7 @@ class Filesystem {
     /**
      * Read the specified Socket using NIO, and save the data to File.
      * @param inChannel Socket from where data will be read
-     * @param file File object, destinationation of the data
+     * @param file File object, destination of the data
      */
     public static void writeFile(SocketChannel inChannel, File file) {
         try (

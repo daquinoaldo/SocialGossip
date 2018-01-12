@@ -1,5 +1,4 @@
 {
   "endpoint": "LIST_FRIEND",
-  "params": {
-  }
+  "params": { }
 }

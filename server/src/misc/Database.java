@@ -5,7 +5,11 @@ import org.sqlite.SQLiteConfig;
 import java.sql.*;
 import java.util.ArrayList;
 
-
+/**
+ * The database helper: the state of server has a permanent copy in the database.
+ * This class contains all the methods to operate with it.
+ * The database is implemented in SQLite.
+ */
 @SuppressWarnings("ConstantConditions")
 public class Database {
 
@@ -16,7 +20,7 @@ public class Database {
     public Database(String dbName) {
         this.dbName = dbName;
     }
-    @SuppressWarnings("WeakerAccess")
+
     public Database() {
         this(DEFAULT_DB_NAME);
     }
@@ -32,6 +36,7 @@ public class Database {
         }
     }
 
+    // Connects to database and exec the sql query, throwing exception if there are errors
     private void execute(String sql) throws SQLException {
         try (Connection connection = connect();
              Statement statement = connection.createStatement()) {
@@ -41,6 +46,7 @@ public class Database {
         // but it has the utility of being able to use try with resources.
     }
 
+    // Like execute, but return false in case of errors without throwing exception
     private boolean execBool(String sql) {
         try {
             execute(sql);
@@ -51,7 +57,8 @@ public class Database {
             return false;
         }
     }
-    
+
+    // Execute a query and returns the String result at first row in columnLabel
     private String getString(String sql, String columnLabel) throws SQLException {
         try (Connection connection = connect();
                 Statement statement = connection.createStatement()) {
@@ -63,6 +70,7 @@ public class Database {
         }
     }
 
+    // Same of getString but return an ArrayList of String, one for any row at column columnLabel
     private ArrayList<String> getList(String sql, String columnLabel) {
         try (Connection connection = connect();
              Statement statement = connection.createStatement()) {
@@ -77,6 +85,7 @@ public class Database {
         }
     }
 
+    // Return the number of results that a COUNT(*) query produce
     private int getCount(String sql) {
         try (Connection connection = connect();
              Statement statement = connection.createStatement()) {
@@ -136,34 +145,6 @@ public class Database {
             e.printStackTrace();
             System.exit(1);
         }
-        /* Important note:
-         * In SQLite, a column with type INTEGER PRIMARY KEY is an alias for the ROWID.
-         * The AUTOINCREMT keyword changes the automatic ROWID assignment algorithm to prevent the reuse of ROWIDs
-         * over the lifetime of the database.
-         * In other words, the purpose of AUTOINCREMENT is to prevent the reuse of ROWIDs from previously deleted rows.
-         * The AUTOINCREMENT keyword imposes extra CPU, memory, disk space, and disk I/O overhead and should be avoided
-         * if not strictly needed. It is usually not needed.
-         *
-         * We consider that messages could be deleted from database, so in this case is better use autoincrement
-         * to avoid problems with the reuse of ROWIDs.
-         * If not, the use of autoincrement could be avoided to improve performance.
-         *
-        // TODO: se non eliminiamo gli utenti, allora eliminiamo autoincrement e modifichiamo il commento sopra
-        String messages = "CREATE TABLE IF NOT EXISTS messages (\n"
-                + "	id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-                + "	room TEXT NOT NULL,\n"
-                + "	author TEXT NOT NULL,\n"
-                + "	content TEXT,\n"
-                + " FOREIGN KEY (room) REFERENCES rooms (name),\n"
-                + " FOREIGN KEY (author) REFERENCES users (username)\n"
-                + ");";
-        try {
-            execute(messages);
-        } catch (SQLException e){
-            System.err.println("Fatal error while creating messages table");
-            e.printStackTrace();
-            System.exit(1);
-        }*/
         String subscriptions = "CREATE TABLE IF NOT EXISTS subscriptions (\n"
                 + "	username TEXT NOT NULL,\n"
                 + "	room TEXT NOT NULL,\n"
@@ -315,8 +296,8 @@ public class Database {
         return getList(sql,"room");
     }
     
-    public ArrayList<String> getChatSubscribers(String chatname) {
-        String sql = "SELECT username FROM subscriptions WHERE room = '" + chatname + "'";
+    public ArrayList<String> getRoomSubscribers(String roomName) {
+        String sql = "SELECT username FROM subscriptions WHERE room = '" + roomName + "'";
         return getList(sql, "username");
     }
 

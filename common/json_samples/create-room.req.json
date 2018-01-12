@@ -1,6 +1,6 @@
 {
   "endpoint": "CREATE_ROOM",
   "params": {
-    "room": "Serie A"
+    "room": "Room name"
   }
 }

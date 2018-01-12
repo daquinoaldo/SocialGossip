@@ -9,8 +9,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.*;
 
+/**
+ * Translation class.
+ * Has only one method, translate.
+ */
 public class Translation {
 
+    /**
+     * Translate a massage
+     * @param text the message to be translated
+     * @param sourceLang the language of the message
+     * @param destLang the language in which it is to be translated
+     * @return the translated message
+     */
     public static String translate(String text, String sourceLang, String destLang) {
         if (
                 text == null ||
@@ -56,7 +67,7 @@ public class Translation {
             e.printStackTrace();
         }
         catch (IOException e) {
-            System.err.println("Error while comunicating with translation server");
+            System.err.println("Error while communicating with translation server");
             e.printStackTrace();
         }
         catch (ParseException e) {
@@ -64,7 +75,7 @@ public class Translation {
             e.printStackTrace();
         }
         
-        // if the translation coudln't be done for some reason - return the original text
+        // if the translation couldn't be done for some reason - return the original text
         return text;
     }
 }

@@ -1,7 +1,7 @@
 {
-  "endpoint": "CHATROOM_MESSAGE",
+  "endpoint": "ROOM_MESSAGE",
   "params": {
-    "room": "Serie A",
+    "room": "Room name",
     "message": "Message for the room."
   }
 }
