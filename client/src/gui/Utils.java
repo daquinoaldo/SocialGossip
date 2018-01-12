@@ -14,7 +14,8 @@ import java.util.regex.Pattern;
 public class Utils {
 
     public static void showErrorDialog(String msg) {
-        JOptionPane.showMessageDialog(null, msg,"Attention!", JOptionPane.WARNING_MESSAGE);
+        Thread t = new Thread(() -> JOptionPane.showMessageDialog(null, msg,"Error", JOptionPane.WARNING_MESSAGE));
+        t.start();
     }
     
     public static boolean showConfirmationDialog(String msg) {
