@@ -1,7 +1,7 @@
 package gui.panels;
 
 import state.*;
-import base.Json;
+import connections.Json;
 
 import javax.swing.*;
 import java.awt.*;

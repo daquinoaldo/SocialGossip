@@ -1,4 +1,4 @@
-package base;
+package connections;
 
 import gui.Utils;
 

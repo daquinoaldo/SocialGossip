@@ -1,5 +1,6 @@
-package base;
+package connections;
 
+import base.Endpoints;
 import connections.Connection;
 import connections.Multicast;
 import state.Friend;

@@ -1,6 +1,6 @@
 package gui.panels;
 
-import base.Json;
+import connections.Json;
 import gui.constants.Colors;
 import gui.Utils;
 import gui.components.Logo;
@@ -15,7 +15,7 @@ class RegisterPanel extends JPanel {
     private static final int maxWidth = 200;
     private final BiConsumer<String, String> onUserRegistered;
     
-    public RegisterPanel(BiConsumer<String, String> onUserRegistered) {
+    RegisterPanel(BiConsumer<String, String> onUserRegistered) {
         this.onUserRegistered = onUserRegistered;
         
         // Init components

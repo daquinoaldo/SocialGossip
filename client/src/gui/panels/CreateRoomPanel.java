@@ -1,6 +1,6 @@
 package gui.panels;
 
-import base.Json;
+import connections.Json;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

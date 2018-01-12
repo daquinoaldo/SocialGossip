@@ -6,7 +6,7 @@ import state.Chat;
 import state.Friend;
 import state.User;
 import state.Room;
-import base.Json;
+import connections.Json;
 import gui.constants.Dimensions;
 import gui.Utils;
 

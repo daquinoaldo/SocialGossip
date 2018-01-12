@@ -2,8 +2,6 @@ package connections;
 
 import state.User;
 import base.Configuration;
-import base.Filesystem;
-import base.Json;
 import gui.Utils;
 
 import java.io.*;

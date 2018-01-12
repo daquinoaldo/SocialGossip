@@ -1,6 +1,5 @@
-package base;
-
 import connections.Connection;
+import connections.Json;
 import state.User;
 import gui.Utils;
 import gui.panels.LoginPanel;

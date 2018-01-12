@@ -1,6 +1,6 @@
 package gui.panels;
 
-import base.Json;
+import connections.Json;
 import gui.constants.Colors;
 import gui.Utils;
 import gui.components.LoginForm;
