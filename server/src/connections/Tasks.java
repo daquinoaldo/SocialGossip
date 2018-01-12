@@ -58,10 +58,10 @@ public class Tasks {
     
             user.getLock();
             ArrayList<String> requests = recv(socket);
+            user.setHeartbeat( System.currentTimeMillis() );
             user.releaseLock();
     
             for (String req : requests) {
-                user.setHeartbeat( System.currentTimeMillis() );
                 String reply = RequestsHandler.parseMessageRequest(user, req);
     
                 if (reply != null) {
