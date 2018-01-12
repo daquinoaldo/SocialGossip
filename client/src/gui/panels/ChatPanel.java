@@ -13,7 +13,7 @@ public class ChatPanel extends JPanel {
     private final JPanel southPanel = new JPanel();
     private final JTextArea chatHistory;
     private final JTextField msgField;
-    private JScrollPane scrollableChatMessages;
+    private final JScrollPane scrollableChatMessages;
     
     private Chat chat;
 

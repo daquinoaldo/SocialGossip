@@ -85,6 +85,7 @@ public class Connection {
     /**
      * Force static initializer to be triggered.
      */
+    @SuppressWarnings("EmptyMethod")
     public static void init() {}
     
     /**

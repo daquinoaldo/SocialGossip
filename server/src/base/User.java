@@ -18,7 +18,7 @@ public class User implements Comparable<User> {
     private Socket primarySocket;
     private Socket messageSocket;
     private ClientCallbackInterface callback; // RMI interface
-    private Lock lock = new ReentrantLock();
+    private final Lock lock = new ReentrantLock();
     
     // This will be used in a ScheduledThreadpoolExecutor to check if the user is still connected
     private long lastHeartbeat;
