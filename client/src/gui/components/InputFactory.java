@@ -8,6 +8,9 @@ import javax.swing.plaf.basic.BasicComboBoxEditor;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
+/**
+ * Input factory for the Login and Registration Forms
+ */
 class InputFactory {
     /* Configuration */
     private static final Border inputBorder = BorderFactory.createCompoundBorder(

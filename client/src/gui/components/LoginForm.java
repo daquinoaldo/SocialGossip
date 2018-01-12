@@ -9,6 +9,9 @@ import java.util.function.*;
 
 import static gui.Validators.isValidUsername;
 
+/**
+ * Login Form under the Logo in the Login Panel
+ */
 public class LoginForm extends JPanel {
     private final JTextField usernameInput = InputFactory.getTextInput("username", e -> submit());
     private final JTextField passwordInput = InputFactory.getPasswordInput("password", e -> submit());
@@ -34,7 +37,10 @@ public class LoginForm extends JPanel {
         this.add(Box.createRigidArea(new Dimension(0, 15)));
         this.add(buttonsPanel);
     }
-    
+
+    /**
+     * Submit form action
+     */
     private void submit() {
         // Submit button or Enter key pressed
         String username = usernameInput.getText().trim();

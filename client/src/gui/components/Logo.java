@@ -6,6 +6,9 @@ import gui.constants.Icons;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Application Logo for the Login and Registration Panels
+ */
 public class Logo extends JPanel {
     public Logo() { this(128); }
     

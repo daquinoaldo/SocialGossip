@@ -20,9 +20,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Factory for the friends and rooms panels.
+ * Creates the 2 panels in the Main Panel.
+ */
 public class ListPanelFactory {
 
-    // Double click listener on online user or joined room start the chat
     private static final MouseListener startChatListener = new MouseAdapter() {
         public void mouseClicked(MouseEvent mouseEvent) {
             JList jlist = (JList) mouseEvent.getSource();
@@ -58,6 +61,13 @@ public class ListPanelFactory {
         }
     };
 
+    /**
+     * Helper: assemble a panel with the elements passed as parameters.
+     * @param firstPanel the upper panel: online friends or joined chats
+     * @param secondPanel the lowest panel: offline friends or other chats (created by other users and not joined)
+     * @param button the bottom button: search an user or create a new room
+     * @return the assembled JPanel
+     */
     private static JPanel preparePanel(JPanel firstPanel, JPanel secondPanel, JButton button) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
@@ -68,6 +78,11 @@ public class ListPanelFactory {
         return panel;
     }
 
+    /**
+     * Build the left panel in MainPanel
+     * @param friends the friends collection that will be parsed and divided into 2 list: online and offline
+     * @return the JPanel with the online and offline lists with the mouse listener and the search user button
+     */
     public static JPanel newFriendsPane(Collection<Friend> friends) {
         List<String> online = new ArrayList<>();
         List<String> offline = new ArrayList<>();
@@ -90,7 +105,7 @@ public class ListPanelFactory {
                 null
         );
 
-        Action action = new AbstractAction() {
+        Action buttonAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JPanel lookupPanel = new LookupPanel();
@@ -99,11 +114,16 @@ public class ListPanelFactory {
         };
 
         JButton button = new JButton("Add friend");
-        button.addActionListener(action);
+        button.addActionListener(buttonAction);
 
         return preparePanel(onlinePanel, offlinePanel, button);
     }
 
+    /**
+     * Build the right panel in MainPanel
+     * @param rooms the rooms collection that will be parsed and divided into 2 list: my rooms and other rooms
+     * @return the JPanel with the my rooms and other rooms lists with the mouse listeners and the new room button
+     */
     public static JPanel newRoomsPane(Collection<Room> rooms) {
         List<String> subscriptions = new ArrayList<>();
         List<String> others = new ArrayList<>();
@@ -126,7 +146,7 @@ public class ListPanelFactory {
                 addRoomListener
         );
 
-        Action action = new AbstractAction() {
+        Action buttonAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JPanel createRoomPanel = new CreateRoomPanel();
@@ -135,7 +155,7 @@ public class ListPanelFactory {
         };
 
         JButton button = new JButton("Create room");
-        button.addActionListener(action);
+        button.addActionListener(buttonAction);
 
         return preparePanel(subscriptionsPanel, othersPanel, button);
     }
