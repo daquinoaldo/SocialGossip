@@ -8,14 +8,17 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
-@SuppressWarnings("ALL")
+/**
+ * UDP connections class.
+ * Contains methods to send an UDP message to the server and to receive the UDP multicast messages (the rooms broadcast)
+ */
 public class Multicast {
     @SuppressWarnings("CanBeFinal")
     private static MulticastSocket ms = null;
     @SuppressWarnings("CanBeFinal")
     private static DatagramSocket outputDatagramSocket;
 
-    private static final HashMap<InetAddress, String> addressToChatname = new HashMap<>();
+    private static final HashMap<InetAddress, String> addressToRoomName = new HashMap<>();
 
     static {
         try {
@@ -54,6 +57,10 @@ public class Multicast {
         listener.start();
     }
 
+    /**
+     * Sends a datagramPacket to the server
+     * @param request the json stringified request
+     */
     public static void send(String request) {
         try {
             InetAddress destAddress = InetAddress.getByName(Configuration.HOSTNAME);
@@ -67,17 +74,23 @@ public class Multicast {
         }
     }
 
-    public static void joinGroup(String chatname, InetAddress address) throws IllegalArgumentException {
+    /**
+     * Join a multicast group, called when the user joins a room (or at login with the joined rooms)
+     * @param roomName the joined room name
+     * @param address the multicast address of the room in quad-dotted decimal notation (239.x.x.x)
+     * @throws IllegalArgumentException if the address is not valid (not a multicast address)
+     */
+    public static void joinGroup(String roomName, InetAddress address) throws IllegalArgumentException {
         if (!address.isMulticastAddress()) {
             throw new IllegalArgumentException("Not a valid multicast address: " + address.getHostName());
         }
 
-        if (addressToChatname.containsValue(chatname))
+        if (addressToRoomName.containsValue(roomName))
             return;
 
         try {
             ms.joinGroup(address);
-            addressToChatname.put(address, chatname);
+            addressToRoomName.put(address, roomName);
         }
         catch (IOException e) {
             System.err.println("Error while joining group: " + address.getHostName());
@@ -85,10 +98,14 @@ public class Multicast {
         }
     }
 
+    /**
+     * Leave a multicast group, used when a joined room is deleted
+     * @param address InetAddress of the group to leave
+     */
     public static void leaveGroup(InetAddress address) {
         try {
             ms.leaveGroup(address);
-            addressToChatname.remove(address);
+            addressToRoomName.remove(address);
         }
         catch (IOException e) {
             System.err.println("Error while leaving multicast group: " + address.getHostName());

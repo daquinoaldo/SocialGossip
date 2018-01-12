@@ -11,10 +11,20 @@ import java.net.*;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
-@SuppressWarnings("EmptyMethod")
+/**
+ * TCP connections class.
+ * Contains methods to send private messages and files.
+ * It is the lowest level and is invoked by the json class that is responsible for generating the right requests sent
+ * through these sockets.
+ * There are 2 sockets, each with its reader and writer:
+ * - primary for the operational request: login, register, lookup, friendship, listFriend createRoom, addMe, chatList,
+ * addMe (required) and the auxiliar isOnline to check if a friend is online;
+ * - secondary for the messages request: msg2friend, file2friend, roomMessage (required) and the auxiliar heartbeat to
+ * notify the server that we are still online.
+ */
 public class Connection {
     private static final String host = Configuration.HOSTNAME;
-    
+
     @SuppressWarnings("CanBeFinal")
     private static BufferedWriter primaryWriter;
     @SuppressWarnings("CanBeFinal")
@@ -24,7 +34,8 @@ public class Connection {
     private static BufferedWriter msgWriter;
     @SuppressWarnings("CanBeFinal")
     private static BufferedReader msgReader;
-    
+
+    /* Static initializer */
     static {
         try {
             Socket primarySocket = new Socket(host, Configuration.PRIMARY_PORT);
@@ -92,28 +103,38 @@ public class Connection {
     public synchronized static void sendMsgRequest(String request) {
         send(msgWriter, null, request);
     }
-    
+
+    /**
+     * Send a request to the server
+     * @param writer of the socket, primary for operational request, secondary for message
+     * @param reader of the socket, primary for operational request, secondary for message
+     * @param request the json stringified request: must include the ENDPOINT and a param object (payload, can be null)
+     * @return the response string (a json stringified)
+     */
     private synchronized static String send(BufferedWriter writer, BufferedReader reader, String request) {
+        if (writer == null || reader == null) return null;
         try {
             writer.write(request);
             writer.newLine();
             writer.flush();
             
-            String toReturn = null;
-            if (reader != null)
-                toReturn = reader.readLine();
-            
-            return toReturn;
+            return reader.readLine();
         }
         catch (IOException e) {
-            System.err.println("Fatal error occured while comunicating with the server.");
+            System.err.println("Fatal error occurred while communicating with the server.");
             e.printStackTrace();
             System.exit(1);
         }
     
         return null;
     }
-    
+
+    /**
+     * Receive a file from a friend
+     * @param destFile the destination file where save data
+     * @param hostname of the sender
+     * @param port of the sender
+     */
     public static void receiveFile(File destFile, String hostname, int port) {
         Thread asyncWriter = new Thread(() -> {
             int failedCount = 0;
@@ -124,20 +145,20 @@ public class Connection {
                     Filesystem.writeFile(socket, destFile);
                     System.out.println("Download finished.");
                     stop = true;
-                } catch (IOException e) {
+                } catch (IOException ioEx) {
                     if (failedCount < 3) {
                         try {
                             failedCount++;
                             Thread.sleep(5000);
-                        } catch (InterruptedException intexc) {
-                            e.printStackTrace();
+                        } catch (InterruptedException intExc) {
+                            intExc.printStackTrace();
                             break;
                         }
                     }
                     else {
                         stop = true;
                         System.err.println("Can't connect to the other peer");
-                        e.printStackTrace();
+                        ioEx.printStackTrace();
                         
                     }
                 }
@@ -145,7 +166,11 @@ public class Connection {
         });
         asyncWriter.start();
     }
-    
+
+    /**
+     * Used in Json.sendFileRequest: opens a socket on which waits an incoming connection from the file recipient
+     * @return a ServerSocketChannel
+     */
     public static ServerSocketChannel openFileSocket() {
         try {
             ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
@@ -153,14 +178,20 @@ public class Connection {
             return serverSocketChannel;
         }
         catch (IOException e) {
-            System.err.println("Error while openening p2p socket for sending file");
+            System.err.println("Error while opening p2p socket for sending file");
             e.printStackTrace();
         }
         
         return null;
     }
-    
-    
+
+    /**
+     * Used in Json.sendFileRequest:
+     * when the other client has connected to the socket it behaves as a server and sends the file
+     * @param serverSocket the ServerSocketChannel opened in openFileSocket
+     * @param file the File to be sent
+     * @param callback to be run when the upload is finished
+     */
     public static void startFileSender(ServerSocketChannel serverSocket, File file, Runnable callback) {
         Thread listener = new Thread(() -> {
             try {

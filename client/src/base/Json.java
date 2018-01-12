@@ -110,7 +110,7 @@ public class Json {
                         new Message("SYSTEM", "Download from " + fromUsername + " completed.") );
                 break;
                 
-            case CHATROOM_MESSAGE:
+            case ROOM_MESSAGE:
                 // If a room message is here, it's probably an error. They should arrive on the UDP multicast socket!
                 String status = (String) payload.get("status");
                 String message = (String) payload.get("message");
