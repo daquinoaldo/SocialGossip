@@ -20,11 +20,11 @@ public class Room extends Chat {
         super(Chat.TYPE_ROOM, name);
         if (mcAddress == null || creator == null)
             throw new IllegalArgumentException("Invalid chat parameters: <" + mcAddress + "," + creator + ">");
-        
-        this.setStatus(subscribed);
+
         this.address = InetAddress.getByName(mcAddress);
         this.creator = creator;
         chatPanel = new ChatPanel(this);
+        this.setStatus(subscribed);
     }
     
     public void leaveMulticastGroup() {

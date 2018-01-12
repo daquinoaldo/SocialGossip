@@ -13,6 +13,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import static base.Utils.printDebug;
 import static connections.Helpers.send;
 
+/**
+ * Server-side user modeling
+ */
 public class User implements Comparable<User> {
     private final String username;
     private Socket primarySocket;
