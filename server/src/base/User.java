@@ -22,8 +22,8 @@ public class User implements Comparable<User> {
     
     // This will be used in a ScheduledThreadpoolExecutor to check if the user is still connected
     private long lastHeartbeat;
-    public void setHeartbeat(long time) { this.lastHeartbeat = time; }
-    public long getLastHeartbeat() { return this.lastHeartbeat; }
+    public synchronized void setHeartbeat(long time) { this.lastHeartbeat = time; }
+    public synchronized long getLastHeartbeat() { return this.lastHeartbeat; }
     private Future<?> ghostbusterFuture;
     public Future<?> getGhostbusterFuture() { return ghostbusterFuture; }
     public void setGhostbusterFuture(Future<?> ghostbusterFuture) { this.ghostbusterFuture = ghostbusterFuture; }

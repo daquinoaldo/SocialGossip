@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class OnlineUsers {
-    private static final long FIVE_SECONDS = 5000;
+    private static final long GHOST_THRESHOLD_TIME = 10000;
     private static final Database db = new Database();
     private static final ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
     
@@ -23,7 +23,7 @@ public class OnlineUsers {
                 long lastHeartbeat = user.getLastHeartbeat();
                 long now = System.currentTimeMillis();
 
-                if (lastHeartbeat != 0 && now - lastHeartbeat > FIVE_SECONDS) {
+                if (lastHeartbeat != 0 && now - lastHeartbeat > GHOST_THRESHOLD_TIME) {
                     // If last heartbeat was 5 or more seconds ago
                     printDebug("[GHOSTBUSTER] Ghost found! Username: " + user.getUsername());
 
@@ -36,7 +36,7 @@ public class OnlineUsers {
                         e.printStackTrace();
                     }
                 }
-            }, 0, 5, TimeUnit.SECONDS);
+            }, 0, GHOST_THRESHOLD_TIME, TimeUnit.MILLISECONDS);
             user.setGhostbusterFuture(future);
         }
         

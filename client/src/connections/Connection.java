@@ -111,13 +111,18 @@ public class Connection {
      * @return the response string (a json stringified)
      */
     private synchronized static String send(BufferedWriter writer, BufferedReader reader, String request) {
-        if (writer == null || reader == null) return null;
+        if (writer == null)
+            return null;
+        
         try {
             writer.write(request);
             writer.newLine();
             writer.flush();
             
-            return reader.readLine();
+            if (reader == null)
+                return null;
+            else
+                return reader.readLine();
         }
         catch (IOException e) {
             System.err.println("Fatal error occurred while communicating with the server.");
