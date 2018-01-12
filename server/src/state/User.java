@@ -1,4 +1,4 @@
-package base;
+package state;
 
 import org.json.simple.JSONObject;
 import remoteinterfaces.ClientCallbackInterface;

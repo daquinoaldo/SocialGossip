@@ -1,4 +1,6 @@
-package base;
+package state;
+
+import base.Database;
 
 import static base.Utils.printDebug;
 

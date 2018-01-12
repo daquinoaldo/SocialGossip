@@ -1,8 +1,8 @@
 package connections;
 
-import base.OnlineUsers;
+import state.OnlineUsers;
 import base.RequestsHandler;
-import base.User;
+import state.User;
 
 import java.io.*;
 import java.net.Socket;
