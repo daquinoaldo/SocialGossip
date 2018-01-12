@@ -7,6 +7,10 @@ import base.Utils;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+/**
+ * The Server Main. Starts things.
+ * More precisely, it creates a thread pool and makes it manage the messages and operational connections
+ */
 class MainServer {
 
     public static void main(String[] args) {
@@ -15,10 +19,10 @@ class MainServer {
         rmi.Manager.start();
         Multicast.init();
         
-        ScheduledExecutorService threadpool = Executors.newScheduledThreadPool(4);
+        ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(4);
     
-        new Reception(threadpool, Configuration.PRIMARY_PORT, Tasks::primaryConnectionTask, Tasks::socketClosed);
-        new Reception(threadpool, Configuration.MSG_PORT, Tasks::messageConnectionTask, Tasks::socketClosed);
+        new Reception(threadPool, Configuration.PRIMARY_PORT, Tasks::primaryConnectionTask, Tasks::socketClosed);
+        new Reception(threadPool, Configuration.MSG_PORT, Tasks::messageConnectionTask, Tasks::socketClosed);
     }
 
 }
