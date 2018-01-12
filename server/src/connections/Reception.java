@@ -39,7 +39,7 @@ public class Reception {
                     System.out.println("Accepted connection (port " + port + ")");
                     selector.addSocket(socket);
                 } catch (SocketTimeoutException e) { /* socket accept timed out, not really an exception */ } catch (IOException e) {
-                    System.err.println("Error occured while accepting connection");
+                    System.err.println("Error occurred while accepting connection");
                     e.printStackTrace();
                 }
             }
